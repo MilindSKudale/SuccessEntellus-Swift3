@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="m4R-ZL-FCg">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="txt_Camp_2" translatesAutoresizingMaskIntoConstraints="NO" id="9tZ-8t-ZXp">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="607"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                </imageView>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="9tZ-8t-ZXp" secondAttribute="bottom" constant="60" id="Cjq-ga-Upl"/>
+                <constraint firstAttribute="trailing" secondItem="9tZ-8t-ZXp" secondAttribute="trailing" id="LDH-Wn-USY"/>
+                <constraint firstItem="9tZ-8t-ZXp" firstAttribute="leading" secondItem="m4R-ZL-FCg" secondAttribute="leading" id="ay2-8k-M28"/>
+                <constraint firstItem="9tZ-8t-ZXp" firstAttribute="top" secondItem="m4R-ZL-FCg" secondAttribute="top" id="eRY-yZ-ZsJ"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="UUc-zV-3j6"/>
+            <point key="canvasLocation" x="32.5" y="53.5"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="txt_Camp_2" width="375" height="601"/>
+    </resources>
+</document>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="qwr-5d-DLX">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="msg_2" translatesAutoresizingMaskIntoConstraints="NO" id="Q6S-Jv-J0m">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="607"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                </imageView>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="Q6S-Jv-J0m" firstAttribute="top" secondItem="qwr-5d-DLX" secondAttribute="top" id="DiZ-AC-UBk"/>
+                <constraint firstItem="Q6S-Jv-J0m" firstAttribute="leading" secondItem="qwr-5d-DLX" secondAttribute="leading" id="I4H-eX-JrW"/>
+                <constraint firstAttribute="trailing" secondItem="Q6S-Jv-J0m" secondAttribute="trailing" id="ftn-tH-xl0"/>
+                <constraint firstAttribute="bottom" secondItem="Q6S-Jv-J0m" secondAttribute="bottom" constant="60" id="iI0-8l-E1N"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="Fl6-i6-hjd"/>
+            <point key="canvasLocation" x="32.5" y="53.5"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="msg_2" width="375" height="601"/>
+    </resources>
+</document>

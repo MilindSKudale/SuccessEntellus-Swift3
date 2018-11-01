@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="Kcc-bn-eaw">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="YNO-Az-kmx">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                </imageView>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="3" translatesAutoresizingMaskIntoConstraints="NO" id="ZhD-vF-WRe">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="607"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                </imageView>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="ZhD-vF-WRe" firstAttribute="top" secondItem="Kcc-bn-eaw" secondAttribute="top" id="4hs-7v-hw3"/>
+                <constraint firstAttribute="bottom" secondItem="ZhD-vF-WRe" secondAttribute="bottom" constant="60" id="7Mm-rh-Hhc"/>
+                <constraint firstAttribute="trailing" secondItem="YNO-Az-kmx" secondAttribute="trailing" id="GUm-9F-Qch"/>
+                <constraint firstAttribute="trailing" secondItem="ZhD-vF-WRe" secondAttribute="trailing" id="H58-oz-who"/>
+                <constraint firstItem="YNO-Az-kmx" firstAttribute="leading" secondItem="Kcc-bn-eaw" secondAttribute="leading" id="IMj-cu-Mmw"/>
+                <constraint firstItem="YNO-Az-kmx" firstAttribute="top" secondItem="Kcc-bn-eaw" secondAttribute="top" id="LrH-ox-jOe"/>
+                <constraint firstAttribute="bottom" secondItem="YNO-Az-kmx" secondAttribute="bottom" id="Qx3-is-PVw"/>
+                <constraint firstItem="ZhD-vF-WRe" firstAttribute="leading" secondItem="Kcc-bn-eaw" secondAttribute="leading" id="RO6-Ib-WoY"/>
+            </constraints>
+            <point key="canvasLocation" x="32.5" y="53.5"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="3" width="375" height="667"/>
+    </resources>
+</document>

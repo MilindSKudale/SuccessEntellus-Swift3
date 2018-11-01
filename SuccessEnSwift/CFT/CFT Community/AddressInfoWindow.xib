@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="JZ0-Q7-e9q" customClass="AddressInfoWindow" customModule="SuccessEnSwift" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="323" height="133"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" alpha="0.69999998807907104" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="MarkerBg" translatesAutoresizingMaskIntoConstraints="NO" id="uuT-MD-rgd">
+                    <rect key="frame" x="0.0" y="0.0" width="323" height="133"/>
+                </imageView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Rgo-qK-ifl">
+                    <rect key="frame" x="10" y="7" width="303" height="20"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="20" id="XUC-LC-fhA"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vz6-Wg-0PY">
+                    <rect key="frame" x="10" y="27" width="303" height="35"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="35" id="ngv-xN-4rX"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" weight="light" pointSize="13"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BuD-zX-mE8">
+                    <rect key="frame" x="10" y="88" width="303" height="35"/>
+                    <constraints>
+                        <constraint firstAttribute="height" priority="250" constant="35" id="zzK-Ri-olf"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" weight="light" pointSize="13"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gUi-En-70D">
+                    <rect key="frame" x="10" y="65" width="303" height="20"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="20" id="CV6-GV-zfg"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" weight="light" pointSize="13"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="cSU-Q1-iS7" firstAttribute="trailing" secondItem="gUi-En-70D" secondAttribute="trailing" constant="10" id="1ZW-MS-C1G"/>
+                <constraint firstItem="uuT-MD-rgd" firstAttribute="leading" secondItem="cSU-Q1-iS7" secondAttribute="leading" id="2g5-Vm-at2"/>
+                <constraint firstItem="gUi-En-70D" firstAttribute="leading" secondItem="cSU-Q1-iS7" secondAttribute="leading" constant="10" id="9q7-cZ-MDQ"/>
+                <constraint firstItem="cSU-Q1-iS7" firstAttribute="bottom" secondItem="uuT-MD-rgd" secondAttribute="bottom" id="Dqi-ad-1zD"/>
+                <constraint firstItem="cSU-Q1-iS7" firstAttribute="trailing" secondItem="uuT-MD-rgd" secondAttribute="trailing" id="HYR-7M-cIv"/>
+                <constraint firstItem="cSU-Q1-iS7" firstAttribute="trailing" secondItem="Vz6-Wg-0PY" secondAttribute="trailing" constant="10" id="JXW-lH-fv5"/>
+                <constraint firstItem="cSU-Q1-iS7" firstAttribute="bottom" secondItem="BuD-zX-mE8" secondAttribute="bottom" constant="10" id="KID-xl-NmR"/>
+                <constraint firstItem="gUi-En-70D" firstAttribute="top" secondItem="Vz6-Wg-0PY" secondAttribute="bottom" constant="3" id="MFd-BB-x90"/>
+                <constraint firstItem="cSU-Q1-iS7" firstAttribute="trailing" secondItem="Rgo-qK-ifl" secondAttribute="trailing" constant="10" id="Niy-Av-sTq"/>
+                <constraint firstItem="Vz6-Wg-0PY" firstAttribute="leading" secondItem="cSU-Q1-iS7" secondAttribute="leading" constant="10" id="O3k-Rz-HDp"/>
+                <constraint firstItem="BuD-zX-mE8" firstAttribute="top" secondItem="gUi-En-70D" secondAttribute="bottom" constant="3" id="PGs-YU-SdY"/>
+                <constraint firstItem="Rgo-qK-ifl" firstAttribute="leading" secondItem="cSU-Q1-iS7" secondAttribute="leading" constant="10" id="SXB-dt-nA8"/>
+                <constraint firstItem="cSU-Q1-iS7" firstAttribute="trailing" secondItem="BuD-zX-mE8" secondAttribute="trailing" constant="10" id="Vya-r1-fbm"/>
+                <constraint firstItem="Vz6-Wg-0PY" firstAttribute="top" secondItem="Rgo-qK-ifl" secondAttribute="bottom" id="oFa-7s-dHb"/>
+                <constraint firstItem="uuT-MD-rgd" firstAttribute="top" secondItem="cSU-Q1-iS7" secondAttribute="top" id="pe6-kb-JUU"/>
+                <constraint firstItem="BuD-zX-mE8" firstAttribute="leading" secondItem="cSU-Q1-iS7" secondAttribute="leading" constant="10" id="xQ4-7t-nYL"/>
+                <constraint firstItem="Rgo-qK-ifl" firstAttribute="top" secondItem="cSU-Q1-iS7" secondAttribute="top" constant="7" id="xTh-9K-YBC"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="cSU-Q1-iS7"/>
+            <connections>
+                <outlet property="lblAddress" destination="Vz6-Wg-0PY" id="ftX-ar-C4u"/>
+                <outlet property="lblDistance" destination="gUi-En-70D" id="Uj2-lh-DGD"/>
+                <outlet property="lblEmail" destination="BuD-zX-mE8" id="yHV-Gx-BSr"/>
+                <outlet property="lblOfficeName" destination="Rgo-qK-ifl" id="gCe-Wl-QqY"/>
+            </connections>
+            <point key="canvasLocation" x="478.5" y="320"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="MarkerBg" width="256" height="118"/>
+    </resources>
+</document>

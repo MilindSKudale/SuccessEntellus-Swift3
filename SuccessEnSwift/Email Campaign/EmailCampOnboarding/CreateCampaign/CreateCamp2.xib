@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="uQn-kN-bIv">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="JXR-7j-roZ">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                </imageView>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Camp_2" translatesAutoresizingMaskIntoConstraints="NO" id="NrS-yv-uDB">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="607"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                </imageView>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="JXR-7j-roZ" firstAttribute="top" secondItem="uQn-kN-bIv" secondAttribute="top" id="6Ft-XA-cpc"/>
+                <constraint firstAttribute="bottom" secondItem="JXR-7j-roZ" secondAttribute="bottom" id="DOl-yU-vdD"/>
+                <constraint firstAttribute="trailing" secondItem="NrS-yv-uDB" secondAttribute="trailing" id="GEQ-tK-7sc"/>
+                <constraint firstItem="NrS-yv-uDB" firstAttribute="leading" secondItem="uQn-kN-bIv" secondAttribute="leading" id="Hba-b4-X00"/>
+                <constraint firstItem="JXR-7j-roZ" firstAttribute="leading" secondItem="uQn-kN-bIv" secondAttribute="leading" id="bBw-49-esM"/>
+                <constraint firstItem="NrS-yv-uDB" firstAttribute="top" secondItem="uQn-kN-bIv" secondAttribute="top" id="hhZ-Dg-i4P"/>
+                <constraint firstAttribute="trailing" secondItem="JXR-7j-roZ" secondAttribute="trailing" id="iBK-Ym-goN"/>
+                <constraint firstAttribute="bottom" secondItem="NrS-yv-uDB" secondAttribute="bottom" constant="60" id="yHJ-sX-h2W"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="o0w-9h-02V"/>
+            <point key="canvasLocation" x="32.5" y="53.5"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="Camp_2" width="375" height="603"/>
+    </resources>
+</document>
