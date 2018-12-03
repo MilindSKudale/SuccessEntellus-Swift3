@@ -12,6 +12,7 @@ import Parchment
 class CMSDashboard : SliderVC {
     
     fileprivate let vcTitles = [
+        "Step-By-Step Guides",
         "FAQ",
         "Contact Support",
         "Send Feedback"
@@ -28,6 +29,8 @@ class CMSDashboard : SliderVC {
         // Load each of the view controllers you want to embed
         // from the storyboard.
         let storyboard = UIStoryboard(name: "CMS", bundle: nil)
+        let guide = storyboard.instantiateViewController(withIdentifier: "idHelpGuideVC")
+        guide.title = "Step-By-Step Guides"
         let faq = storyboard.instantiateViewController(withIdentifier: "idFaq")
         faq.title = "FAQ"
         let support = storyboard.instantiateViewController(withIdentifier: "idSupport")
@@ -39,6 +42,7 @@ class CMSDashboard : SliderVC {
         // Initialize a FixedPagingViewController and pass
         // in the view controllers.
         let pagingViewController = FixedPagingViewController(viewControllers: [
+            guide,
             faq,
             support,
             feedback

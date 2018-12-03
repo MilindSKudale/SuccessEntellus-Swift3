@@ -464,7 +464,6 @@ extension ViewAndEditContactVC {
             dictParam["contact_work_phone"] = txtPhoneWork.text as AnyObject
             dictParam["contact_other_phone"] = txtPhoneOther.text as AnyObject
             dictParam["contact_company_name"] = txtCompanyName.text as AnyObject
-            dictParam["contact_title"] = "" as AnyObject
             dictParam["contact_date_of_birth"] = txtDOB.text as AnyObject
             dictParam["contact_date_of_anniversary"] = txtDOAnni.text as AnyObject
             dictParam["contact_address"] = txtAddress.text as AnyObject
@@ -481,7 +480,7 @@ extension ViewAndEditContactVC {
             dictParam["contact_lead_status_id"] = prospectStatusID as AnyObject
             dictParam["contact_lead_source_id"] = prospectSourceID as AnyObject
             dictParam["contact_industry"] = txtIndustry.text as AnyObject
-            dictParam["contact_customer_annual_income"] = txtAnnualIncome.text as AnyObject
+            dictParam["contact_annual_revenue"] = txtAnnualIncome.text as AnyObject
             dictParam["contact_customer_policy_number"] = txtCustPolicyNumber.text as AnyObject
             dictParam["contact_customer_current_policy"] = txtCurrentPolicy.text as AnyObject
             dictParam["contact_customer_policy_comp"] = txtPolicyCompany.text as AnyObject

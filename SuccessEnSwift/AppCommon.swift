@@ -16,7 +16,7 @@ let APPGRAYCOLOR = UIColor(red:0.24, green:0.24, blue:0.24, alpha:1.0)
 let SITEURL:String = "http://bringmax.com/successentellus/successapp/"
 //let SITEURL:String = "https://successentellus.com/successapp/"
 let SITEURLCHECK:String = "http://bringmax.com/successentellus/successapp/"
-let versionNumber = "Version 2.5.7"
+let versionNumber = "Version 2.6.1"
 var OBJCOM = AppCommon()
 
 class AppCommon: UIViewController, URLSessionDelegate, URLSessionTaskDelegate, URLSessionDataDelegate {
@@ -48,7 +48,8 @@ class AppCommon: UIViewController, URLSessionDelegate, URLSessionTaskDelegate, U
                 }
             case .failure(let error):
                 print(error)
-               // self.setAlert(_title: "Error", message: error.localizedDescription)
+                
+                //self.setAlert(_title: "Error", message: error.localizedDescription)
                 self.hideLoader()
             }
         })
@@ -509,6 +510,32 @@ class AppCommon: UIViewController, URLSessionDelegate, URLSessionTaskDelegate, U
             }
         }
     }
+    
+    func sendUDIDToServer(_ deviceId: String){
+        
+        let dictParam = ["userId": userID,
+                         "platform":"3",
+                         "deviceId":deviceId]
+        
+        let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
+        let jsonString = String(data: jsonData!, encoding: .utf8)
+        let dictParamTemp = ["param":jsonString];
+        
+        typealias JSONDictionary = [String:Any]
+        OBJCOM.modalAPICall(Action: "updateDeviceForPushNotification", param:dictParamTemp as [String : AnyObject],  vcObject: self){
+            JsonDict, staus in
+            let success:String = JsonDict!["IsSuccess"] as! String
+            if success == "true"{
+                let result = JsonDict!["result"] as AnyObject
+                print(result)
+                OBJCOM.hideLoader()
+            }else{
+                
+                OBJCOM.setAlert(_title: "", message: "Cannot get response..")
+                OBJCOM.hideLoader()
+            }
+        };
+    }
 }
 
 extension UIView {
@@ -525,3 +552,18 @@ extension UIView {
         layer.backgroundColor =  backgroundCGColor
     }
 }
+
+extension UITextField {
+    func setLeftPaddingPoints(){
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: self.frame.size.height))
+        self.leftView = paddingView
+        self.leftViewMode = .always
+    }
+    func setRightPaddingPoints() {
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: self.frame.size.height))
+        self.rightView = paddingView
+        self.rightViewMode = .always
+    }
+}
+
+

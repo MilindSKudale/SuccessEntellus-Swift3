@@ -15,6 +15,7 @@ class AddMembersManualVC: UIViewController {
   //  @IBOutlet var txtEmail : SkyFloatingLabelTextField!
     @IBOutlet var txtMobile : SkyFloatingLabelTextField!
     @IBOutlet var btnAssign : UIButton!
+    @IBOutlet var btnAddAndStartCamp : UIButton!
     @IBOutlet var btnCancel : UIButton!
     var CampaignId = ""
 
@@ -24,6 +25,8 @@ class AddMembersManualVC: UIViewController {
         btnCancel.clipsToBounds = true
         btnAssign.layer.cornerRadius = 5.0
         btnAssign.clipsToBounds = true
+        btnAddAndStartCamp.layer.cornerRadius = 5.0
+        btnAddAndStartCamp.clipsToBounds = true
     }
     
     @IBAction func actionClose(_ sender:UIButton){
@@ -34,14 +37,25 @@ class AddMembersManualVC: UIViewController {
         if Validate() == true {
             if OBJCOM.isConnectedToNetwork(){
                 OBJCOM.setLoader()
-                self.apiCallForAddMemberManually()
+                self.apiCallForAddMemberManually("0")
             }else{
                 OBJCOM.NoInternetConnectionCall()
             }
         }
     }
     
-    func apiCallForAddMemberManually(){
+    @IBAction func actionAddAndStartCampaign(_ sender:UIButton){
+        if Validate() == true {
+            if OBJCOM.isConnectedToNetwork(){
+                OBJCOM.setLoader()
+                self.apiCallForAddMemberManually("1")
+            }else{
+                OBJCOM.NoInternetConnectionCall()
+            }
+        }
+    }
+    
+    func apiCallForAddMemberManually(_ addAndAssinged:String){
         
         let dictParam = ["userId":userID,
                          "platform":"3",
@@ -49,7 +63,8 @@ class AddMembersManualVC: UIViewController {
                          "fname":self.txtFirstName.text!,
                          "lname":self.txtLastName.text!,
                          "email": "",
-                         "phone":self.txtMobile.text!] as [String : Any]
+                         "phone":self.txtMobile.text!,
+                         "addAndAssinged":addAndAssinged] as [String : Any]
         
         let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
         let jsonString = String(data: jsonData!, encoding: .utf8)

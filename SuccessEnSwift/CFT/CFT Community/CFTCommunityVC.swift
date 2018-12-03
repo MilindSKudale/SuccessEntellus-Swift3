@@ -72,6 +72,7 @@ class CFTCommunityVC: SliderVC, CLLocationManagerDelegate, GMSAutocompleteViewCo
     var newCFT: [String:AnyObject]!
     
     var isLoadView = "0"
+    var zoomValue : Float = 15.0
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -88,6 +89,7 @@ class CFTCommunityVC: SliderVC, CLLocationManagerDelegate, GMSAutocompleteViewCo
         txtSearchByCft.layer.borderColor = APPGRAYCOLOR.cgColor
         txtSearchByCft.layer.borderWidth = 0.5
         txtSearchByCft.clipsToBounds = true
+        txtSource.isUserInteractionEnabled = false
 
         self.viewRoute.layer.cornerRadius = 10.0
         self.viewRouteHeight.constant = 0.0
@@ -97,6 +99,9 @@ class CFTCommunityVC: SliderVC, CLLocationManagerDelegate, GMSAutocompleteViewCo
         self.mapView.settings.myLocationButton = true
         self.mapView.settings.compassButton = true
         self.mapView.settings.zoomGestures = true
+        let layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        self.mapView.layoutMargins = layoutMargins
+        
         
         btnFindRoute.layer.cornerRadius = 5.0
         btnFindRoute.clipsToBounds = true
@@ -108,21 +113,10 @@ class CFTCommunityVC: SliderVC, CLLocationManagerDelegate, GMSAutocompleteViewCo
         case .notDetermined:
             setUpLoc()
         case .restricted:
+           // setUpLoc()
             break
         case .denied:
-//            let alertController = UIAlertController(title: "\"SuccessEntellus\" would like to access your location.", message: "SuccessEntellus app needs access to your current location to connect you with CFTs near you. If you are a CFT, then your current location will be tracked. Please click Settings and select Always for best optimal experience and maximum sales leads.", preferredStyle: .alert)
-//            let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) -> Void in
-//                guard let settingsUrl = URL(string: UIApplicationOpenSettingsURLString) else {
-//                    return
-//                }
-//                if UIApplication.shared.canOpenURL(settingsUrl) {
-//                    UIApplication.shared.open(settingsUrl, completionHandler: { (success) in }
-//                    )}
-//            }
-//            let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
-//            alertController.addAction(cancelAction)
-//            alertController.addAction(settingsAction)
-//            self.present(alertController, animated: true, completion: nil)
+            setUpLoc()
             break
         case .authorizedAlways:
             setUpLoc()
@@ -157,11 +151,15 @@ class CFTCommunityVC: SliderVC, CLLocationManagerDelegate, GMSAutocompleteViewCo
     }
     
     func setUpLoc(){
+        self.zoomValue = 15.0
         locationManager.delegate = self
-        locationManager.startUpdatingLocation()
-        locationManager.distanceFilter = 100
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.activityType = CLActivityType.automotiveNavigation
+        locationManager.distanceFilter = 10
+        locationManager.headingFilter = 1
         locationManager.startMonitoringSignificantLocationChanges()
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
     }
     
     @objc func callExecuteReapeate(notification: NSNotification){
@@ -209,6 +207,10 @@ class CFTCommunityVC: SliderVC, CLLocationManagerDelegate, GMSAutocompleteViewCo
             self.viewRoute.layoutIfNeeded()
         })
         repeatCall = false
+        
+//        let layoutMargins = UIEdgeInsets(top: self.mapView.frame.height/2, left: 0, bottom: 0, right: 0)
+//        self.mapView.layoutMargins = layoutMargins
+        //self.mapView.camera.zoom = 20.0
     }
     
     public func executeRepeatedly() {
@@ -270,11 +272,13 @@ extension CFTCommunityVC : GMSMapViewDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         let userLocation :CLLocation = locations[0] as CLLocation
         
-        let camera = GMSCameraPosition.camera(withLatitude: userLocation.coordinate.latitude, longitude: userLocation.coordinate.longitude, zoom: 10);
+        let camera = GMSCameraPosition.camera(withLatitude: userLocation.coordinate.latitude, longitude: userLocation.coordinate.longitude, zoom: self.zoomValue);
+    
+        camera.accessibilityNavigationStyle = .automatic
         self.mapView.camera = camera
         self.mapView.isMyLocationEnabled = true
         self.mapView.animate(to: camera)
-   
+        
         let geocoder = CLGeocoder()
         geocoder.reverseGeocodeLocation(userLocation) { (placemarks, error) in
             if (error != nil){
@@ -282,9 +286,8 @@ extension CFTCommunityVC : GMSMapViewDelegate {
             }
             self.sourceLatitude = userLocation.coordinate.latitude
             self.sourceLongitude = userLocation.coordinate.longitude
-            let coordinates = CLLocationCoordinate2D(latitude:self.sourceLatitude
-                , longitude:self.sourceLongitude)
-            self.oldCoodinate = coordinates
+            self.getCFTfromCurrentLocation("","")
+           // self.oldCoodinate = coordinates
             if placemarks != nil {
                 print(placemarks as Any)
                 let placeMark = placemarks?.last
@@ -316,7 +319,8 @@ extension CFTCommunityVC : GMSMapViewDelegate {
     }
     
     func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
-        
+        self.zoomValue = mapView.camera.zoom
+        print("****** \(self.zoomValue) ******")
 
     }
     
@@ -398,23 +402,9 @@ extension CFTCommunityVC {
     func viewController(_ viewController: GMSAutocompleteViewController, didAutocompleteWith place: GMSPlace) {
     
         if self.isSource == "" {
-//            let center = CLLocationCoordinate2D(latitude: place.coordinate.latitude, longitude: place.coordinate.longitude)
-//
-//            let camera = GMSCameraPosition.camera(withLatitude: place.coordinate.latitude, longitude: place.coordinate.longitude, zoom: 10.0)
-//            self.mapView.camera = camera
-//            self.mapView.animate(to: camera)
-//
-//            let marker = GMSMarker()
-//            marker.position = center
-//            marker.map = self.mapView
             if place.name != "" {
-////                if OBJCOM.isConnectedToNetwork(){
-////                    self.getCFTfromLocationSearch(place.name)
                 self.txtSearchByCft.text = place.name
-////                }else{
-////                    OBJCOM.NoInternetConnectionCall()
-                }
-//            }
+            }
         }else if self.isSource == "SOURCE" {
             self.txtSource.text = place.name
             self.sourceLatitude = place.coordinate.latitude
@@ -498,13 +488,7 @@ extension CFTCommunityVC {
         typealias JSONDictionary = [String:Any]
         OBJCOM.modalAPICall(Action: "updateCftStatus", param:dictParamTemp as [String : AnyObject],  vcObject: self){
             JsonDict, staus in
-//            let success:String = JsonDict!["IsSuccess"] as! String
-//            if success == "true" {
-                OBJCOM.hideLoader()
-//            } else {
-//
-//                OBJCOM.hideLoader()
-//            }
+            OBJCOM.hideLoader()
         };
     }
     
@@ -533,7 +517,8 @@ extension CFTCommunityVC {
                         let coordinates = CLLocationCoordinate2D(latitude:strLat!
                             , longitude:strLong!)
                         
-                        let camera = GMSCameraPosition.camera(withLatitude: coordinates.latitude, longitude: coordinates.longitude, zoom: 18);
+//                        let camera = GMSCameraPosition.camera(withLatitude: coordinates.latitude, longitude: coordinates.longitude, zoom: 18);
+                        let camera = GMSCameraPosition.camera(withLatitude: coordinates.latitude, longitude: coordinates.longitude, zoom: self.zoomValue);
                         self.mapView.camera = camera
                         self.mapView.animate(to: camera)
                     
@@ -557,10 +542,6 @@ extension CFTCommunityVC {
                         
                         let coordinates = CLLocationCoordinate2D(latitude:strLat!
                             , longitude:strLong!)
-                        
-//                        let camera = GMSCameraPosition.camera(withLatitude: coordinates.latitude, longitude: coordinates.longitude, zoom: 18);
-//                        self.mapView.camera = camera
-//                        self.mapView.animate(to: camera)
                         
                         let marker = GMSMarker()
                         marker.icon = #imageLiteral(resourceName: "officelogo")
@@ -623,7 +604,7 @@ extension CFTCommunityVC {
 //            if success == "true" {
                 if let result = JsonDict!["result"] as? [AnyObject] {
                     print("result:",result)
-                    self.mapView.clear()
+//                    self.mapView.clear()
                     for obj in result {
                         let strLat = Double(obj["userLatitude"] as! String)
                         let strLong = Double(obj["userLongitude"] as! String)
@@ -636,9 +617,6 @@ extension CFTCommunityVC {
                         let coordinates = CLLocationCoordinate2D(latitude:strLat!
                             , longitude:strLong!)
                         
-                        let camera = GMSCameraPosition.camera(withLatitude: coordinates.latitude, longitude: coordinates.longitude, zoom: 10);
-                        self.mapView.camera = camera
-                        self.mapView.animate(to: camera)
                         
                         let marker = GMSMarker()
                         self.newCoodinate = coordinates
@@ -768,10 +746,18 @@ extension CFTCommunityVC : UITextFieldDelegate {
     @IBAction func actionFindDirection(_ sender: UIButton) {
 
         repeatCall = false
-        let src = self.txtSource.text?.replacingOccurrences(of: " ", with: "%20")
-        let dest = self.txtDestination.text?.replacingOccurrences(of: " ", with: "%20")
-        self.drawPath(origin: src!, destination: dest!)
-        
+//        let src = self.txtSource.text?.replacingOccurrences(of: " ", with: "%20")
+//        let dest = self.txtDestination.text?.replacingOccurrences(of: " ", with: "%20")
+//        self.drawPath(origin: src!, destination: dest!)
+        // if GoogleMap installed
+        if let url = URL(string: "comgooglemaps://?saddr=\(self.sourceLatitude),\(self.sourceLongitude)&daddr=\(self.destLatitude),\(self.destLongitude)&directionsmode=driving") {
+            UIApplication.shared.open(url, options: [:])
+        } else {
+            // if GoogleMap App is not installed
+            UIApplication.shared.open(URL(string:
+                "https://www.google.co.in/maps/dir/?saddr=\(self.sourceLatitude),\(self.sourceLongitude)&daddr=\(self.destLatitude),\(self.destLongitude)&directionsmode=driving")!, options: [:], completionHandler: nil)
+        }
+      
     }
     
     
@@ -792,8 +778,8 @@ extension CFTCommunityVC : UITextFieldDelegate {
                     marker.position = start
                     marker.icon = #imageLiteral(resourceName: "my_location")
                     marker.map = self.mapView
-                    
-                    let camera = GMSCameraPosition.camera(withLatitude: self.sourceLatitude, longitude: self.sourceLongitude, zoom: 10);
+                   
+                    let camera = GMSCameraPosition.camera(withLatitude: self.sourceLatitude, longitude: self.sourceLongitude, zoom: self.zoomValue);
                     self.mapView.camera = camera
                     self.mapView.animate(to: camera)
                     
@@ -807,7 +793,6 @@ extension CFTCommunityVC : UITextFieldDelegate {
                     if routes.count > 0 {
                         
                         for rts in routes {
-                        
                             let overViewPolyLine = rts["overview_polyline"]?["points"]
                             let path = GMSMutablePath(fromEncodedPath: overViewPolyLine as! String)
                             
@@ -935,8 +920,8 @@ extension CFTCommunityVC {
                             else {
                                 return
                             }
-                        // Use your location
-                        let camera = GMSCameraPosition.camera(withLatitude: location.coordinate.latitude, longitude: location.coordinate.longitude, zoom: 10.0)
+                    
+                        let camera = GMSCameraPosition.camera(withLatitude: location.coordinate.latitude, longitude: location.coordinate.longitude, zoom: self.zoomValue);
                         self.mapView.camera = camera
                         self.mapView.animate(to: camera)
                     }
@@ -996,9 +981,9 @@ extension CFTCommunityVC {
                         let coordinates = CLLocationCoordinate2D(latitude:strLat!
                             , longitude:strLong!)
                         
-                        let camera = GMSCameraPosition.camera(withLatitude: coordinates.latitude, longitude: coordinates.longitude, zoom: 18);
+                        let camera = GMSCameraPosition.camera(withLatitude: coordinates.latitude, longitude: coordinates.longitude, zoom: self.zoomValue);
                         self.mapView.camera = camera
-                        self.mapView.animate(to: camera)
+                      //  self.mapView.animate(to: camera)
                         
                         let marker = GMSMarker()
                         marker.position = coordinates
@@ -1009,7 +994,24 @@ extension CFTCommunityVC {
                         }
                         marker.map = self.mapView
                         marker.userData = obj
-                       // marker.appearAnimation = GMSMarkerAnimation.none
+                       
+                
+                        // Keep Rotation Short
+                        CATransaction.begin()
+                        CATransaction.setAnimationDuration(0.3)
+                        marker.rotation = 0
+                        CATransaction.commit()
+                        
+                        // Movement
+                        CATransaction.begin()
+                        CATransaction.setAnimationDuration(0.1)
+                        marker.position = coordinates
+                        
+                        // Center Map View
+                        let camera1 = GMSCameraUpdate.setTarget(coordinates)
+                        self.mapView.animate(with: camera1)
+                        
+                        CATransaction.commit()
                     }
                 }
                 OBJCOM.hideLoader()
@@ -1029,4 +1031,40 @@ extension CFTCommunityVC {
 
         return    "\(finalDist) miles"
     }
+    
+//    func updateMarker(coordinates: CLLocationCoordinate2D, degrees: CLLocationDegrees, duration: Double) {
+//        // Keep Rotation Short
+//        CATransaction.begin()
+//        CATransaction.setAnimationDuration(0.3)
+//        marker.rotation = degrees
+//        CATransaction.commit()
+//
+//        // Movement
+//        CATransaction.begin()
+//        CATransaction.setAnimationDuration(duration)
+//        marker.position = coordinates
+//
+//        // Center Map View
+//        let camera = GMSCameraUpdate.setTarget(coordinates)
+//        mapView.animate(with: camera)
+//
+//        CATransaction.commit()
+//    }
+    
+//    @IBAction func shareLocationAction(_ sender: Any)
+//    {
+//        let msg = "geo:\(self.sourceLatitude),\(self.sourceLongitude)"
+//        //let urlWhats = "whatsapp://send?text=\(msg)"
+//        let urlWhats = "whatsapp://app"
+//        
+//        if let urlString = urlWhats.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlQueryAllowed) {
+//            if let whatsappURL = NSURL(string: urlString) {
+//                if UIApplication.shared.canOpenURL(whatsappURL as URL) {
+//                    UIApplication.shared.open(whatsappURL as URL, options: [:], completionHandler: nil)
+//                } else {
+//                    print("please install whatsapp")
+//                }
+//            }
+//        }
+//    }
 }

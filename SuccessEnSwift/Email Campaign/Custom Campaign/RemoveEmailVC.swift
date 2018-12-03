@@ -62,7 +62,7 @@ class RemoveEmailVC: UIViewController {
     
     @IBAction func actionRemove(_ sender:UIButton){
         if self.arrSelectedMemberId.count == 0 {
-            OBJCOM.setAlert(_title: "", message: "Please select atleast one member to remove.")
+            OBJCOM.setAlert(_title: "", message: "Please select atleast one email to remove.")
             return
         }
         
@@ -146,7 +146,7 @@ extension RemoveEmailVC {
             
             let success:String = JsonDict!["IsSuccess"] as! String
             if success == "true"{
-                let result = JsonDict!["result"] as? String ?? "Member(s) removed from given text campaign!"
+                let result = JsonDict!["result"] as? String ?? "Email removed from given email campaign!"
                 OBJCOM.setAlert(_title: "", message: result)
                 print(result)
                 OBJCOM.hideLoader()

@@ -475,7 +475,7 @@ class MentorConversationVC: JSQMessagesViewController, UIImagePickerControllerDe
 //        locationItem.setLocation(ferryBuildingInSF) {
 //            self.collectionView!.reloadData()
 //        }
-//
+
 //        return locationItem
 //    }
     

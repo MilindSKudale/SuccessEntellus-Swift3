@@ -18,14 +18,12 @@ class CustomCampaignVC: UIViewController, UITableViewDelegate, UITableViewDataSo
     var arrCampaignColor = [AnyObject]()
     var arrCampaignImage = [String]()
     var arrCampaignStepContent = [String]()
+    var arrTemplateCount = [String]()
     let actionButton = JJFloatingActionButton()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         self.tblCustomCampaign.tableFooterView = UIView()
-        
-        
         actionButton.buttonColor = APPORANGECOLOR
         actionButton.addItem(title: "Create Campaign", image: #imageLiteral(resourceName: "ic_add_white")) { item in
             print("Action Float button")
@@ -97,6 +95,7 @@ class CustomCampaignVC: UIViewController, UITableViewDelegate, UITableViewDataSo
         let storyboard = UIStoryboard(name: "EmailCampaign", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "idCustomCampDetailVC") as! CustomCampDetailVC
         vc.companyCampaign = self.arrCampaignId[indexPath.row]
+        vc.CampaignTitle = self.arrCampaignTitle[indexPath.row]
         vc.bgColor = bgColor
         vc.modalPresentationStyle = .custom
         vc.modalTransitionStyle = .crossDissolve
@@ -121,6 +120,7 @@ class CustomCampaignVC: UIViewController, UITableViewDelegate, UITableViewDataSo
                 self.arrCampaignId = []
                 self.arrCampaignImage = []
                 self.arrCampaignColor = []
+                self.arrTemplateCount = []
                 let dictJsonData = JsonDict!["result"] as! [AnyObject]
                 print(dictJsonData)
                 
@@ -129,6 +129,7 @@ class CustomCampaignVC: UIViewController, UITableViewDelegate, UITableViewDataSo
                     self.arrCampaignId.append(obj.value(forKey: "campaignId") as! String)
                     self.arrCampaignImage.append(obj.value(forKey: "campaignImage") as! String)
                     self.arrCampaignColor.append(obj.value(forKey: "campaignColor") as AnyObject)
+                    self.arrTemplateCount.append("\(obj.value(forKey: "stepPresent") ?? "")")
                     
                 }
                 
@@ -153,14 +154,19 @@ class CustomCampaignVC: UIViewController, UITableViewDelegate, UITableViewDataSo
 extension CustomCampaignVC {
     
     @IBAction func actionAddEmail(_ sender : UIButton){
-        self.addMembersOptions(sender.tag)
+        if arrTemplateCount[sender.tag] != "" && arrTemplateCount[sender.tag] != "0" {
+            self.addMembersOptions(sender.tag)
+        }else{
+            OBJCOM.setAlert(_title: "", message: "You cannot add email, because template is not added in this campaign.")
+        }
+        
     }
     
     func addMembersOptions(_ index:Int){
         
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
-        let actionSystemContacts = UIAlertAction(title: "From system contact(s)", style: .default)
+        let actionSystemContacts = UIAlertAction(title: "From system contacts", style: .default)
         {
             UIAlertAction in
             //AddMembersSystemVC
@@ -182,7 +188,7 @@ extension CustomCampaignVC {
         }
         actionSystemContacts.setValue(UIColor.black, forKey: "titleTextColor")
         
-        let actionManuallyContacts = UIAlertAction(title: "Add Member Manually", style: .default)
+        let actionManuallyContacts = UIAlertAction(title: "Add Email Manually", style: .default)
         {
             UIAlertAction in
             NotificationCenter.default.addObserver(
@@ -250,15 +256,32 @@ extension CustomCampaignVC {
         actionImportTemplates.setValue(UIColor.black, forKey: "titleTextColor")
         //actionImportTemplates.setValue(#imageLiteral(resourceName: "popup_import") , forKey: "image")
         
+        let actionStartCampaign = UIAlertAction(title: "Start Campaign", style: .default)
+        {
+            UIAlertAction in
+            
+            if self.arrTemplateCount[index] != "" && self.arrTemplateCount[index] != "0" {
+                self.startCampaigns(index:index)
+            }else{
+                OBJCOM.setAlert(_title: "", message: "You cannot start campaign, because template or emails is not added in this campaign.")
+            }
+        }
+        actionStartCampaign.setValue(UIColor.black, forKey: "titleTextColor")
+        
         let actionSetaSelfReminder = UIAlertAction(title: "Set a Self Reminder", style: .default)
         {
             UIAlertAction in
-            self.setSelfReminder(index: index)
+            if self.arrTemplateCount[index] != "" &&  self.arrTemplateCount[index] != "0" {
+                self.setSelfReminder(index: index)
+            }else{
+                OBJCOM.setAlert(_title: "", message: "You cannot add self reminder, because template is not added in this campaign.")
+            }
+            
         }
         actionSetaSelfReminder.setValue(UIColor.black, forKey: "titleTextColor")
        // actionSetaSelfReminder.setValue(#imageLiteral(resourceName: "popup_reminder") , forKey: "image")
         
-        let actionEditCampaign = UIAlertAction(title: "Edit Campaign", style: .default)
+        let actionEditCampaign = UIAlertAction(title: "Rename Campaign", style: .default)
         {
             UIAlertAction in
             self.editCampaign(index: index)
@@ -274,7 +297,7 @@ extension CustomCampaignVC {
         actionDeleteCampaign.setValue(UIColor.black, forKey: "titleTextColor")
        // actionDeleteCampaign.setValue(#imageLiteral(resourceName: "popup_delete") , forKey: "image")
         
-        let actionRemoveMembers = UIAlertAction(title: "Remove Member(s)", style: .default)
+        let actionRemoveMembers = UIAlertAction(title: "Unassigned Email", style: .default)
         {
             UIAlertAction in
             let storyboard = UIStoryboard(name: "EmailCampaign", bundle: nil)
@@ -296,6 +319,7 @@ extension CustomCampaignVC {
         
         alert.addAction(actionCreateTemplate)
         alert.addAction(actionImportTemplates)
+        alert.addAction(actionStartCampaign)
         alert.addAction(actionSetaSelfReminder)
         alert.addAction(actionEditCampaign)
         alert.addAction(actionDeleteCampaign)
@@ -336,6 +360,20 @@ extension CustomCampaignVC {
         vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
         self.present(vc, animated: false, completion: nil)
     }
+    
+    func startCampaigns (index:Int) {
+        
+        
+        
+        let storyboard = UIStoryboard(name: "EmailCampaign", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "idStartCampaignVC") as! StartCampaignVC
+        vc.modalPresentationStyle = .custom
+        vc.campaignId = self.arrCampaignId[index]
+        vc.modalTransitionStyle = .crossDissolve
+        vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
+        self.present(vc, animated: false, completion: nil)
+    }
+    
     
     func setSelfReminder(index:Int) {
         let storyboard = UIStoryboard(name: "EmailCampaign", bundle: nil)

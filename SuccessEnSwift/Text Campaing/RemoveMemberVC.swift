@@ -60,18 +60,31 @@ class RemoveMemberVC: UIViewController {
     }
     
     @IBAction func actionRemove(_ sender:UIButton){
+        //
         if self.arrSelectedMemberId.count == 0 {
             OBJCOM.setAlert(_title: "", message: "Please select atleast one member to remove.")
             return
+        }else{
+            let alertController = UIAlertController(title: "", message: "Are you sure you want to unassigned this member from current campaign \(textCampaignName)?", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "Delete", style: UIAlertActionStyle.default) {
+                UIAlertAction in
+                let selectId = self.arrSelectedMemberId.joined(separator: ",")
+                if OBJCOM.isConnectedToNetwork(){
+                    OBJCOM.setLoader()
+                    self.removeMembers(selectId)
+                }else{
+                    OBJCOM.NoInternetConnectionCall()
+                }
+            }
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) {
+                UIAlertAction in
+            }
+            alertController.addAction(okAction)
+            alertController.addAction(cancelAction)
+            self.present(alertController, animated: true, completion: nil)
         }
         
-        let selectId = self.arrSelectedMemberId.joined(separator: ",")
-        if OBJCOM.isConnectedToNetwork(){
-            OBJCOM.setLoader()
-            self.removeMembers(selectId)
-        }else{
-            OBJCOM.NoInternetConnectionCall()
-        }
+        
     }
 }
 

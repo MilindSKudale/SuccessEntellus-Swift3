@@ -87,6 +87,8 @@ class SliderVC: UIViewController, DrawerControllerDelegate {
                          "secondGoalDetails": strCA,
                          "thirdGoalDetails": strBLA]
         
+        
+        
         let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
         let jsonString = String(data: jsonData!, encoding: .utf8)
         let dictParamTemp = ["param":jsonString];
@@ -111,8 +113,8 @@ class SliderVC: UIViewController, DrawerControllerDelegate {
 
 // 7.Struct for add storyboards which you want show on navigation drawer
 struct DrawerArray {
-    static let array:NSArray = ["Daily Top 10", "Scratch Pad", "Calendar", "Time Analysis", "Dashboard", "Daily Checklist", "Weekly Tracking", "Weekly Graph", "Add/Edit Goals", "CFT Dashboard", "CFT Locator", "Email Campaigns", "Text Campaigns", "Upload Documents", "My Groups", "My Prospects", "My Contacts", "My Customers", "My Recruits", "Profile", "Help"]
-    //"Team Campaigns", 
+    static let array:NSArray = ["Daily Top 10", "Scratch Pad", "Calendar", "Time Analysis", "Dashboard", "Daily Checklist", "Weekly Tracking", "Weekly Graph", "Add/Edit Goals", "CFT Dashboard", "CFT Locator", "My Campaigns", "Profile", "Help", "Vision Board"]
+    //"Team Campaigns", "My Groups", "My Prospects", "My Contacts", "My Customers", "My Recruits", "Email Campaigns", "Text Campaigns", "Upload Documents",
     
 }
 

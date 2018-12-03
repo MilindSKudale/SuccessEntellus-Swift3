@@ -70,37 +70,59 @@ class MemberDetailsVC: UIViewController {
     }
     
     @IBAction func actionBtnDelete(sender: UIButton) {
+        
         if self.arrSelectedRecords.count > 0 {
-            if OBJCOM.isConnectedToNetwork(){
-                OBJCOM.setLoader()
-                DispatchQueue.main.async {
-                    self.deteteAPI()
+            let alertController = UIAlertController(title: "", message: "Are you sure you want to delete this member from current message template only?", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "Delete", style: UIAlertActionStyle.default) {
+                UIAlertAction in
+                if OBJCOM.isConnectedToNetwork(){
+                    OBJCOM.setLoader()
+                    DispatchQueue.main.async {
+                        self.deteteAPI()
+                    }
+                }else {
+                    OBJCOM.NoInternetConnectionCall()
                 }
-            }else{
-                OBJCOM.NoInternetConnectionCall()
             }
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) {
+                UIAlertAction in
+            }
+            alertController.addAction(okAction)
+            alertController.addAction(cancelAction)
+            self.present(alertController, animated: true, completion: nil)
         }else{
             OBJCOM.setAlert(_title: "", message: "Please select atleast one record to delete.")
         }
     }
     
     @IBAction func actionBtnDeleteAllFollowing(sender: UIButton) {
-        if isRepeate == true {
-            OBJCOM.setAlert(_title: "", message: "Not allowed for repeat time interval.")
-            return
-        }else{
-            if self.arrSelectedRecords.count > 0 {
-                if OBJCOM.isConnectedToNetwork(){
-                    OBJCOM.setLoader()
-                    DispatchQueue.main.async {
-                        self.deteteAllFollowingAPI()
-                    }
-                }else{
-                    OBJCOM.NoInternetConnectionCall()
-                }
+        
+        if self.arrSelectedRecords.count > 0 {
+            if isRepeate == true {
+                OBJCOM.setAlert(_title: "", message: "Not allowed for repeat time interval.")
+                return
             }else{
-                OBJCOM.setAlert(_title: "", message: "Please select atleast one record to delete.")
+                let alertController = UIAlertController(title: "", message: "Are you sure you want to delete this member from current and following message templates?", preferredStyle: .alert)
+                let okAction = UIAlertAction(title: "Delete", style: UIAlertActionStyle.default) {
+                    UIAlertAction in
+                    if OBJCOM.isConnectedToNetwork(){
+                        OBJCOM.setLoader()
+                        DispatchQueue.main.async {
+                            self.deteteAllFollowingAPI()
+                        }
+                    }else{
+                        OBJCOM.NoInternetConnectionCall()
+                    }
+                }
+                let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) {
+                    UIAlertAction in
+                }
+                alertController.addAction(okAction)
+                alertController.addAction(cancelAction)
+                self.present(alertController, animated: true, completion: nil)
             }
+        }else{
+            OBJCOM.setAlert(_title: "", message: "Please select atleast one record to delete.")
         }
     }
     
@@ -216,7 +238,7 @@ extension MemberDetailsVC {
             if success == "true"{
                 let result = JsonDict!["result"] as! [String : AnyObject]
                 print(result)
-                self.setView(view: self.noDataView, hidden: true)
+                
                 self.lblTemplateName.text = result["campaignStepTitle"] as? String ?? ""
                 self.lblTemplateCreatedDate.text = "Email template created on : \(result["txtTemplateAddDate"] as? String ?? "")"
                 
@@ -239,6 +261,11 @@ extension MemberDetailsVC {
                         self.arrScheduleDate.append(obj.value(forKey: "scheduleDate") as! String)
                         self.arrStatus.append(obj.value(forKey: "sent") as! String)
                     }
+                }
+                if memberDetails.count > 0 {
+                    self.setView(view: self.noDataView, hidden: true)
+                }else{
+                    self.setView(view: self.noDataView, hidden: false)
                 }
                 self.emailTableView.reloadData()
                 OBJCOM.hideLoader()

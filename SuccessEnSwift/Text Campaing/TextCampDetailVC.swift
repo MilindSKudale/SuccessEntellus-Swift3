@@ -181,6 +181,7 @@ extension TextCampDetailVC {
         let vc = storyboard.instantiateViewController(withIdentifier: "idTextTemplatePreviewVC") as! TextTemplatePreviewVC
         vc.templateData = self.arrTemplateDats[sender.tag] as! [String : Any]
         vc.templateId = self.arrTemplateId[sender.tag]
+        vc.campaignName = textCampaignTitle
         vc.modalPresentationStyle = .custom
         vc.modalTransitionStyle = .crossDissolve
 //        vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)

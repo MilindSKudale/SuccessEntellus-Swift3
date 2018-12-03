@@ -152,7 +152,7 @@ class DeleteRecurringEvent: UIViewController, GIDSignInDelegate, GIDSignInUIDele
         error : NSError?) {
         
         if error != nil {
-            OBJCOM.setAlert(_title: "Error", message:"\(error?.localizedDescription ?? "")" )
+          //  OBJCOM.setAlert(_title: "Error", message:"\(error?.localizedDescription ?? "")" )
         }
        
     }

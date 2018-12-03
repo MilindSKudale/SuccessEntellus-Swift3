@@ -31,6 +31,7 @@ class MyContactVC: SliderVC, UITextFieldDelegate, UIDocumentPickerDelegate, UIDo
     @IBOutlet var tblContactList : LUExpandableTableView!
     @IBOutlet var btnMove : UIButton!
     @IBOutlet var btnDelete : UIButton!
+    @IBOutlet var btnAssignCampaign : UIButton!
     @IBOutlet weak var actionViewHeight: NSLayoutConstraint!
     @IBOutlet var noRecView : UIView!
     
@@ -68,9 +69,11 @@ class MyContactVC: SliderVC, UITextFieldDelegate, UIDocumentPickerDelegate, UIDo
         
         actionViewHeight.constant = 0.0
         btnMove.layer.cornerRadius = 5.0
+        btnAssignCampaign.layer.cornerRadius = 5.0
         btnDelete.layer.cornerRadius = 5.0
         btnMove.clipsToBounds = true
         btnDelete.clipsToBounds = true
+        btnAssignCampaign.clipsToBounds = true
         
         Config.doneString = ""
         SwiftMultiSelect.dataSource     = self
@@ -106,6 +109,7 @@ class MyContactVC: SliderVC, UITextFieldDelegate, UIDocumentPickerDelegate, UIDo
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
+        arrSelectedContact = []
         if OBJCOM.isConnectedToNetwork(){
             //DispatchQueue.main.sync {
                 OBJCOM.setLoader()
@@ -207,7 +211,7 @@ class MyContactVC: SliderVC, UITextFieldDelegate, UIDocumentPickerDelegate, UIDo
     
     func showHideMoveDeleteButtons(){
         if self.arrSelectedContact.count > 0{
-            self.actionViewHeight.constant = 40.0
+            self.actionViewHeight.constant = 75.0
         }else{
             self.actionViewHeight.constant = 0.0
         }
@@ -224,6 +228,40 @@ class MyContactVC: SliderVC, UITextFieldDelegate, UIDocumentPickerDelegate, UIDo
         }
         
     }
+    
+    @IBAction func actionAssignCampaignsToAllRecords(_ sender: UIButton) {
+        if arrSelectedContact.count > 0 && arrSelectedContact.count <= 50 {
+            let strContactId = arrSelectedContact.joined(separator: ",")
+            let storyboard = UIStoryboard(name: "Profile", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "idAssignECforMultipleCrm") as! AssignECforMultipleCrm
+            
+            vc.contactsId = strContactId
+            vc.modalPresentationStyle = .custom
+            vc.modalTransitionStyle = .crossDissolve
+            vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
+            self.present(vc, animated: false, completion: nil)
+            
+        }else if arrSelectedContact.count > 50{
+            
+            let alertController = UIAlertController(title: "", message: "You can assign email campaign only 50 contacts.", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default) {
+                UIAlertAction in
+                self.dismiss(animated: true, completion: nil)
+            }
+//            let CancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) {
+//                UIAlertAction in
+//
+//            }
+            alertController.addAction(okAction)
+            //alertController.addAction(CancelAction)
+            self.present(alertController, animated: true, completion: nil)
+        } else{
+            OBJCOM.setAlert(_title: "", message: "Please select at least one contact to continue")
+            return
+        }
+        
+    }
+    
     @IBAction func actionDeleteMultipleRecord(_ sender: UIButton) {
         //OBJCOM.animateButton(button: sender)
         if self.arrSelectedContact.count>0{
@@ -305,21 +343,38 @@ class MyContactVC: SliderVC, UITextFieldDelegate, UIDocumentPickerDelegate, UIDo
         print("SelectedID >> ",selectedID)
     }
     @IBAction func actionAssignCampaign(_ sender: UIButton) {
-        self.arrSelectedContact.removeAll()
-        var arrId = [String]()
-        if isFilter {
-            arrId = arrContactIdSearch
+        
+        
+        if self.arrEmail[sender.tag] == "" {
+            OBJCOM.setAlert(_title: "", message: "Email-id required for assign campaigns")
+            return
         }else{
-            arrId = arrContactId
+            self.arrSelectedContact.removeAll()
+            var arrId = [String]()
+            var arrfName = [String]()
+            var arrlName = [String]()
+            if isFilter {
+                arrId = arrContactIdSearch
+                arrfName = self.arrFirstNameSearch
+                arrlName = self.arrLastNameSearch
+            }else{
+                arrId = arrContactId
+                arrfName = self.arrFirstName
+                arrlName = self.arrLastName
+            }
+            
+            let storyboard = UIStoryboard(name: "CRM", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "idPopUpAssignCampaign") as! PopUpAssignCampaign
+            vc.contactId = arrId[sender.tag]
+            vc.contactName = "\(arrfName[sender.tag]) \(arrlName[sender.tag])"
+            vc.isGroup = false
+            vc.modalPresentationStyle = .custom
+            vc.modalTransitionStyle = .crossDissolve
+            vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
+            self.present(vc, animated: false, completion: nil)
         }
-        let storyboard = UIStoryboard(name: "CRM", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "idPopUpAssignCampaign") as! PopUpAssignCampaign
-        vc.contactId = arrId[sender.tag]
-        vc.isGroup = false
-        vc.modalPresentationStyle = .custom
-        vc.modalTransitionStyle = .crossDissolve
-        vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
-        self.present(vc, animated: false, completion: nil)
+
+        
     }
     @IBAction func actionSetTag(_ sender: UIButton) {
         var arrId : [String] = []
@@ -360,11 +415,11 @@ extension MyContactVC: LUExpandableTableViewDataSource {
             cell.lblTag.text = "Tag : ";
             category = self.arrCategorySearch[indexPath.section]
             
-            if self.arrEmailSearch[indexPath.section] == "" {
-                cell.btnAssignCampaign.isHidden = true
-            }else{
-                cell.btnAssignCampaign.isHidden = false
-            }
+//            if self.arrEmailSearch[indexPath.section] == "" {
+//                cell.btnAssignCampaign.isHidden = true
+//            }else{
+//                cell.btnAssignCampaign.isHidden = false
+//            }
         }else{
             cell.selectionStyle = .none
             cell.lblEmail.text = "Email : \(self.arrEmail[indexPath.section])";
@@ -372,11 +427,11 @@ extension MyContactVC: LUExpandableTableViewDataSource {
             cell.lblTag.text = "Tag : ";
             category = self.arrCategory[indexPath.section]
             
-            if self.arrEmail[indexPath.section] == "" {
-                cell.btnAssignCampaign.isHidden = true
-            }else{
-                cell.btnAssignCampaign.isHidden = false
-            }
+//            if self.arrEmail[indexPath.section] == "" {
+//                cell.btnAssignCampaign.isHidden = true
+//            }else{
+//                cell.btnAssignCampaign.isHidden = false
+//            }
         }
         
         if category != "" {
@@ -606,7 +661,7 @@ extension MyContactVC {
     }
     
     func editContact(ContactId: String, view:UIButton){
-        OBJCOM.animateButton(button: view)
+       // OBJCOM.animateButton(button: view)
         let storyboard = UIStoryboard(name: "CRM", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "idViewAndEditContactVC") as! ViewAndEditContactVC
         vc.modalTransitionStyle = .crossDissolve

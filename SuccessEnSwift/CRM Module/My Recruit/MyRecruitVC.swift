@@ -15,6 +15,7 @@ class MyRecruitVC: SliderVC, UIDocumentPickerDelegate, UIDocumentMenuDelegate {
     @IBOutlet var tblRecruitList : LUExpandableTableView!
     @IBOutlet var btnMove : UIButton!
     @IBOutlet var btnDelete : UIButton!
+    @IBOutlet var btnAssignCampaign : UIButton!
     @IBOutlet weak var actionViewHeight: NSLayoutConstraint!
     @IBOutlet var noRecView : UIView!
     
@@ -63,9 +64,11 @@ class MyRecruitVC: SliderVC, UIDocumentPickerDelegate, UIDocumentMenuDelegate {
         
         actionViewHeight.constant = 0.0
         btnMove.layer.cornerRadius = 5.0
+        btnAssignCampaign.layer.cornerRadius = 5.0
         btnDelete.layer.cornerRadius = 5.0
         btnMove.clipsToBounds = true
         btnDelete.clipsToBounds = true
+        btnAssignCampaign.clipsToBounds = true
         
         txtSearch.leftViewMode = UITextFieldViewMode.always
         txtSearch.layer.cornerRadius = txtSearch.frame.size.height/2
@@ -96,6 +99,7 @@ class MyRecruitVC: SliderVC, UIDocumentPickerDelegate, UIDocumentMenuDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
+        arrSelectedRecords = []
         if OBJCOM.isConnectedToNetwork(){
             OBJCOM.setLoader()
             getRecruitData()
@@ -197,7 +201,7 @@ class MyRecruitVC: SliderVC, UIDocumentPickerDelegate, UIDocumentMenuDelegate {
     
     func showHideMoveDeleteButtons(){
         if self.arrSelectedRecords.count > 0{
-            self.actionViewHeight.constant = 40.0
+            self.actionViewHeight.constant = 75.0
         }else{
             self.actionViewHeight.constant = 0.0
         }
@@ -211,6 +215,38 @@ class MyRecruitVC: SliderVC, UIDocumentPickerDelegate, UIDocumentMenuDelegate {
     @IBAction func actionMoveRecord(_ sender: UIButton) {
         let selected = self.arrSelectedRecords.joined(separator: ",")
         self.selectOptionsForMoveRecruits(recruitId: selected)
+    }
+    
+    @IBAction func actionAssignCampaignsToAllRecords(_ sender: UIButton) {
+        if arrSelectedRecords.count > 0 && arrSelectedRecords.count <= 50 {
+            let strContactId = arrSelectedRecords.joined(separator: ",")
+            let storyboard = UIStoryboard(name: "Profile", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "idAssignECforMultipleCrm") as! AssignECforMultipleCrm
+            
+            vc.contactsId = strContactId
+            vc.modalPresentationStyle = .custom
+            vc.modalTransitionStyle = .crossDissolve
+            vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
+            self.present(vc, animated: false, completion: nil)
+            
+        }else if arrSelectedRecords.count > 50{
+            
+            let alertController = UIAlertController(title: "", message: "You can assign email campaign only 50 recruits.", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default) {
+                UIAlertAction in
+                self.dismiss(animated: true, completion: nil)
+            }
+            //            let CancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) {
+            //                UIAlertAction in
+            //
+            //            }
+            alertController.addAction(okAction)
+            //alertController.addAction(CancelAction)
+            self.present(alertController, animated: true, completion: nil)
+        } else{
+            OBJCOM.setAlert(_title: "", message: "Please select at least one recruit to continue")
+            return
+        }
     }
     
     @IBAction func actionBtnMore(_ sender: Any) {
@@ -356,11 +392,11 @@ extension MyRecruitVC: LUExpandableTableViewDataSource {
            // cell.lblPFAAgent.text = "PFA Agent ID : \(self.arrPFAAgentIDSearch[indexPath.section])";
             category = self.arrCategorySearch[indexPath.section]
             
-            if self.arrEmailSearch[indexPath.section] == "" {
-                cell.btnAssignCampaign.isHidden = true
-            }else{
-                cell.btnAssignCampaign.isHidden = false
-            }
+//            if self.arrEmailSearch[indexPath.section] == "" {
+//                cell.btnAssignCampaign.isHidden = true
+//            }else{
+//                cell.btnAssignCampaign.isHidden = false
+//            }
             
             
         }else{
@@ -371,11 +407,11 @@ extension MyRecruitVC: LUExpandableTableViewDataSource {
             //cell.lblPFAAgent.text = "PFA Agent ID : \(self.arrPFAAgentID[indexPath.section])";
             category = self.arrCategory[indexPath.section]
             
-            if self.arrEmail[indexPath.section] == "" {
-                cell.btnAssignCampaign.isHidden = true
-            }else{
-                cell.btnAssignCampaign.isHidden = false
-            }
+//            if self.arrEmail[indexPath.section] == "" {
+//                cell.btnAssignCampaign.isHidden = true
+//            }else{
+//                cell.btnAssignCampaign.isHidden = false
+//            }
         }
         
         if category != "" {
@@ -497,22 +533,35 @@ extension MyRecruitVC: LUExpandableTableViewDelegate {
 extension MyRecruitVC {
     
     @IBAction func actionAssignCampaign(_ sender: UIButton) {
-        self.arrSelectedRecords.removeAll()
-        var arrId = [String]()
-        if isFilter {
-            arrId = arrRecruitIdSearch
+        if self.arrEmail[sender.tag] == "" {
+            OBJCOM.setAlert(_title: "", message: "Email-id required for assign campaigns")
+            return
         }else{
-            arrId = arrRecruitId
+            self.arrSelectedRecords.removeAll()
+            var arrId = [String]()
+            var arrfName = [String]()
+            var arrlName = [String]()
+            if isFilter {
+                arrId = arrRecruitIdSearch
+                arrfName = self.arrFirstNameSearch
+                arrlName = self.arrLastNameSearch
+            }else{
+                arrId = arrRecruitId
+                arrfName = self.arrFirstName
+                arrlName = self.arrLastName
+            }
+            
+            let storyboard = UIStoryboard(name: "CRM", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "idPopUpAssignCampaign") as! PopUpAssignCampaign
+            vc.contactId = arrId[sender.tag]
+            vc.contactName = "\(arrfName[sender.tag]) \(arrlName[sender.tag])"
+            vc.isGroup = false
+            vc.modalPresentationStyle = .custom
+            vc.modalTransitionStyle = .crossDissolve
+            vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
+            self.present(vc, animated: false, completion: nil)
         }
         
-        let storyboard = UIStoryboard(name: "CRM", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "idPopUpAssignCampaign") as! PopUpAssignCampaign
-        vc.contactId = arrId[sender.tag]
-        vc.isGroup = false
-        vc.modalPresentationStyle = .custom
-        vc.modalTransitionStyle = .crossDissolve
-        vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
-        self.present(vc, animated: false, completion: nil)
     }
     
     func deleteCustomer(CustomerId: String, type :String){

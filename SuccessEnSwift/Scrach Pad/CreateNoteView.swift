@@ -31,10 +31,36 @@ class CreateNoteView: UIViewController {
     // @IBOutlet var stackBtnBlack : UIButton!
      @IBOutlet var stackBtnWhite : UIButton!
     
+    @IBOutlet weak var repeatSwitch: UISwitch!
+    @IBOutlet weak var viewRepeat : UIView!
+    @IBOutlet weak var viewRepeatHeight : NSLayoutConstraint!
+    @IBOutlet weak var btnDaily : UIButton!
+    @IBOutlet weak var btnWeekly : UIButton!
+    @IBOutlet weak var viewDaily : UIView!
+    @IBOutlet weak var viewWeekly : UIView!
+
+    @IBOutlet var btnEndsOn : UIButton!
+    @IBOutlet var weekBtnSun : UIButton!
+    @IBOutlet var weekBtnMon : UIButton!
+    @IBOutlet var weekBtnTue : UIButton!
+    @IBOutlet var weekBtnWed : UIButton!
+    @IBOutlet var weekBtnThu : UIButton!
+    @IBOutlet var weekBtnFri : UIButton!
+    @IBOutlet var weekBtnSat : UIButton!
+    @IBOutlet var txtWeeks : UITextField!
+    
+    var arrSelectedWeekDays = [String]()
+    var repeatFlag = "0"
+    var repeatEndDate = ""
+    var repeatNoOfWeeks = ""
+    var repeatWeekDays = ""
+    var minDateRepeat = Date()
+    
     var setDate = ""
     var setTime = ""
     var setColor = ""
     var arrStackBtn = [UIButton]()
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,24 +68,9 @@ class CreateNoteView: UIViewController {
     }
     
     func designUI(){
-        viewNote.layer.cornerRadius = 10.0
-        viewNote.layer.borderWidth = 0.3
-        viewNote.layer.borderColor = UIColor.darkGray.cgColor
-        viewNote.clipsToBounds = true
         
-        btnSetDate.layer.cornerRadius = 5.0
-        btnSetDate.layer.borderWidth = 0.3
-        btnSetDate.layer.borderColor = UIColor.darkGray.cgColor
-        btnSetDate.clipsToBounds = true
-        
-        btnSetTime.layer.cornerRadius = 5.0
-        btnSetTime.layer.borderWidth = 0.3
-        btnSetTime.layer.borderColor = UIColor.darkGray.cgColor
-        btnSetTime.clipsToBounds = true
-
         btnAddNote.layer.cornerRadius = btnAddNote.frame.height/2
         btnAddNote.clipsToBounds = true
-        
         txtViewNote.minHeight = self.view.frame.height - 280
         
         arrStackBtn = [stackBtnR, stackBtnB, stackBtnG, stackBtnO, stackBtnV, stackBtnWhite]
@@ -80,15 +91,45 @@ class CreateNoteView: UIViewController {
             
         }
         let dt = Date()
+        self.minDateRepeat = dt
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         setDate = formatter.string(from: dt)
+        self.repeatEndDate = formatter.string(from: self.minDateRepeat)
         formatter.dateFormat = "hh:mm a"
         setTime = formatter.string(from: dt)
         
+        self.arrSelectedWeekDays = []
+        let selectedDay = dt.dayNumberOfWeek()!
+        let arrWeekDays = [weekBtnSun, weekBtnMon, weekBtnTue, weekBtnWed, weekBtnThu, weekBtnFri, weekBtnSat]
+        let arrDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+        for i in 0 ..< arrWeekDays.count {
+            if i == selectedDay - 1 {
+                arrWeekDays[i]?.isSelected = true
+                self.arrSelectedWeekDays.append(arrDays[i])
+                
+            }else{
+                arrWeekDays[i]?.isSelected = false
+            }
+            self.setBtnBorder(arrWeekDays[i]!)
+        }
+        
         self.btnSetDate.setTitle(setDate, for: .normal)
         self.btnSetTime.setTitle(setTime, for: .normal)
+        self.btnEndsOn.setTitle(setDate, for: .normal)
         self.setColor = ""
+        
+        self.repeatSwitch.isOn = false
+        self.viewRepeat.isHidden = true
+        self.viewRepeatHeight.constant = 0.0
+       
+        self.setBtnBorder(self.btnEndsOn)
+        self.setBtnBorder(self.btnSetDate)
+        self.setBtnBorder(self.btnSetTime)
+        self.setBtnBorder(self.viewNote)
+        
+        self.repeatFlag = "0"
+        txtWeeks.text = "1"
     }
     
     
@@ -102,9 +143,11 @@ class CreateNoteView: UIViewController {
                 formatter.dateFormat = "yyyy-MM-dd"
                 sender.setTitle(formatter.string(from: dt), for: .normal)
                 self.setDate = formatter.string(from: dt)
+                self.repeatEndDate = formatter.string(from: dt)
+                self.minDateRepeat = dt
+                self.btnEndsOn.setTitle(self.repeatEndDate, for: .normal)
             }
         }
-       
     }
     
     @IBAction func actionSetTime(_ sender:UIButton){
@@ -112,6 +155,7 @@ class CreateNoteView: UIViewController {
         DatePickerDialog().show("", doneButtonTitle: "Set", cancelButtonTitle: "Cancel", minimumDate: Date(), maximumDate: nil, datePickerMode: .time) {
             (date) -> Void in
             if let dt = date {
+                
                 let formatter = DateFormatter()
                 formatter.dateFormat = "hh:mm:ss a"
                 sender.setTitle(formatter.string(from: dt), for: .normal)
@@ -181,13 +225,42 @@ extension CreateNoteView {
         
         print(txtViewNote.text)
         print(String(txtViewNote.text))
+
+        if self.repeatFlag == "0" {
+            self.repeatEndDate = ""
+            self.repeatNoOfWeeks = ""
+            self.repeatWeekDays = ""
+        }else if self.repeatFlag == "1" {
+            self.repeatNoOfWeeks = ""
+            self.repeatWeekDays = ""
+        }else if self.repeatFlag == "2" {
+            self.repeatEndDate = ""
+            if self.txtWeeks.text == "" || self.txtWeeks.text == "0" {
+                OBJCOM.setAlert(_title: "", message: "Please set week count greater than 0.")
+                self.txtWeeks.text = "1"
+                return
+            }else{
+                self.repeatNoOfWeeks = self.txtWeeks.text ?? "1"
+            }
+            
+            if self.arrSelectedWeekDays.count == 0 {
+                OBJCOM.setAlert(_title: "", message: "Please select atleast one  week day for set reminder.")
+                return
+            }else{
+                self.repeatWeekDays = self.arrSelectedWeekDays.joined(separator: ",")
+            }
+        }
         
         let dictParam = ["userId": userID,
                          "platform":"3",
-                         "scratchNoteText":String(txtViewNote.text).withoutHtmlTags,
+                         "scratchNoteText": String(txtViewNote.text).withoutHtmlTags,
                          "scratchNoteColor":setColor,
                          "scratchNoteReminderDate":setDate,
-                         "scratchNoteReminderTime":setTime] as [String : Any]
+                         "scratchNoteReminderTime":setTime,
+                         "scratchNoteReminderRepeat":self.repeatFlag,
+                         "scratchNoteReminderWeeklyDays":self.repeatWeekDays,
+                         "scratchNoteReminderWeeklyEnds":self.repeatNoOfWeeks,
+                         "scratchNoteReminderDailyEndDate":self.repeatEndDate] as [String : Any]
         
         let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
         let jsonString = String(data: jsonData!, encoding: .utf8)
@@ -216,5 +289,136 @@ extension CreateNoteView {
 extension String {
     var withoutHtmlTags: String {
         return self.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression, range: nil)
+    }
+}
+
+extension CreateNoteView {
+    
+    @IBAction func switchValueDidChange(_ sender: UISwitch) {
+        if repeatSwitch.isOn == true {
+            self.viewRepeat.isHidden = false
+            self.viewRepeatHeight.constant = 130.0
+            self.repeatFlag = "1"
+            self.btnDaily.isSelected = true
+            self.btnWeekly.isSelected = false
+            self.viewDaily.isHidden = false
+            self.viewWeekly.isHidden = true
+        } else {
+            self.viewRepeat.isHidden = true
+            self.viewRepeatHeight.constant = 0.0
+            self.repeatFlag = "0"
+        }
+    }
+    
+    @IBAction func actionSetReminderDaily(_ sender:UIButton){
+        self.btnDaily.isSelected = true
+        self.btnWeekly.isSelected = false
+        self.viewDaily.isHidden = false
+        self.viewWeekly.isHidden = true
+        self.repeatFlag = "1"
+    }
+    
+    @IBAction func actionSetReminderWeekly(_ sender:UIButton){
+        self.btnDaily.isSelected = false
+        self.btnWeekly.isSelected = true
+        self.viewDaily.isHidden = true
+        self.viewWeekly.isHidden = false
+        self.repeatFlag = "2"
+    }
+    
+    @IBAction func actionSetEndDateForDailyReminder(_ sender:UIButton){
+        DatePickerDialog().show("Reminder ends on", doneButtonTitle: "Set", cancelButtonTitle: "Cancel", minimumDate: self.minDateRepeat, maximumDate: nil, datePickerMode: .date) {
+            (date) -> Void in
+            if let dt = date {
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy-MM-dd"
+                sender.setTitle(formatter.string(from: dt), for: .normal)
+                self.repeatEndDate = formatter.string(from: dt)
+            }
+        }
+    }
+    
+    @IBAction func actionBtnSunday(sender: UIButton) {
+        sender.isSelected = !sender.isSelected;
+        if self.arrSelectedWeekDays.contains("Sun") {
+            if let index = self.arrSelectedWeekDays.index(of: "Sun") {
+                self.arrSelectedWeekDays.remove(at: index)
+            }
+        }else{
+            self.arrSelectedWeekDays.append("Sun")
+        }
+    }
+    @IBAction func actionBtnMonday(sender: UIButton) {
+        sender.isSelected = !sender.isSelected;
+        if self.arrSelectedWeekDays.contains("Mon") {
+            if let index = self.arrSelectedWeekDays.index(of: "Mon"){
+                self.arrSelectedWeekDays.remove(at: index)
+            }
+        }else{
+            self.arrSelectedWeekDays.append("Mon")
+        }
+    }
+    @IBAction func actionBtnTuesday(sender: UIButton) {
+        sender.isSelected = !sender.isSelected;
+        if self.arrSelectedWeekDays.contains("Tue") {
+            if let index = self.arrSelectedWeekDays.index(of: "Tue") {
+                self.arrSelectedWeekDays.remove(at: index)
+            }
+        }else{
+            self.arrSelectedWeekDays.append("Tue")
+        }
+    }
+    @IBAction func actionBtnWedensday(sender: UIButton) {
+        sender.isSelected = !sender.isSelected;
+        if self.arrSelectedWeekDays.contains("Wed") {
+            if let index = self.arrSelectedWeekDays.index(of: "Wed") {
+                self.arrSelectedWeekDays.remove(at: index)
+            }
+        }else{
+            self.arrSelectedWeekDays.append("Wed")
+        }
+    }
+    @IBAction func actionBtnThursday(sender: UIButton) {
+        sender.isSelected = !sender.isSelected;
+        if self.arrSelectedWeekDays.contains("Thu") {
+            if let index = self.arrSelectedWeekDays.index(of: "Thu") {
+                self.arrSelectedWeekDays.remove(at: index)
+            }
+        }else{
+            self.arrSelectedWeekDays.append("Thu")
+        }
+    }
+    @IBAction func actionBtnFriday(sender: UIButton) {
+        sender.isSelected = !sender.isSelected;
+        if self.arrSelectedWeekDays.contains("Fri") {
+            if let index = self.arrSelectedWeekDays.index(of: "Fri") {
+                self.arrSelectedWeekDays.remove(at: index)
+            }
+        }else{
+            self.arrSelectedWeekDays.append("Fri")
+        }
+    }
+    @IBAction func actionBtnSaterday(sender: UIButton) {
+        sender.isSelected = !sender.isSelected;
+        if self.arrSelectedWeekDays.contains("Sat") {
+            if let index = self.arrSelectedWeekDays.index(of: "Sat") {
+                self.arrSelectedWeekDays.remove(at: index)
+            }
+        }else{
+            self.arrSelectedWeekDays.append("Sat")
+        }
+    }
+    
+    func setBtnBorder (_ btn:UIView){
+        btn.layer.borderColor = APPGRAYCOLOR.cgColor
+        btn.layer.borderWidth = 0.5
+        btn.layer.cornerRadius = 5
+        btn.clipsToBounds = true
+    }
+}
+
+extension Date {
+    func dayNumberOfWeek() -> Int? {
+        return Calendar.current.dateComponents([.weekday], from: self).weekday
     }
 }

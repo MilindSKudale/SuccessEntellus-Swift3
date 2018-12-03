@@ -42,14 +42,14 @@ class MyGroupCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        lblGrType.frame = CGRect(x: 10, y: 5, width: self.contentView.frame.size.width - 20, height: 35)
-        lblGrMembers.frame = CGRect(x: 10, y: 35, width: self.contentView.frame.size.width - 20, height: 50)
-        btnViewMore.frame = CGRect(x: self.contentView.frame.size.width - 120, y: 90, width: 100, height: 30)
-        lblViewMore.frame = CGRect(x: self.contentView.frame.size.width - 120, y: 119, width: 100, height: 1)
+        lblGrType.frame = CGRect(x: 10, y: 5, width: self.contentView.frame.size.width - 20, height: 50)
+        lblGrMembers.frame = CGRect(x: 10, y: 60, width: self.contentView.frame.size.width - 20, height: 50)
+        btnViewMore.frame = CGRect(x: self.contentView.frame.size.width - 120, y: 110, width: 100, height: 30)
+        lblViewMore.frame = CGRect(x: self.contentView.frame.size.width - 120, y: 139, width: 100, height: 1)
         
-        btnEdit.frame = CGRect(x: self.contentView.frame.size.width - 120, y: 125, width: 30, height: 30)
-        btnDelete.frame = CGRect(x: self.contentView.frame.size.width - 80, y: 125, width: 30, height: 30)
-        btnAssignCampaign.frame = CGRect(x: self.contentView.frame.size.width - 40, y: 125, width: 30, height: 30)
+        btnEdit.frame = CGRect(x: self.contentView.frame.size.width - 120, y: 145, width: 30, height: 30)
+        btnDelete.frame = CGRect(x: self.contentView.frame.size.width - 80, y: 145, width: 30, height: 30)
+        btnAssignCampaign.frame = CGRect(x: self.contentView.frame.size.width - 40, y: 145, width: 30, height: 30)
         
     }
 }

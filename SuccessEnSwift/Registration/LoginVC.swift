@@ -105,7 +105,11 @@ extension LoginVC {
                 let userData = UserDefaults.standard.value(forKey: "USERINFO") as! [String:Any]
                 userID = userData["zo_user_id"] as! String
                 isOnboard = JsonDict!["IsGoalSetSuccess"] as! String
-            
+                
+                if deviceTokenId != "" {
+                    OBJCOM.sendUDIDToServer(deviceTokenId)
+                }
+                
                 isFirstTimeChecklist = true
                 isFirstTimeEmailCampaign = true
                 isFirstTimeCftLocator = true

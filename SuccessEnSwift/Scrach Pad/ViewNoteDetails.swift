@@ -13,6 +13,7 @@ class ViewNoteDetails: UIViewController {
     @IBOutlet weak var viewNote : UIView!
     @IBOutlet weak var lblCreatedDate : UILabel!
     @IBOutlet weak var lblReminderDate : UILabel!
+    @IBOutlet weak var lblRepeat : UILabel!
     @IBOutlet weak var txtNoteText : UITextView!
     @IBOutlet weak var btnDismiss : UIButton!
     @IBOutlet weak var btnEdit : UIButton!
@@ -24,6 +25,10 @@ class ViewNoteDetails: UIViewController {
         super.viewDidLoad()
         designUI()
         print(noteData)
+        txtNoteText.layer.borderColor = APPGRAYCOLOR.cgColor
+        txtNoteText.layer.borderWidth = 0.3
+        txtNoteText.layer.cornerRadius = 10
+        txtNoteText.clipsToBounds = true
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -82,6 +87,21 @@ class ViewNoteDetails: UIViewController {
         lblReminderDate.text = data["scratchNoteReminderDate"] as? String ?? ""
         let str = data["scratchNoteText"] as? String ?? ""
         txtNoteText.text = str.htmlToString
+        
+        let repeatFlag = data["scratchNoteReminderRepeat"] as? String ?? "0"
+        var repeatVal = ""
+        if repeatFlag == "0" {
+            repeatVal = "Never"
+        }else if repeatFlag == "1" {
+            repeatVal = "Daily"
+        }else if repeatFlag == "2" {
+            repeatVal = "Weekly"
+        }
+        
+        self.lblRepeat.text = "Repeat on - \(repeatVal)"
+        
+        let noteColor = data["scratchNoteColor"] as? String ?? "0"
+        self.viewNote.backgroundColor = getColor(noteColor)
     }
     
     func getScratchnoteById(){
@@ -113,5 +133,24 @@ class ViewNoteDetails: UIViewController {
                 OBJCOM.hideLoader()
             }
         };
+    }
+    
+    func getColor(_ color:String) -> UIColor {
+        
+        if color == "blue" {
+            return UIColor(red:0.62, green:0.88, blue:0.99, alpha:1.0)
+        }else if color == "pink" {
+            return UIColor(red:1.00, green:0.76, blue:0.86, alpha:1.0)
+        }else if color == "green" {
+            return UIColor(red:0.85, green:1.00, blue:0.83, alpha:1.0)
+        }else if color == "orange" {
+            return UIColor(red:1.00, green:0.84, blue:0.76, alpha:1.0)
+        }else if color == "violet" {
+            return UIColor(red:0.87, green:0.85, blue:1.00, alpha:1.0)
+        }else if color == "white"{
+            return UIColor(red:0.93, green:0.93, blue:0.93, alpha:1.0)
+        }else{
+            return UIColor(red:0.93, green:0.93, blue:0.93, alpha:1.0)
+        }
     }
 }

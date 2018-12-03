@@ -46,6 +46,7 @@ class ChangeProfileVC: SliderVC {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.title = "My Profile"
         if OBJCOM.isConnectedToNetwork(){
             OBJCOM.setLoader()
             designUI()

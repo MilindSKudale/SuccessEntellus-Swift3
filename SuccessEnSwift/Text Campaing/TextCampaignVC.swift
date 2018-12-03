@@ -17,6 +17,7 @@ class TextCampaignVC : SliderVC, EAIntroDelegate {
     @IBOutlet var heightLblAvailTextMsgNoti : NSLayoutConstraint!
     @IBOutlet var heightLblAvailTextMsg : NSLayoutConstraint!
     @IBOutlet var noRecView : UIView!
+    let actionButton = JJFloatingActionButton()
     
     var arrCampaignData = [AnyObject]()
     var arrCampaignName = [String]()
@@ -41,6 +42,13 @@ class TextCampaignVC : SliderVC, EAIntroDelegate {
             self.view.layoutIfNeeded()
         })
         self.view.isUserInteractionEnabled = true
+        
+        actionButton.buttonColor = APPORANGECOLOR
+        actionButton.addItem(title: "Create Campaign", image: #imageLiteral(resourceName: "ic_add_white")) { item in
+            print("Action Float button")
+            self.addCampaign()
+        }
+        actionButton.display(inViewController: self)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -150,7 +158,7 @@ class TextCampaignVC : SliderVC, EAIntroDelegate {
         }
     }
     
-    @IBAction func addCampaign(_ sender:AnyObject){
+    @objc func addCampaign(){
         
         if self.txtMsgCount == "0" {
             return
@@ -193,12 +201,14 @@ extension TextCampaignVC : UITableViewDelegate, UITableViewDataSource {
         
         let cell = tblTextCampaign.dequeueReusableCell(withIdentifier: "TextCell") as! TextCampaignCell
         
-        let imgUrl = self.arrCampaignImage[indexPath.row]
-        if imgUrl != "" {
-            cell.imgView.imageFromServerURL(urlString: imgUrl)
-        }else{
-            cell.imgView.image = #imageLiteral(resourceName: "txt_camp")
+        if let imgUrl = self.arrCampaignImage[indexPath.row] as? String {
+            if imgUrl != "" {
+                cell.imgView.imageFromServerURL(urlString: imgUrl)
+            }else{
+                cell.imgView.image = #imageLiteral(resourceName: "txt_camp")
+            }
         }
+        
         let colorObj = self.arrCampaignColor[indexPath.row]
         if colorObj.count > 0 {
             let redColor = colorObj.object(at: 0)
@@ -260,19 +270,30 @@ extension TextCampaignVC {
             }
             actionCreateTextMessage.setValue(UIColor.black, forKey: "titleTextColor")
             
+            let actionStartCamp = UIAlertAction(title: "Start Campaign", style: .default)
+            {
+                UIAlertAction in
+                if self.arrTemplateCount[sender.tag] != "" && self.arrTemplateCount[sender.tag] != "0" {
+                    self.startTextCampaigns(index:sender.tag)
+                }else{
+                    OBJCOM.setAlert(_title: "", message: "You cannot start campaign, because template or members is not added in this campaign.")
+                }
+            }
+            actionStartCamp.setValue(UIColor.black, forKey: "titleTextColor")
+            
             let actionAddMembers = UIAlertAction(title: "Add Member", style: .default)
             {
                 UIAlertAction in
                 let count = self.arrTemplateCount[sender.tag]
                 if count == "0" {
-                    OBJCOM.setAlert(_title: "", message: "You cannot add member(s), because template is not added in this campaign.")
+                    OBJCOM.setAlert(_title: "", message: "You cannot add members, because template is not added in this campaign.")
                 }else{
                     self.addMembersOptions(sender.tag)
                 }
             }
             actionAddMembers.setValue(UIColor.black, forKey: "titleTextColor")
             
-            let actionRemoveMembers = UIAlertAction(title: "Remove Member(s)", style: .default)
+            let actionRemoveMembers = UIAlertAction(title: "Assigned Members", style: .default)
             {
                 UIAlertAction in
                 let storyboard = UIStoryboard(name: "TextCampaign", bundle: nil)
@@ -286,7 +307,7 @@ extension TextCampaignVC {
             }
             actionRemoveMembers.setValue(UIColor.black, forKey: "titleTextColor")
             
-            let actionEditCampaign = UIAlertAction(title: "Edit Campaign", style: .default)
+            let actionEditCampaign = UIAlertAction(title: "Rename Campaign", style: .default)
             {
                 UIAlertAction in
                 NotificationCenter.default.addObserver(
@@ -328,6 +349,7 @@ extension TextCampaignVC {
             
             alert.addAction(actionCreateTextMessage)
             alert.addAction(actionAddMembers)
+            alert.addAction(actionStartCamp)
             alert.addAction(actionRemoveMembers)
             alert.addAction(actionEditCampaign)
             alert.addAction(actionDeleteCampaign)
@@ -340,19 +362,30 @@ extension TextCampaignVC {
         
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
+        let actionStartCamp = UIAlertAction(title: "Start Campaign", style: .default)
+        {
+            UIAlertAction in
+            if self.arrTemplateCount[tag] != "" && self.arrTemplateCount[tag] != "0" {
+                self.startTextCampaigns(index:tag)
+            }else{
+                OBJCOM.setAlert(_title: "", message: "You cannot start campaign, because template or members is not added in this campaign.")
+            }
+        }
+        actionStartCamp.setValue(UIColor.black, forKey: "titleTextColor")
+        
         let actionAddMembers = UIAlertAction(title: "Add Member", style: .default)
         {
             UIAlertAction in
             let count = self.arrTemplateCount[tag]
             if count == "0" {
-                OBJCOM.setAlert(_title: "", message: "You cannot add member(s), because template is not added in this campaign.")
+                OBJCOM.setAlert(_title: "", message: "You cannot add members, because template is not added in this campaign.")
             }else{
                 self.addMembersOptions(tag)
             }
         }
         actionAddMembers.setValue(UIColor.black, forKey: "titleTextColor")
         
-        let actionRemoveMembers = UIAlertAction(title: "Remove Member(s)", style: .default)
+        let actionRemoveMembers = UIAlertAction(title: "Assigned Members", style: .default)
         {
             UIAlertAction in
             let storyboard = UIStoryboard(name: "TextCampaign", bundle: nil)
@@ -374,10 +407,21 @@ extension TextCampaignVC {
         actionCancel.setValue(UIColor.red, forKey: "titleTextColor")
         
         alert.addAction(actionAddMembers)
+        alert.addAction(actionStartCamp)
         alert.addAction(actionRemoveMembers)
         alert.addAction(actionCancel)
         self.present(alert, animated: true, completion: nil)
         
+    }
+    
+    func startTextCampaigns (index:Int) {
+        let storyboard = UIStoryboard(name: "TextCampaign", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "idStartTextCampaignVC") as! StartTextCampaignVC
+        vc.modalPresentationStyle = .custom
+        vc.campaignId = self.arrCampaignId[index]
+        vc.modalTransitionStyle = .crossDissolve
+        vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
+        self.present(vc, animated: false, completion: nil)
     }
     
     func deleteCampaignAlert (_ index:Int) {

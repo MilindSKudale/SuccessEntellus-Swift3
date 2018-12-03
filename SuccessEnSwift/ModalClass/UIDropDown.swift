@@ -22,7 +22,9 @@ public class UIDropDown: UIControl {
     
     public fileprivate(set) var selectedIndex: Int?
     public var options = [String]()
+    public var availCamp = [AnyObject]()
     public var currentDay = ""
+    public var campaigns = ""
     public var hideOptionsWhenSelect = false
     public var placeholder: String! {
         didSet {
@@ -184,7 +186,7 @@ public class UIDropDown: UIControl {
         table.layer.borderColor = optionsBorderColor.cgColor
         table.rowHeight = rowHeight ?? table.rowHeight
         self.superview?.insertSubview(table, belowSubview:self )
-        self.superview?.backgroundColor = .white
+        self.superview?.backgroundColor =  .white
         switch animationType {
         case .Default:
             UIView.animate(withDuration: 0.9,
@@ -346,6 +348,8 @@ extension UIDropDown: UITableViewDataSource {
             cell!.textLabel!.textColor = APPORANGECOLOR
         }else if isSelectedRow == options[indexPath.row] {
             cell!.textLabel!.textColor = APPORANGECOLOR
+        }else if "\(availCamp[indexPath.row])" == "0" {
+            cell!.textLabel!.textColor = UIColor.lightGray
         }else{
             cell!.textLabel!.textColor = optionsTextColor ?? tint ?? cell!.textLabel!.textColor
         }
@@ -362,6 +366,10 @@ extension UIDropDown: UITableViewDataSource {
 
 extension UIDropDown: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        if "\(availCamp[indexPath.row])" == "0" {
+            return
+        }
         
         selectedIndex = (indexPath as NSIndexPath).row
         title.alpha = 0.0

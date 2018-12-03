@@ -15,13 +15,13 @@ import GooglePlaces
 import Alamofire
 import SwiftyJSON
 import CoreLocation
-
-
+import UserNotifications
 
 let appDel = AppDelegate()
 var isOnboarding = true
 var isOnboard = "true"
 var userID = ""
+var deviceTokenId = ""
 
 //com.successentellusplus.swift
 //com.bundle.Successen
@@ -69,6 +69,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     
         customNavBar()
         setupSiren()
+//        registerForPushNotifications()
         
         DispatchQueue.main.async {
             OBJCOM.getPackagesInfo()
@@ -275,7 +276,7 @@ extension AppDelegate {
             locationManager.delegate = self
             locationManager.desiredAccuracy = kCLLocationAccuracyBest
             locationManager.distanceFilter = kCLDistanceFilterNone
-           // locationManager.startMonitoringSignificantLocationChanges()
+            locationManager.startMonitoringSignificantLocationChanges()
             locationManager.requestAlwaysAuthorization()
 //            locationManager.requestWhenInUseAuthorization()
             locationManager.startUpdatingLocation()
@@ -299,7 +300,7 @@ extension AppDelegate {
             locationManager.delegate = self
             locationManager.desiredAccuracy = kCLLocationAccuracyBest
             locationManager.distanceFilter = kCLDistanceFilterNone
-           // locationManager.startMonitoringSignificantLocationChanges()
+            locationManager.startMonitoringSignificantLocationChanges()
             locationManager.requestAlwaysAuthorization()
 //            locationManager.requestWhenInUseAuthorization()
             locationManager.startUpdatingLocation()
@@ -307,9 +308,9 @@ extension AppDelegate {
             locationManager.delegate = self
             locationManager.desiredAccuracy = kCLLocationAccuracyBest
             locationManager.distanceFilter = kCLDistanceFilterNone
-            //locationManager.startMonitoringSignificantLocationChanges()
-            locationManager.requestAlwaysAuthorization()
-//            locationManager.requestWhenInUseAuthorization()
+            locationManager.startMonitoringSignificantLocationChanges()
+//            locationManager.requestAlwaysAuthorization()
+            locationManager.requestWhenInUseAuthorization()
             locationManager.startUpdatingLocation()
         }
         
@@ -323,7 +324,6 @@ extension AppDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        
         
         self.latitude = manager.location!.coordinate.latitude
         self.longitude = manager.location!.coordinate.longitude
@@ -357,8 +357,49 @@ extension AppDelegate {
         self.locationManager.startUpdatingLocation()
         self.locationManager.stopUpdatingLocation()
     }
-    
-    
 }
  
+//Push notifications setting
+extension AppDelegate {
+    func registerForPushNotifications() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
+            (granted, error) in
+            print("Permission granted: \(granted)")
+            guard granted else { return }
+            self.getNotificationSettings()
+        }
+    }
+    
+    func getNotificationSettings() {
+        UNUserNotificationCenter.current().getNotificationSettings { (settings) in
+            print("Notification settings: \(settings)")
+            guard settings.authorizationStatus == .authorized else { return }
+            DispatchQueue.main.sync {
+                UIApplication.shared.registerForRemoteNotifications()
+            }
+            
+        }
+    }
+    
+    func application(_ application: UIApplication,
+                     didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        let tokenParts = deviceToken.map { data -> String in
+            return String(format: "%02.2hhx", data)
+        }
+        
+        let token = tokenParts.joined()
+        deviceTokenId = token
+        if UserDefaults.standard.value(forKey: "USERINFO") != nil {
+            let userInfo = UserDefaults.standard.value(forKey: "USERINFO") as! [String : Any]
+            userID = userInfo["zo_user_id"] as? String ?? ""
+            OBJCOM.sendUDIDToServer(deviceTokenId)
+        }
+        print("Device Token: \(token)")
+    }
+    
+    func application(_ application: UIApplication,
+                     didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("Failed to register: \(error)")
+    }
+}
 

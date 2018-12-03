@@ -46,6 +46,10 @@ class CreateTextMessageVC: UIViewController, TagListViewDelegate, UITextViewDele
     
     @IBOutlet var txtRepeatWeek: UITextField!
     @IBOutlet weak var stepperRepeatOccurance: PKYStepper!
+    
+    @IBOutlet var rdoButtonFooterYes: UIButton!
+    @IBOutlet var rdoButtonFooterNo: UIButton!
+    var isFooterShow = "1"
    
     var arrSelectedDays = [String]()
 
@@ -123,12 +127,16 @@ class CreateTextMessageVC: UIViewController, TagListViewDelegate, UITextViewDele
         self.repeatWeeks = ""
         self.repeatOn = ""
         self.repeatEnd = ""
-        self.timeIntervalValue = "0"
-        self.timeIntervalType = ""
+        self.timeIntervalValue = "1"
+        self.timeIntervalType = "hours"
         self.txtRepeatWeek.text = "1"
         self.txtRepeatWeek.delegate = self
         self.txtInterval.text = timeIntervalValue
-        self.btnIntervalType.setTitle("Select", for: .normal)
+        self.btnIntervalType.setTitle("hours", for: .normal)
+        
+        self.rdoButtonFooterYes.isSelected = true
+        self.rdoButtonFooterNo.isSelected = false
+        self.isFooterShow = "1"
        
     }
     
@@ -139,11 +147,21 @@ class CreateTextMessageVC: UIViewController, TagListViewDelegate, UITextViewDele
     }
 
     @IBAction func actionAddTextMessage(_ sender:UIButton){
-        if OBJCOM.isConnectedToNetwork(){
-            OBJCOM.setLoader()
-            self.addTextMessageAPI()
+        
+        if self.isImmediate == "1" {
+            if OBJCOM.isConnectedToNetwork(){
+                OBJCOM.setLoader()
+                self.actionCheckMemberAssignedOrNot()
+            }else{
+                OBJCOM.NoInternetConnectionCall()
+            }
         }else{
-            OBJCOM.NoInternetConnectionCall()
+            if OBJCOM.isConnectedToNetwork(){
+                OBJCOM.setLoader()
+                self.addTextMessageAPI()
+            }else{
+                OBJCOM.NoInternetConnectionCall()
+            }
         }
     }
     
@@ -442,8 +460,8 @@ class CreateTextMessageVC: UIViewController, TagListViewDelegate, UITextViewDele
     }
     func textFieldDidEndEditing(_ textField: UITextField) {
         if textField == txtInterval {
-            if txtInterval.text == "" {
-                self.timeIntervalValue = "0"
+            if txtInterval.text == "" || txtInterval.text == "0"{
+                self.timeIntervalValue = "1"
                 self.timeIntervalType = "hours"
                 self.txtInterval.text = timeIntervalValue
                 self.btnIntervalType.setTitle(timeIntervalType, for: .normal)
@@ -522,7 +540,8 @@ extension CreateTextMessageVC {
                          "selectType": self.isImmediate,
                          "repeat_every_weeks":self.txtRepeatWeek.text!,
                          "repeat_on":self.repeatOn,
-                        "repeat_ends_after":self.repeatEnd] as [String : Any]
+                        "repeat_ends_after":self.repeatEnd,
+                        "txtTemplateFooterFlag":self.isFooterShow] as [String : Any]
     
         let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
         let jsonString = String(data: jsonData!, encoding: .utf8)
@@ -545,6 +564,62 @@ extension CreateTextMessageVC {
                 OBJCOM.hideLoader()
             }
         }
+    }
+    
+    func actionCheckMemberAssignedOrNot() {
+        
+        let dictParam = ["userId" : userID,
+                         "platform": "3",
+                         "txtCampId":self.campaignId,
+                         "stepId":"0"]
+        print(dictParam)
+        let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
+        let jsonString = String(data: jsonData!, encoding: .utf8)
+        let dictParamTemp = ["param":jsonString];
+        
+        typealias JSONDictionary = [String:Any]
+        OBJCOM.modalAPICall(Action: "checkMemberAssignedOrNot", param:dictParamTemp as [String : AnyObject],  vcObject: self) {
+            JsonDict, staus in
+            let success:String = JsonDict!["IsSuccess"] as! String
+            if success == "true"{
+                OBJCOM.hideLoader()
+                let result = JsonDict!["result"] as AnyObject
+                if "\(result)" != "0" {
+                    let alert = UIAlertController(title: nil, message: "Members are assinged with this campaign. Text message will send to that member 'Immediately'. Do you want to proceed?", preferredStyle: .alert)
+                    
+                    let actionOk = UIAlertAction(title: "Proceed", style: .default)
+                    {
+                        UIAlertAction in
+                        if OBJCOM.isConnectedToNetwork(){
+                            OBJCOM.setLoader()
+                            self.addTextMessageAPI()
+                        }else{
+                            OBJCOM.NoInternetConnectionCall()
+                        }
+                    }
+                    actionOk.setValue(UIColor.black, forKey: "titleTextColor")
+                    let actionCancel = UIAlertAction(title: "Cancel", style: .cancel)
+                    {
+                        UIAlertAction in
+                    }
+                    actionCancel.setValue(UIColor.red, forKey: "titleTextColor")
+                    
+                    alert.addAction(actionOk)
+                    alert.addAction(actionCancel)
+                    self.present(alert, animated: true, completion: nil)
+                }else{
+                    if OBJCOM.isConnectedToNetwork(){
+                        OBJCOM.setLoader()
+                        self.addTextMessageAPI()
+                    }else{
+                        OBJCOM.NoInternetConnectionCall()
+                    }
+                }
+            }else{
+                print("result:",JsonDict ?? "")
+                OBJCOM.hideLoader()
+            }
+        };
     }
     
     func actionDeleteDocs(_ attachId:String) {
@@ -753,7 +828,16 @@ extension CreateTextMessageVC {
         self.present(alert, animated: true, completion: nil)
     }
     
-    
+    @IBAction func actionIsFooterYes(_ sender : UIButton){
+        self.rdoButtonFooterYes.isSelected = true
+        self.rdoButtonFooterNo.isSelected = false
+        self.isFooterShow = "1"
+    }
+    @IBAction func actionIsFooterNo(_ sender : UIButton){
+        self.rdoButtonFooterYes.isSelected = false
+        self.rdoButtonFooterNo.isSelected = true
+        self.isFooterShow = "0"
+    }
     
 }
 

@@ -29,7 +29,7 @@ open class FSPageControl: UIControl {
     
     /// The spacing to use of page indicators in the page control.
     @IBInspectable
-    open var itemSpacing: CGFloat = 6 {
+    open var itemSpacing: CGFloat = 0 {
         didSet {
             self.setNeedsUpdateIndicators()
         }
@@ -37,7 +37,7 @@ open class FSPageControl: UIControl {
     
     /// The spacing to use between page indicators in the page control.
     @IBInspectable
-    open var interitemSpacing: CGFloat = 6 {
+    open var interitemSpacing: CGFloat = 0 {
         didSet {
             self.setNeedsLayout()
         }

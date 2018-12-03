@@ -12,24 +12,46 @@ class AddGroupVC: UIViewController, UITextFieldDelegate {
     
     @IBOutlet var tblList : UITableView!
     @IBOutlet var txtSearch : UITextField!
-    @IBOutlet var txtGrpName : SkyFloatingLabelTextField!
+    @IBOutlet var txtGrpName : UITextField!
+    @IBOutlet var txtDesc : UITextView!
     @IBOutlet var viewSearch : UIView!
     @IBOutlet var selectionView : UIView!
     @IBOutlet var importCsvView : UIView!
+    @IBOutlet var emailCampaignView : UIView!
     @IBOutlet var btnContact : UIButton!
     @IBOutlet var btnProspect : UIButton!
     @IBOutlet var btnCustomer : UIButton!
     @IBOutlet var btnRecruit : UIButton!
+    @IBOutlet var btnSelectAllSC : UIButton!
     
     @IBOutlet var btnFromSystemContact : UIButton!
     @IBOutlet var btnImportCsvContact : UIButton!
+    @IBOutlet var btnFromEmailCampaigns : UIButton!
     @IBOutlet var btnSelectCsvFile : UIButton!
     @IBOutlet var btnImportCsvFile : UIButton!
     @IBOutlet var lblCsvFile : UILabel!
     var importArray = [AnyObject]()
-    
     var isFilter = false;
     var isImportCsv = false
+    var fromEmailCampaigns = false
+    
+    @IBOutlet var DDSelectCampaign : UIDropDown!
+    @IBOutlet var btnStatusRead : UIButton!
+    @IBOutlet var btnStatusNotRead : UIButton!
+    @IBOutlet var tblMemberList : UITableView!
+    @IBOutlet var lblTblTitle : UILabel!
+    @IBOutlet var noEmailListView : UIView!
+    @IBOutlet var btnSelectAllECRec : UIButton!
+    
+    var arrCampaignFname = [String]()
+    var arrCampaignLname = [String]()
+    var arrCampaignTitle = [String]()
+    var arrCampaignID = [String]()
+    var arrCampEmailList = [String]()
+    var arrCampEmailID = [String]()
+    var campaignTitle = ""
+    var campaignId = ""
+    var isReadFlag = "1"
     
     var mainArrayList = [String]()
     var mainArrayID = [String]()
@@ -44,11 +66,13 @@ class AddGroupVC: UIViewController, UITextFieldDelegate {
     var arrCustomerID = [String]()
     var arrRecruitID = [String]()
     var arrSelectedIDs = [String]()
+    var arrSelectedEmailsCampIDs = [String]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         designUI()
         self.tblList.tableFooterView = UIView()
+        self.tblMemberList.tableFooterView = UIView()
         self.setSelected(btnContact)
         self.setDeSelected(btnProspect)
         self.setDeSelected(btnCustomer)
@@ -59,9 +83,14 @@ class AddGroupVC: UIViewController, UITextFieldDelegate {
         self.arrSelectedIDs = []
         self.btnFromSystemContact.isSelected = true
         self.btnImportCsvContact.isSelected = false
+        self.btnFromEmailCampaigns.isSelected = false
         self.selectionView.isHidden = false
         self.importCsvView.isHidden = true
+        self.emailCampaignView.isHidden = true
         self.isImportCsv = false
+        self.fromEmailCampaigns = false
+        self.btnSelectAllECRec.isSelected = false
+        self.btnSelectAllSC.isSelected = false
         self.lblCsvFile.text = ""
         
         if OBJCOM.isConnectedToNetwork(){
@@ -70,6 +99,7 @@ class AddGroupVC: UIViewController, UITextFieldDelegate {
             self.getProspectList()
             self.getCustomerList()
             self.getRecruitList()
+            self.getCampaignData()
         }else{
             OBJCOM.NoInternetConnectionCall()
         }
@@ -84,43 +114,30 @@ class AddGroupVC: UIViewController, UITextFieldDelegate {
         super.viewWillAppear(true)
        
     }
-    
-//    func refreshUIWithData(){
-//       // getGroupData()
-//        if OBJCOM.isConnectedToNetwork(){
-//            OBJCOM.setLoader()
-//            self.getContactList()
-//            self.getProspectList()
-//            self.getCustomerList()
-//            self.getRecruitList()
-//        }else{
-//            OBJCOM.NoInternetConnectionCall()
-//        }
-//
-//        self.btnFromSystemContact.isSelected = true
-//        self.btnImportCsvContact.isSelected = false
-//        self.selectionView.isHidden = false
-//        self.importCsvView.isHidden = true
-//
-//        self.setSelected(self.btnProspect)
-//        self.setDeSelected(self.btnContact)
-//        self.setDeSelected(self.btnCustomer)
-//        self.setDeSelected(self.btnRecruit)
-//
-//        mainArrayList = arrProspectList
-//        mainArrayID = arrProspectID
-//        isFilter = false
-//        txtSearch.text = ""
-//        self.isImportCsv = true
-//        txtSearch.resignFirstResponder()
-//        self.tblList.reloadData()
-//    }
-    
+  
     func designUI(){
         selectionView.layer.borderColor = APPGRAYCOLOR.cgColor
-        selectionView.layer.borderWidth = 1.0
+        selectionView.layer.borderWidth = 0.5
         importCsvView.layer.borderColor = APPGRAYCOLOR.cgColor
-        importCsvView.layer.borderWidth = 1.0
+        importCsvView.layer.borderWidth = 0.5
+        emailCampaignView.layer.borderColor = APPGRAYCOLOR.cgColor
+        emailCampaignView.layer.borderWidth = 0.5
+        
+        self.btnStatusRead.isSelected = true
+        self.btnStatusNotRead.isSelected = false
+        
+        txtDesc.layer.borderColor = APPGRAYCOLOR.cgColor
+        txtDesc.layer.borderWidth = 0.5
+        txtDesc.layer.cornerRadius = 5.0
+        txtDesc.clipsToBounds = true
+        txtDesc.contentInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+        
+        txtGrpName.layer.borderColor = APPGRAYCOLOR.cgColor
+        txtGrpName.layer.borderWidth = 0.5
+        txtGrpName.layer.cornerRadius = 5.0
+        txtGrpName.clipsToBounds = true
+        txtGrpName.setLeftPaddingPoints()
+        txtGrpName.setRightPaddingPoints()
         
         self.btnSelectCsvFile.layer.cornerRadius = 5.0
         self.btnSelectCsvFile.clipsToBounds = true
@@ -128,17 +145,16 @@ class AddGroupVC: UIViewController, UITextFieldDelegate {
         self.btnImportCsvFile.clipsToBounds = true
         self.btnImportCsvFile.isEnabled = false
         viewSearch.layer.borderColor = APPGRAYCOLOR.cgColor
-        viewSearch.layer.borderWidth = 1.0
+        viewSearch.layer.borderWidth = 0.5
         txtSearch.leftViewMode = UITextFieldViewMode.always
         txtSearch.layer.cornerRadius = txtSearch.frame.size.height/2
         txtSearch.layer.borderColor = APPGRAYCOLOR.cgColor
-        txtSearch.layer.borderWidth = 1.0
+        txtSearch.layer.borderWidth = 0.5
         txtSearch.clipsToBounds = true
         let uiView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
         let imageView = UIImageView(frame: CGRect(x: 5, y: 5, width: 20, height: 20))
-        let image = #imageLiteral(resourceName: "icons8-search")
-        
-        imageView.image = image
+       
+        imageView.image = #imageLiteral(resourceName: "icons8-search")
         uiView.addSubview(imageView)
         txtSearch.leftView = uiView
         self.txtSearch.delegate = self
@@ -153,78 +169,125 @@ class AddGroupVC: UIViewController, UITextFieldDelegate {
 extension AddGroupVC : UITableViewDataSource, UITableViewDelegate {
     
     func numberOfSections(in tableView: UITableView) -> Int {
+        if tableView == tblList {
+            return 1
+        }else if tableView == tblMemberList {
+            return 1
+        }
         return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if isFilter {
-            return self.mainArrayListSearch.count
-        }else { return mainArrayList.count }
+        if tableView == tblList {
+            if isFilter {
+                return self.mainArrayListSearch.count
+            }else { return mainArrayList.count }
+        }else if tableView == tblMemberList {
+            return self.arrCampaignFname.count
+        }
+        return 0
         
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tblList.dequeueReusableCell(withIdentifier: "EditCell") as! EditGroupCell
         
-        if isFilter {
-            cell.lblName.text = self.mainArrayListSearch[indexPath.row]
-            
-            let selId = self.mainArrayIDSearch[indexPath.row]
-            if self.arrSelectedIDs.contains(selId){
-                cell.imgSelectBox.image = #imageLiteral(resourceName: "checkbox_ic")
+        if tableView == tblList {
+            if isFilter {
+                cell.lblName.text = self.mainArrayListSearch[indexPath.row]
+                let selId = self.mainArrayIDSearch[indexPath.row]
+                if self.arrSelectedIDs.contains(selId){
+                    cell.imgSelectBox.image = #imageLiteral(resourceName: "checkbox_ic")
+                }else{
+                    cell.imgSelectBox.image = #imageLiteral(resourceName: "uncheck")
+                }
             }else{
-                cell.imgSelectBox.image = #imageLiteral(resourceName: "uncheck")
+                cell.lblName.text = self.mainArrayList[indexPath.row]
+                let selId = self.mainArrayID[indexPath.row]
+                if self.arrSelectedIDs.contains(selId){
+                    cell.imgSelectBox.image = #imageLiteral(resourceName: "checkbox_ic")
+                }else{
+                    cell.imgSelectBox.image = #imageLiteral(resourceName: "uncheck")
+                }
             }
-        }else{
-            cell.lblName.text = self.mainArrayList[indexPath.row]
-            
-            let selId = self.mainArrayID[indexPath.row]
-            if self.arrSelectedIDs.contains(selId){
+        }
+        else if tableView == tblMemberList {
+            cell.lblName.text = "\(self.arrCampaignFname[indexPath.row]) \(self.arrCampaignLname[indexPath.row])"
+            if arrSelectedEmailsCampIDs.contains (arrCampEmailID[indexPath.row]) {
                 cell.imgSelectBox.image = #imageLiteral(resourceName: "checkbox_ic")
             }else{
                 cell.imgSelectBox.image = #imageLiteral(resourceName: "uncheck")
             }
         }
         
-        
         return cell
+        
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        if isFilter {
-            let selId = self.mainArrayIDSearch[indexPath.row]
-            if self.arrSelectedIDs.contains(selId){
-                if let index = self.arrSelectedIDs.index(of: selId) {
-                    self.arrSelectedIDs.remove(at: index)
+        if tableView == tblList {
+            if isFilter {
+                let selId = self.mainArrayIDSearch[indexPath.row]
+                if self.arrSelectedIDs.contains(selId){
+                    if let index = self.arrSelectedIDs.index(of: selId) {
+                        self.arrSelectedIDs.remove(at: index)
+                    }
+                }else{
+                    self.arrSelectedIDs.append(selId)
                 }
             }else{
-                self.arrSelectedIDs.append(selId)
+                let selId = self.mainArrayID[indexPath.row]
+                if self.arrSelectedIDs.contains(selId){
+                    if let index = self.arrSelectedIDs.index(of: selId) {
+                        self.arrSelectedIDs.remove(at: index)
+                    }
+                }else{
+                    self.arrSelectedIDs.append(selId)
+                }
             }
-        }else{
-            let selId = self.mainArrayID[indexPath.row]
-            if self.arrSelectedIDs.contains(selId){
-                if let index = self.arrSelectedIDs.index(of: selId) {
-                    self.arrSelectedIDs.remove(at: index)
+            self.tblList.reloadData()
+        }else if tableView == tblMemberList {
+            let selId = self.arrCampEmailID[indexPath.row]
+            if self.arrSelectedEmailsCampIDs.contains(selId){
+                if let index = self.arrSelectedEmailsCampIDs.index(of: selId) {
+                    self.arrSelectedEmailsCampIDs.remove(at: index)
                 }
             }else{
-                self.arrSelectedIDs.append(selId)
+                self.arrSelectedEmailsCampIDs.append(selId)
             }
+            self.tblMemberList.reloadData()
         }
-        
-        self.tblList.reloadData()
     }
 }
 
 extension AddGroupVC {
     
     @IBAction func actionShowContactList (_ sender:UIButton){
+        
         self.setSelected(btnContact)
         self.setDeSelected(btnProspect)
         self.setDeSelected(btnCustomer)
         self.setDeSelected(btnRecruit)
         mainArrayList = arrContactList
         mainArrayID = arrContactID
+        var count = 0
+        for i in 0 ..< mainArrayID.count {
+            if self.arrSelectedIDs.count > 0 {
+                if self.arrSelectedIDs.contains(mainArrayID[i]){
+                    count = count + 1
+                }
+            }
+        }
+        if self.mainArrayID.count > 0 {
+            if count == mainArrayID.count {
+                self.btnSelectAllSC.isSelected = true
+            }else{
+                self.btnSelectAllSC.isSelected = false
+            }
+        }else{
+            self.btnSelectAllSC.isSelected = false
+        }
+        
         isFilter = false
         txtSearch.text = ""
         txtSearch.resignFirstResponder()
@@ -232,12 +295,32 @@ extension AddGroupVC {
     }
     
     @IBAction func actionShowProspectList (_ sender:UIButton){
+        self.btnSelectAllSC.isSelected = false
         self.setDeSelected(btnContact)
         self.setSelected(btnProspect)
         self.setDeSelected(btnCustomer)
         self.setDeSelected(btnRecruit)
         mainArrayList = arrProspectList
         mainArrayID = arrProspectID
+        
+        var count = 0
+        for i in 0 ..< mainArrayID.count {
+            if self.arrSelectedIDs.count > 0 {
+                if self.arrSelectedIDs.contains(mainArrayID[i]){
+                    count = count + 1
+                }
+            }
+        }
+        
+        if self.mainArrayID.count > 0 {
+            if count == mainArrayID.count {
+                self.btnSelectAllSC.isSelected = true
+            }else{
+                self.btnSelectAllSC.isSelected = false
+            }
+        }else{
+            self.btnSelectAllSC.isSelected = false
+        }
         isFilter = false
         txtSearch.text = ""
         txtSearch.resignFirstResponder()
@@ -245,12 +328,31 @@ extension AddGroupVC {
     }
     
     @IBAction func actionShowCustomerList (_ sender:UIButton){
+        self.btnSelectAllSC.isSelected = false
         self.setDeSelected(btnContact)
         self.setDeSelected(btnProspect)
         self.setSelected(btnCustomer)
         self.setDeSelected(btnRecruit)
         mainArrayList = arrCustomerList
         mainArrayID = arrCustomerID
+        var count = 0
+        for i in 0 ..< mainArrayID.count {
+            if self.arrSelectedIDs.count > 0 {
+                if self.arrSelectedIDs.contains(mainArrayID[i]){
+                    count = count + 1
+                }
+            }
+        }
+        
+        if self.mainArrayID.count > 0 {
+            if count == mainArrayID.count {
+                self.btnSelectAllSC.isSelected = true
+            }else{
+                self.btnSelectAllSC.isSelected = false
+            }
+        }else{
+            self.btnSelectAllSC.isSelected = false
+        }
         isFilter = false
         txtSearch.text = ""
         txtSearch.resignFirstResponder()
@@ -258,12 +360,31 @@ extension AddGroupVC {
     }
     
     @IBAction func actionShowRecruitList (_ sender:UIButton){
+        self.btnSelectAllSC.isSelected = false
         self.setDeSelected(btnContact)
         self.setDeSelected(btnProspect)
         self.setDeSelected(btnCustomer)
         self.setSelected(btnRecruit)
         mainArrayList = arrRecruitList
         mainArrayID = arrRecruitID
+        var count = 0
+        for i in 0 ..< mainArrayID.count {
+            if self.arrSelectedIDs.count > 0 {
+                if self.arrSelectedIDs.contains(mainArrayID[i]){
+                    count = count + 1
+                }
+            }
+        }
+        
+        if self.mainArrayID.count > 0 {
+            if count == mainArrayID.count {
+                self.btnSelectAllSC.isSelected = true
+            }else{
+                self.btnSelectAllSC.isSelected = false
+            }
+        }else{
+            self.btnSelectAllSC.isSelected = false
+        }
         isFilter = false
         txtSearch.text = ""
         txtSearch.resignFirstResponder()
@@ -279,14 +400,73 @@ extension AddGroupVC {
         btn.setTitleColor(.black, for: .normal)
     }
     
+    @IBAction func actionSelectAllRecords(_ btn : UIButton){
+        
+        if btn.isSelected {
+            if isFilter {
+                for i in 0 ..< self.mainArrayIDSearch.count {
+                    let selId = self.mainArrayIDSearch[i]
+                    if self.arrSelectedIDs.contains(selId){
+                        if let index = self.arrSelectedIDs.index(of: selId) {
+                            self.arrSelectedIDs.remove(at: index)
+                        }
+                    }else{
+                        self.arrSelectedIDs.append(selId)
+                    }
+                }
+            }else{
+                for i in 0 ..< self.mainArrayID.count {
+                    let selId = self.mainArrayID[i]
+                    if self.arrSelectedIDs.contains(selId){
+                        if let index = self.arrSelectedIDs.index(of: selId) {
+                            self.arrSelectedIDs.remove(at: index)
+                        }
+                    }else{
+                        self.arrSelectedIDs.append(selId)
+                    }
+                }
+            }
+            btn.isSelected = false
+        }else{
+            btn.isSelected = true
+            if isFilter {
+                for obj in self.mainArrayIDSearch {
+                    if !self.arrSelectedIDs.contains(obj) {
+                        self.arrSelectedIDs.append(obj)
+                    }
+                }
+            }else{
+                for obj in self.mainArrayID {
+                    if !self.arrSelectedIDs.contains(obj) {
+                        self.arrSelectedIDs.append(obj)
+                    }
+                }
+            }
+        }
+        self.tblList.reloadData()
+    }
+    
     @IBAction func actionAddGroup (_ sender:UIButton){
         if txtGrpName.text == ""{
             OBJCOM.setAlert(_title: "", message: "Please enter group name.")
-        } else if self.arrSelectedIDs.count == 0 && self.isImportCsv == false {
+        } else if self.arrSelectedIDs.count == 0 && self.arrSelectedEmailsCampIDs.count == 0  && self.isImportCsv == false {
             OBJCOM.setAlert(_title: "", message: "Please select atleast one group member.")
         }
         else{
-            self.addGroup()
+            var strSelect = ""
+            if self.fromEmailCampaigns == true {
+                if self.arrSelectedEmailsCampIDs.count > 0 {
+                    strSelect = self.arrSelectedEmailsCampIDs.joined(separator: ",")
+                    self.addGroup(strSelect: strSelect)
+                }
+            }else if self.isImportCsv == true {
+                    self.addGroup(strSelect: strSelect)
+            }else{
+                if self.arrSelectedIDs.count > 0 {
+                    strSelect = self.arrSelectedIDs.joined(separator: ",")
+                    self.addGroup(strSelect: strSelect)
+                }
+            }
         }
     }
     
@@ -362,12 +542,6 @@ extension AddGroupVC {
                         self.arrProspectID.append(result[i]["contact_id"] as? String ?? "")
                     }
                 }
-            //    if self.isImportCsv == true {
-            //        self.mainArrayList = self.arrProspectList
-            //        self.mainArrayID = self.arrProspectID
-            //        self.tblList.reloadData()
-            //        self.isImportCsv = false
-            //    }
                 OBJCOM.hideLoader()
             }else{
                 print("result:",JsonDict ?? "")
@@ -446,11 +620,11 @@ extension AddGroupVC {
         };
     }
     
-    func addGroup(){
-        let strSelect = self.arrSelectedIDs.joined(separator: ",")
+    func addGroup(strSelect:String){
         let dictParam = ["userId": userID,
                          "platform":"3",
                          "group_name":txtGrpName.text!,
+                         "group_description":txtDesc.text!,
                          "group_contact_id": strSelect] as [String : Any]
         
         let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
@@ -523,15 +697,32 @@ extension AddGroupVC : UIDocumentPickerDelegate, UIDocumentMenuDelegate  {
     @IBAction func actionSelectSystemContacts(_ btn : UIButton){
         self.btnFromSystemContact.isSelected = true
         self.btnImportCsvContact.isSelected = false
+        self.btnFromEmailCampaigns.isSelected = false
+        self.emailCampaignView.isHidden = true
         self.selectionView.isHidden = false
         self.importCsvView.isHidden = true
+        self.fromEmailCampaigns = false
     }
     
     @IBAction func actionImportCsvContacts(_ btn : UIButton){
         self.btnFromSystemContact.isSelected = false
         self.btnImportCsvContact.isSelected = true
+        self.btnFromEmailCampaigns.isSelected = false
+        self.emailCampaignView.isHidden = true
         self.selectionView.isHidden = true
         self.importCsvView.isHidden = false
+        self.fromEmailCampaigns = false
+    }
+    
+    @IBAction func actionSelectEmailCampaigns(_ btn : UIButton){
+        self.btnFromSystemContact.isSelected = false
+        self.btnImportCsvContact.isSelected = false
+        self.btnFromEmailCampaigns.isSelected = true
+        self.emailCampaignView.isHidden = false
+        self.selectionView.isHidden = true
+        self.importCsvView.isHidden = true
+        self.fromEmailCampaigns = true
+        self.btnSelectAllECRec.isSelected = false
     }
     
     @IBAction func actionSelectCsvFile(_ btn : UIButton){
@@ -645,7 +836,6 @@ extension AddGroupVC : UIDocumentPickerDelegate, UIDocumentMenuDelegate  {
                 let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default) {
                     UIAlertAction in
                     self.dismiss(animated: true, completion: nil)
-                    //self.refreshUIWithData()
                 }
                 alertController.addAction(okAction)
                 self.present(alertController, animated: true, completion: nil)
@@ -658,4 +848,200 @@ extension AddGroupVC : UIDocumentPickerDelegate, UIDocumentMenuDelegate  {
     }
 }
 
+extension AddGroupVC {
+    @IBAction func actionSelectReadStatus (_ sender:UIButton){
+        
+        if self.arrSelectedEmailsCampIDs.count > 0 {
+            let alertController = UIAlertController(title: "", message: "You can create group either from members who read emails or not read emails.", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "Continue", style: UIAlertActionStyle.default) {
+                UIAlertAction in
+                self.btnStatusRead.isSelected = true
+                self.btnStatusNotRead.isSelected = false
+                self.btnSelectAllECRec.isSelected = false
+                self.arrSelectedEmailsCampIDs = []
+                if self.campaignTitle != " Select Email Campaign" && self.campaignTitle != "" {
+                    if OBJCOM.isConnectedToNetwork(){
+                        OBJCOM.setLoader()
+                        self.getCampaignStatusList(campaignId: self.campaignId, readFlag: "1")
+                    }else{
+                        OBJCOM.NoInternetConnectionCall()
+                    }
+                }
+            }
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) {
+                UIAlertAction in
+            }
+            alertController.addAction(okAction)
+            alertController.addAction(cancelAction)
+            self.present(alertController, animated: true, completion: nil)
+        }else{
+            self.btnStatusRead.isSelected = true
+            self.btnStatusNotRead.isSelected = false
+            self.btnSelectAllECRec.isSelected = false
+            self.arrSelectedEmailsCampIDs = []
+            if self.campaignTitle != " Select Email Campaign" && self.campaignTitle != "" {
+                if OBJCOM.isConnectedToNetwork(){
+                    OBJCOM.setLoader()
+                    self.getCampaignStatusList(campaignId: self.campaignId, readFlag: "1")
+                }else{
+                    OBJCOM.NoInternetConnectionCall()
+                }
+            }
+        }
+    }
+    
+    @IBAction func actionSelectNotReadStatus (_ sender:UIButton){
+        
+        if self.arrSelectedEmailsCampIDs.count > 0 {
+            let alertController = UIAlertController(title: "", message: "You can create group either from members who read emails or not read emails.", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "Continue", style: UIAlertActionStyle.default) {
+                UIAlertAction in
+                
+                self.arrSelectedEmailsCampIDs = []
+                self.btnStatusRead.isSelected = false
+                self.btnStatusNotRead.isSelected = true
+                self.btnSelectAllECRec.isSelected = false
+                if self.campaignTitle != " Select Email Campaign" && self.campaignTitle != "" {
+                    if OBJCOM.isConnectedToNetwork(){
+                        OBJCOM.setLoader()
+                        self.getCampaignStatusList(campaignId: self.campaignId, readFlag: "0")
+                    }else{
+                        OBJCOM.NoInternetConnectionCall()
+                    }
+                }
+            }
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) {
+                UIAlertAction in
+            }
+            alertController.addAction(okAction)
+            alertController.addAction(cancelAction)
+            self.present(alertController, animated: true, completion: nil)
+        }else{
+            self.arrSelectedEmailsCampIDs = []
+            self.btnStatusRead.isSelected = false
+            self.btnStatusNotRead.isSelected = true
+            self.btnSelectAllECRec.isSelected = false
+            if self.campaignTitle != " Select Email Campaign" && self.campaignTitle != "" {
+                if OBJCOM.isConnectedToNetwork(){
+                    OBJCOM.setLoader()
+                    self.getCampaignStatusList(campaignId: self.campaignId, readFlag: "0")
+                }else{
+                    OBJCOM.NoInternetConnectionCall()
+                }
+            }
+        }
+    }
+    
+    func getCampaignData() {
+        
+        let dictParam = ["userId": userID,
+                         "platform":"3"]
+        let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
+        let jsonString = String(data: jsonData!, encoding: .utf8)
+        let dictParamTemp = ["param":jsonString];
+        
+        typealias JSONDictionary = [String:Any]
+        OBJCOM.modalAPICall(Action: "getCampaignForGroup", param:dictParamTemp as [String : AnyObject],  vcObject: self){
+            JsonDict, staus in
+            let success:String = JsonDict!["IsSuccess"] as! String
+            if success == "true"{
+                self.arrCampaignTitle = []
+                self.arrCampaignID = []
+                let dictJsonData = JsonDict!["result"] as! [AnyObject]
+                print(dictJsonData)
+                
+                for obj in dictJsonData {
+                    self.arrCampaignTitle.append(obj.value(forKey: "campaignTitle") as! String)
+                    self.arrCampaignID.append(obj.value(forKey: "campaignId") as! String)
+                }
+                self.loadDropDown()
+                OBJCOM.hideLoader()
+            }else{
+                print("result:",JsonDict ?? "")
+                OBJCOM.hideLoader()
+            }
+        };
+    }
+    
+    func loadDropDown() {
+        self.DDSelectCampaign.textColor = .black
+        self.DDSelectCampaign.tint = .black
+        self.DDSelectCampaign.optionsSize = 15.0
+        self.DDSelectCampaign.placeholder = " Select Email Campaign"
+        self.DDSelectCampaign.optionsTextAlignment = NSTextAlignment.left
+        self.DDSelectCampaign.textAlignment = NSTextAlignment.left
+        self.DDSelectCampaign.options = self.arrCampaignTitle
+        self.campaignTitle = " Select Email Campaign"
+        self.DDSelectCampaign.didSelect { (item, index) in
+            self.campaignTitle = self.arrCampaignTitle[index]
+            self.campaignId = self.arrCampaignID[index]
+            self.btnStatusRead.isSelected = true
+            self.btnStatusNotRead.isSelected = false
+            if OBJCOM.isConnectedToNetwork(){
+                OBJCOM.setLoader()
+                self.getCampaignStatusList(campaignId: self.campaignId, readFlag: "1")
+            }else{
+                OBJCOM.NoInternetConnectionCall()
+            }
+        }
+        self.tblMemberList.reloadData()
+    }
+    
+    func getCampaignStatusList(campaignId : String, readFlag : String) {
+            let dictParam = ["userId": userID,
+                             "platform":"3",
+                             "campId":campaignId,
+                             "readFlag":readFlag]
+    
+            let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
+            let jsonString = String(data: jsonData!, encoding: .utf8)
+            let dictParamTemp = ["param":jsonString];
+    
+            typealias JSONDictionary = [String:Any]//
+            OBJCOM.modalAPICall(Action: "getCampaignStatusList", param:dictParamTemp as [String : AnyObject],  vcObject: self){
+                JsonDict, staus in
+                let success:String = JsonDict!["IsSuccess"] as! String
+                if success == "true"{
+                    self.arrCampaignFname = []
+                    self.arrCampaignLname = []
+                    self.arrCampEmailList = []
+                    self.arrCampEmailID = []
+                    let dictJsonData = JsonDict!["result"] as! [AnyObject]
+                    print(dictJsonData)
+                    
+                    for obj in dictJsonData {
+                        self.arrCampaignFname.append(obj.value(forKey: "contact_fname") as? String ?? "")
+                        self.arrCampaignLname.append(obj.value(forKey: "contact_lname") as? String ?? "")
+                        self.arrCampEmailList.append(obj.value(forKey: "contact_email") as? String ?? "")
+                        self.arrCampEmailID.append(obj.value(forKey: "contact_id") as? String ?? "")
+                    }
+                    self.noEmailListView.isHidden = true
+                    self.tblMemberList.reloadData()
+                    OBJCOM.hideLoader()
+                }else{
+                    self.noEmailListView.isHidden = false
+                    self.arrCampEmailList = []
+                    self.arrCampEmailID = []
+                    self.arrCampaignFname = []
+                    self.arrCampaignLname = []
+                    print("result:",JsonDict ?? "")
+                    self.tblMemberList.reloadData()
+                    OBJCOM.hideLoader()
+                }
+
+            };
+        }
+    
+    @IBAction func selectAllRecordFromEmailCampList(_ sender:UIButton){
+        if self.btnSelectAllECRec.isSelected {
+            self.btnSelectAllECRec.isSelected = false
+            self.arrSelectedEmailsCampIDs.removeAll()
+        }else{
+            self.btnSelectAllECRec.isSelected = true
+            self.arrSelectedEmailsCampIDs = self.arrCampEmailID
+        }
+        self.tblMemberList.reloadData()
+    }
+    
+}
 

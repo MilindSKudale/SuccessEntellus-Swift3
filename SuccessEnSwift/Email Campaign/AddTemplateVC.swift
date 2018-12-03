@@ -67,8 +67,24 @@ class AddTemplateVC :UIViewController, UIImagePickerControllerDelegate, UIDocume
         return toolbar
     }()
     
+    @IBOutlet var rdoButtonFooterYes: UIButton!
+    @IBOutlet var rdoButtonFooterNo: UIButton!
+    var isFooterShow = "1"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        var userName = ""
+        var phoneNum = ""
+        if UserDefaults.standard.value(forKey: "USERINFO") != nil {
+            let userInfo = UserDefaults.standard.value(forKey: "USERINFO") as! [String : Any]
+            if userInfo.count > 0 {
+                let first_name = userInfo["first_name"] ?? ""
+                let last_name = userInfo["last_name"] ?? ""
+                userName = "\(first_name) \(last_name)"
+                phoneNum = "\(userInfo["phone"] ?? "")"
+            }
+        }
         
         arrAttachFileId = []
         arrAttachSavedFileId = []
@@ -77,7 +93,7 @@ class AddTemplateVC :UIViewController, UIImagePickerControllerDelegate, UIDocume
         btnIntervalType.clipsToBounds = true
         btnIntervalType.layer.borderColor = APPGRAYCOLOR.cgColor
         btnIntervalType.layer.borderWidth = 0.3
-        txtInterval.text = "0"
+        txtInterval.text = "1"
         txtRepeatWeek.text = "1"
         txtRepeatWeek.delegate = self
         
@@ -93,7 +109,7 @@ class AddTemplateVC :UIViewController, UIImagePickerControllerDelegate, UIDocume
         editorView.delegate = self
         editorView.inputAccessoryView = toolbar
         editorView.placeholder = "Type some text..."
-        editorView.html = "Hi {firstName},"
+        editorView.html = "Hi {firstName}, <br><br> \(userName) <br> \(phoneNum)"
         
         vwAttachFiles.delegate = self
         vwAttachFiles.textFont = UIFont.systemFont(ofSize: 13)
@@ -145,6 +161,10 @@ class AddTemplateVC :UIViewController, UIImagePickerControllerDelegate, UIDocume
         
         self.txtInterval.text = timeIntervalValue
         txtInterval.delegate = self
+        
+        self.rdoButtonFooterYes.isSelected = true
+        self.rdoButtonFooterNo.isSelected = false
+        self.isFooterShow = "1"
     }
     
     @IBAction func actionClose(_ sender : UIButton){
@@ -245,8 +265,8 @@ extension AddTemplateVC : UITextFieldDelegate {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         if textField == txtInterval {
-            if txtInterval.text == "" {
-                self.timeIntervalValue = "0"
+            if txtInterval.text == "" || txtInterval.text == "0" {
+                self.timeIntervalValue = "1"
                 self.timeIntervalType = "hours"
                 self.txtInterval.text = timeIntervalValue
                 self.btnIntervalType.setTitle(timeIntervalType, for: .normal)
@@ -412,7 +432,8 @@ extension AddTemplateVC {
                          "selectType": self.isImmediate,
                          "repeat_every_weeks":self.txtRepeatWeek.text!,
                          "repeat_on":self.repeatOn,
-                         "repeat_ends_after":self.repeatEnd] as [String : Any]
+                         "repeat_ends_after":self.repeatEnd,
+                         "campaignStepFooterFlag":self.isFooterShow] as [String : Any]
      
         print(dictParam)
         
@@ -890,5 +911,16 @@ extension AddTemplateVC  {
         alert.addAction(actionMonth)
         alert.addAction(actionCancel)
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    @IBAction func actionIsFooterYes(_ sender : UIButton){
+        self.rdoButtonFooterYes.isSelected = true
+        self.rdoButtonFooterNo.isSelected = false
+        self.isFooterShow = "1"
+    }
+    @IBAction func actionIsFooterNo(_ sender : UIButton){
+        self.rdoButtonFooterYes.isSelected = false
+        self.rdoButtonFooterNo.isSelected = true
+        self.isFooterShow = "0"
     }
 }

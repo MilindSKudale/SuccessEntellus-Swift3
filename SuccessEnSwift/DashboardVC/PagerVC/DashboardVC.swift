@@ -86,7 +86,6 @@ class DashboardVC: SliderVC, PopupProtocol, EAIntroDelegate {
             if OBJCOM.isConnectedToNetwork(){
                 OBJCOM.setLoader()
                 self.fetchAllContacts()
-                
                 let userData = UserDefaults.standard.value(forKey: "USERINFO") as! [String:Any]
                 if userData.count > 0 {
                     let cft = userData["userCft"] as? String ?? "0"
@@ -104,6 +103,8 @@ class DashboardVC: SliderVC, PopupProtocol, EAIntroDelegate {
                 isFirstTimeChecklist = false
             }
         }
+        let appdel = AppDelegate()
+        appdel.registerForPushNotifications()
     }
     
     func motivatinalData(){

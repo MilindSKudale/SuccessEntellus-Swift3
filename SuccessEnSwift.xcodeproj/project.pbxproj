@@ -44,6 +44,10 @@
 		FC2523D120B74596005321FB /* TaskListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC2523D020B74596005321FB /* TaskListCell.swift */; };
 		FC2523D320B8BBF1005321FB /* EditEventTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC2523D220B8BBF1005321FB /* EditEventTVC.swift */; };
 		FC3707BE21889189007E7510 /* AssignCampaignCrmCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3707BD21889189007E7510 /* AssignCampaignCrmCell.swift */; };
+		FC3707C7218D8F08007E7510 /* DrawerSubmenuCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FC3707C6218D8F08007E7510 /* DrawerSubmenuCell.xib */; };
+		FC3707CA219008AB007E7510 /* VisionBoard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC3707C9219008AB007E7510 /* VisionBoard.storyboard */; };
+		FC3707CC219008D2007E7510 /* DashboardVB.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3707CB219008D2007E7510 /* DashboardVB.swift */; };
+		FC3707CE2190131B007E7510 /* DetailsVB.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3707CD2190131B007E7510 /* DetailsVB.swift */; };
 		FC3C87FC208D1EF500F0DD6A /* CustomCampDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3C87FB208D1EF500F0DD6A /* CustomCampDetailVC.swift */; };
 		FC3C87FE208D1F2F00F0DD6A /* CustomCampCollectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3C87FD208D1F2F00F0DD6A /* CustomCampCollectCell.swift */; };
 		FC3C8800208E108B00F0DD6A /* SetTimeIntervalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3C87FF208E108B00F0DD6A /* SetTimeIntervalVC.swift */; };
@@ -59,6 +63,10 @@
 		FC3C88512090EA5D00F0DD6A /* EmailDetailsHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = FC3C884B2090DEB200F0DD6A /* EmailDetailsHeader.xib */; };
 		FC4B6C3620FC614900EB27BB /* DailyTopTenVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC4B6C3520FC614900EB27BB /* DailyTopTenVC.swift */; };
 		FC4B6C3920FC619600EB27BB /* DailyTopTen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC4B6C3820FC619600EB27BB /* DailyTopTen.storyboard */; };
+		FC572123219A78D00091F292 /* VBCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC572122219A78D00091F292 /* VBCell.swift */; };
+		FC572125219A92840091F292 /* ViewDetailsVB.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC572124219A92840091F292 /* ViewDetailsVB.swift */; };
+		FC572127219AA8610091F292 /* AACarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC572126219AA8610091F292 /* AACarousel.swift */; };
+		FC572149219FEF6E0091F292 /* AddVB.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC572148219FEF6E0091F292 /* AddVB.swift */; };
 		FC5CFE85204EC176004A7EC1 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FC5CFE7D204EC174004A7EC1 /* Info.plist */; };
 		FC5CFEAF204EE788004A7EC1 /* SliderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC5CFEAE204EE788004A7EC1 /* SliderVC.swift */; };
 		FC5CFEB4204EE7CB004A7EC1 /* DrawerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC5CFEB0204EE7CA004A7EC1 /* DrawerView.swift */; };
@@ -103,6 +111,9 @@
 		FC618DAA2119A2A000AF2A3E /* CustomPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = FC618DA62119A29F00AF2A3E /* CustomPage.xib */; };
 		FC618DAB2119A2A000AF2A3E /* CustomOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC618DA72119A29F00AF2A3E /* CustomOverlay.swift */; };
 		FC618DAC2119A2A000AF2A3E /* CustomOverlay.xib in Resources */ = {isa = PBXBuildFile; fileRef = FC618DA82119A29F00AF2A3E /* CustomOverlay.xib */; };
+		FC65B27721A2BEA500DC9999 /* AssignECforMultipleCrm.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC65B27621A2BEA500DC9999 /* AssignECforMultipleCrm.swift */; };
+		FC65B27921A3D44600DC9999 /* StartCampaignVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC65B27821A3D44600DC9999 /* StartCampaignVC.swift */; };
+		FC65B27B21A3D46D00DC9999 /* StartCampaignCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC65B27A21A3D46D00DC9999 /* StartCampaignCell.swift */; };
 		FC6A331720656820007CE88C /* MyCustomerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6A331620656820007CE88C /* MyCustomerVC.swift */; };
 		FC6A331A20657048007CE88C /* AddCustomerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6A331920657048007CE88C /* AddCustomerVC.swift */; };
 		FC6A331C2065855F007CE88C /* ViewAndEditCustomerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6A331B2065855F007CE88C /* ViewAndEditCustomerVC.swift */; };
@@ -142,6 +153,9 @@
 		FC8C39922054394A00C97602 /* FSPagerViewLayoutAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8C398B2054394900C97602 /* FSPagerViewLayoutAttributes.swift */; };
 		FC8C39932054394A00C97602 /* FSPageViewTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8C398C2054394900C97602 /* FSPageViewTransformer.swift */; };
 		FC8C39942054394A00C97602 /* FSPageViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8C398D2054394900C97602 /* FSPageViewLayout.swift */; };
+		FC8FCE6821B1308400213670 /* HelpGuideVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8FCE6721B1308400213670 /* HelpGuideVC.swift */; };
+		FC8FCE6A21B133A900213670 /* HelpGuideCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8FCE6921B133A900213670 /* HelpGuideCell.swift */; };
+		FC8FCE6C21B1576300213670 /* pdfViewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8FCE6B21B1576300213670 /* pdfViewVC.swift */; };
 		FC90144E213CFD1300B4E2BB /* NewSetTimeIntervalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC90144D213CFD1300B4E2BB /* NewSetTimeIntervalVC.swift */; };
 		FC99EA71208BF2D4005BD8F8 /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC99EA70208BF2D4005BD8F8 /* CollectionViewCell.swift */; };
 		FC99EA73208BF77A005BD8F8 /* CompanyCampaignDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC99EA72208BF77A005BD8F8 /* CompanyCampaignDetailVC.swift */; };
@@ -172,6 +186,7 @@
 		FCA6751E212A845300A389DF /* PackagesFilterVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA6751D212A845300A389DF /* PackagesFilterVC.swift */; };
 		FCA67521212A941200A389DF /* Packages.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FCA67520212A941200A389DF /* Packages.storyboard */; };
 		FCA67528212AA24400A389DF /* SHPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA67526212AA24300A389DF /* SHPopup.swift */; };
+		FCA879D421A574A800BCDC22 /* NewCftLocVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA879D321A574A800BCDC22 /* NewCftLocVC.swift */; };
 		FCAFD6CE2025F3DE00233292 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCAFD6CD2025F3DE00233292 /* AppDelegate.swift */; };
 		FCAFD6D02025F3DE00233292 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCAFD6CF2025F3DE00233292 /* ViewController.swift */; };
 		FCAFD6D32025F3DE00233292 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FCAFD6D12025F3DE00233292 /* Main.storyboard */; };
@@ -320,6 +335,9 @@
 		FCE76EC8210C3B6E00A8AFAB /* GoogleMaps.bundle in Resources */ = {isa = PBXBuildFile; fileRef = FCE76EC7210C3B6E00A8AFAB /* GoogleMaps.bundle */; };
 		FCEEDBF720DC1AEE00D60A1D /* EventListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCEEDBF620DC1AEE00D60A1D /* EventListVC.swift */; };
 		FCEEDBF920DC1B1700D60A1D /* EventListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCEEDBF820DC1B1700D60A1D /* EventListCell.swift */; };
+		FCF0846521AC0D88004C6DBA /* SavedDocListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCF0846421AC0D88004C6DBA /* SavedDocListVC.swift */; };
+		FCF0846721AD1F50004C6DBA /* StartTextCampaignVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCF0846621AD1F50004C6DBA /* StartTextCampaignVC.swift */; };
+		FCF0846921AD533D004C6DBA /* StartTextCampCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCF0846821AD533D004C6DBA /* StartTextCampCell.swift */; };
 		FCF113AD21180DFA0074EB46 /* CFTUserListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCF113AC21180DFA0074EB46 /* CFTUserListVC.swift */; };
 		FCF113AF211815410074EB46 /* CFTUserListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCF113AE211815410074EB46 /* CFTUserListCell.swift */; };
 		FCF48FBC2053258E00DCD76B /* EmailCampaignDashboardVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCF48FBB2053258E00DCD76B /* EmailCampaignDashboardVC.swift */; };
@@ -380,6 +398,10 @@
 		FC2523D020B74596005321FB /* TaskListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListCell.swift; sourceTree = "<group>"; };
 		FC2523D220B8BBF1005321FB /* EditEventTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditEventTVC.swift; sourceTree = "<group>"; };
 		FC3707BD21889189007E7510 /* AssignCampaignCrmCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssignCampaignCrmCell.swift; sourceTree = "<group>"; };
+		FC3707C6218D8F08007E7510 /* DrawerSubmenuCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DrawerSubmenuCell.xib; sourceTree = "<group>"; };
+		FC3707C9219008AB007E7510 /* VisionBoard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = VisionBoard.storyboard; sourceTree = "<group>"; };
+		FC3707CB219008D2007E7510 /* DashboardVB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardVB.swift; sourceTree = "<group>"; };
+		FC3707CD2190131B007E7510 /* DetailsVB.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsVB.swift; sourceTree = "<group>"; };
 		FC3C87FB208D1EF500F0DD6A /* CustomCampDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCampDetailVC.swift; sourceTree = "<group>"; };
 		FC3C87FD208D1F2F00F0DD6A /* CustomCampCollectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCampCollectCell.swift; sourceTree = "<group>"; };
 		FC3C87FF208E108B00F0DD6A /* SetTimeIntervalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetTimeIntervalVC.swift; sourceTree = "<group>"; };
@@ -395,6 +417,10 @@
 		FC3C884F2090E3DB00F0DD6A /* EmailDetailsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailDetailsCell.swift; sourceTree = "<group>"; };
 		FC4B6C3520FC614900EB27BB /* DailyTopTenVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyTopTenVC.swift; sourceTree = "<group>"; };
 		FC4B6C3820FC619600EB27BB /* DailyTopTen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = DailyTopTen.storyboard; sourceTree = "<group>"; };
+		FC572122219A78D00091F292 /* VBCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VBCell.swift; sourceTree = "<group>"; };
+		FC572124219A92840091F292 /* ViewDetailsVB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDetailsVB.swift; sourceTree = "<group>"; };
+		FC572126219AA8610091F292 /* AACarousel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AACarousel.swift; sourceTree = "<group>"; };
+		FC572148219FEF6E0091F292 /* AddVB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddVB.swift; sourceTree = "<group>"; };
 		FC5CFE7D204EC174004A7EC1 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = "../../../../../../Downloads/InteractiveSideMenu-master/Sources/Info.plist"; sourceTree = "<group>"; };
 		FC5CFEAE204EE788004A7EC1 /* SliderVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderVC.swift; sourceTree = "<group>"; };
 		FC5CFEB0204EE7CA004A7EC1 /* DrawerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawerView.swift; sourceTree = "<group>"; };
@@ -440,6 +466,9 @@
 		FC618DA62119A29F00AF2A3E /* CustomPage.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomPage.xib; sourceTree = "<group>"; };
 		FC618DA72119A29F00AF2A3E /* CustomOverlay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomOverlay.swift; sourceTree = "<group>"; };
 		FC618DA82119A29F00AF2A3E /* CustomOverlay.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomOverlay.xib; sourceTree = "<group>"; };
+		FC65B27621A2BEA500DC9999 /* AssignECforMultipleCrm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssignECforMultipleCrm.swift; sourceTree = "<group>"; };
+		FC65B27821A3D44600DC9999 /* StartCampaignVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartCampaignVC.swift; sourceTree = "<group>"; };
+		FC65B27A21A3D46D00DC9999 /* StartCampaignCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartCampaignCell.swift; sourceTree = "<group>"; };
 		FC6A331620656820007CE88C /* MyCustomerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCustomerVC.swift; sourceTree = "<group>"; };
 		FC6A331920657048007CE88C /* AddCustomerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCustomerVC.swift; sourceTree = "<group>"; };
 		FC6A331B2065855F007CE88C /* ViewAndEditCustomerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewAndEditCustomerVC.swift; sourceTree = "<group>"; };
@@ -479,6 +508,9 @@
 		FC8C398B2054394900C97602 /* FSPagerViewLayoutAttributes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FSPagerViewLayoutAttributes.swift; sourceTree = "<group>"; };
 		FC8C398C2054394900C97602 /* FSPageViewTransformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FSPageViewTransformer.swift; sourceTree = "<group>"; };
 		FC8C398D2054394900C97602 /* FSPageViewLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FSPageViewLayout.swift; sourceTree = "<group>"; };
+		FC8FCE6721B1308400213670 /* HelpGuideVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpGuideVC.swift; sourceTree = "<group>"; };
+		FC8FCE6921B133A900213670 /* HelpGuideCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpGuideCell.swift; sourceTree = "<group>"; };
+		FC8FCE6B21B1576300213670 /* pdfViewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pdfViewVC.swift; sourceTree = "<group>"; };
 		FC90144D213CFD1300B4E2BB /* NewSetTimeIntervalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSetTimeIntervalVC.swift; sourceTree = "<group>"; };
 		FC99EA70208BF2D4005BD8F8 /* CollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewCell.swift; sourceTree = "<group>"; };
 		FC99EA72208BF77A005BD8F8 /* CompanyCampaignDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyCampaignDetailVC.swift; sourceTree = "<group>"; };
@@ -509,6 +541,7 @@
 		FCA6751D212A845300A389DF /* PackagesFilterVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackagesFilterVC.swift; sourceTree = "<group>"; };
 		FCA67520212A941200A389DF /* Packages.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Packages.storyboard; sourceTree = "<group>"; };
 		FCA67526212AA24300A389DF /* SHPopup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SHPopup.swift; sourceTree = "<group>"; };
+		FCA879D321A574A800BCDC22 /* NewCftLocVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCftLocVC.swift; sourceTree = "<group>"; };
 		FCAFD6CA2025F3DE00233292 /* SuccessEnSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SuccessEnSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FCAFD6CD2025F3DE00233292 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FCAFD6CF2025F3DE00233292 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -668,6 +701,9 @@
 		FCE76EC7210C3B6E00A8AFAB /* GoogleMaps.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GoogleMaps.bundle; path = Pods/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle; sourceTree = SOURCE_ROOT; };
 		FCEEDBF620DC1AEE00D60A1D /* EventListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventListVC.swift; sourceTree = "<group>"; };
 		FCEEDBF820DC1B1700D60A1D /* EventListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventListCell.swift; sourceTree = "<group>"; };
+		FCF0846421AC0D88004C6DBA /* SavedDocListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedDocListVC.swift; sourceTree = "<group>"; };
+		FCF0846621AD1F50004C6DBA /* StartTextCampaignVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartTextCampaignVC.swift; sourceTree = "<group>"; };
+		FCF0846821AD533D004C6DBA /* StartTextCampCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartTextCampCell.swift; sourceTree = "<group>"; };
 		FCF113AC21180DFA0074EB46 /* CFTUserListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CFTUserListVC.swift; sourceTree = "<group>"; };
 		FCF113AE211815410074EB46 /* CFTUserListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CFTUserListCell.swift; sourceTree = "<group>"; };
 		FCF48FBB2053258E00DCD76B /* EmailCampaignDashboardVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailCampaignDashboardVC.swift; sourceTree = "<group>"; };
@@ -757,6 +793,8 @@
 				FC90144D213CFD1300B4E2BB /* NewSetTimeIntervalVC.swift */,
 				FCBF1A75216F356F0009918C /* RemoveMemberVC.swift */,
 				FCBF1A77216F35B50009918C /* RemoveMemberCell.swift */,
+				FCF0846621AD1F50004C6DBA /* StartTextCampaignVC.swift */,
+				FCF0846821AD533D004C6DBA /* StartTextCampCell.swift */,
 			);
 			path = "Text Campaing";
 			sourceTree = "<group>";
@@ -787,6 +825,21 @@
 			path = "CFT Feedback";
 			sourceTree = "<group>";
 		};
+		FC3707C82190087C007E7510 /* Vision Board */ = {
+			isa = PBXGroup;
+			children = (
+				FC3707C9219008AB007E7510 /* VisionBoard.storyboard */,
+				FC3707CB219008D2007E7510 /* DashboardVB.swift */,
+				FC3707CD2190131B007E7510 /* DetailsVB.swift */,
+				FC572122219A78D00091F292 /* VBCell.swift */,
+				FC572124219A92840091F292 /* ViewDetailsVB.swift */,
+				FC572126219AA8610091F292 /* AACarousel.swift */,
+				FC572148219FEF6E0091F292 /* AddVB.swift */,
+				FCF0846421AC0D88004C6DBA /* SavedDocListVC.swift */,
+			);
+			path = "Vision Board";
+			sourceTree = "<group>";
+		};
 		FC3C87F9208D1E9F00F0DD6A /* Company Campaign */ = {
 			isa = PBXGroup;
 			children = (
@@ -814,6 +867,8 @@
 				FC3C884F2090E3DB00F0DD6A /* EmailDetailsCell.swift */,
 				FCBF1A7B216F4D6D0009918C /* RemoveEmailVC.swift */,
 				FCBF1A79216F4D500009918C /* RemoveEmailCell.swift */,
+				FC65B27821A3D44600DC9999 /* StartCampaignVC.swift */,
+				FC65B27A21A3D46D00DC9999 /* StartCampaignCell.swift */,
 			);
 			path = "Custom Campaign";
 			sourceTree = "<group>";
@@ -860,6 +915,7 @@
 				FC5CFEB1204EE7CA004A7EC1 /* DrawerCell.xib */,
 				FC5CFEB2204EE7CB004A7EC1 /* DrawerProtocol.swift */,
 				FC5CFEB0204EE7CA004A7EC1 /* DrawerView.swift */,
+				FC3707C6218D8F08007E7510 /* DrawerSubmenuCell.xib */,
 			);
 			path = SliderView;
 			sourceTree = "<group>";
@@ -952,6 +1008,7 @@
 				FCA2DA59209755F700EA3A0D /* My Group */,
 				FCA2DA7120A3309300EA3A0D /* PopUpAssignCampaign.swift */,
 				FCA2DA7320A330C800EA3A0D /* AssignCampaignCell.swift */,
+				FC65B27621A2BEA500DC9999 /* AssignECforMultipleCrm.swift */,
 			);
 			path = "CRM Module";
 			sourceTree = "<group>";
@@ -1036,7 +1093,6 @@
 				FC8C398B2054394900C97602 /* FSPagerViewLayoutAttributes.swift */,
 				FC8C398D2054394900C97602 /* FSPageViewLayout.swift */,
 				FC8C398C2054394900C97602 /* FSPageViewTransformer.swift */,
-				FCD7815B205C1E4000F8800B /* TagListView */,
 				FC3C87FF208E108B00F0DD6A /* SetTimeIntervalVC.swift */,
 				FC3C8801208E296D00F0DD6A /* EditTemplateVC.swift */,
 				FCE68FB920920CEA0009FBBF /* AddTemplateVC.swift */,
@@ -1044,6 +1100,7 @@
 				FC3C8805208F630900F0DD6A /* TemplateSelectionCell.swift */,
 				FCDBAD8E2137CD9F0015BCE9 /* SetIntervalCell.swift */,
 				FCC18140213E6CF10012197A /* NewEmailSetTimeIntervalVC.swift */,
+				FCD7815B205C1E4000F8800B /* TagListView */,
 			);
 			path = "Email Campaign";
 			sourceTree = "<group>";
@@ -1141,6 +1198,7 @@
 		FCAFD6CC2025F3DE00233292 /* SuccessEnSwift */ = {
 			isa = PBXGroup;
 			children = (
+				FC3707C82190087C007E7510 /* Vision Board */,
 				FCF9669620EB4EBB00DE94A4 /* SuccessEnSwift.entitlements */,
 				FCAFD6CD2025F3DE00233292 /* AppDelegate.swift */,
 				FCAFD6DF2025F40200233292 /* AppCommon.swift */,
@@ -1272,6 +1330,7 @@
 				FCBF1A422164C3290009918C /* VPAutoComplete.swift */,
 				FCBF1A432164C3290009918C /* VPAutoCompleteViewCell.swift */,
 				FCBF1A412164C3280009918C /* VPAutoCompleteViewCell.xib */,
+				FCA879D321A574A800BCDC22 /* NewCftLocVC.swift */,
 			);
 			path = "CFT Community";
 			sourceTree = "<group>";
@@ -1495,6 +1554,9 @@
 				FCE3C04A20A8AFE000E539D7 /* SupportVC.swift */,
 				FCE3C04C20A8AFFA00E539D7 /* FeedbackVC.swift */,
 				FCE3C04E20A8CAAC00E539D7 /* FaqCell.swift */,
+				FC8FCE6721B1308400213670 /* HelpGuideVC.swift */,
+				FC8FCE6921B133A900213670 /* HelpGuideCell.swift */,
+				FC8FCE6B21B1576300213670 /* pdfViewVC.swift */,
 			);
 			path = "CMS Pages";
 			sourceTree = "<group>";
@@ -1564,6 +1626,9 @@
 							com.apple.Maps.iOS = {
 								enabled = 0;
 							};
+							com.apple.Push = {
+								enabled = 1;
+							};
 							com.apple.iCloud = {
 								enabled = 1;
 							};
@@ -1631,9 +1696,11 @@
 				FCAFD6D82025F3DE00233292 /* LaunchScreen.storyboard in Resources */,
 				FCD90290206EAB8A00A981C7 /* credentials.plist in Resources */,
 				FC5CFECC204F4852004A7EC1 /* WeeklyTracking.storyboard in Resources */,
+				FC3707C7218D8F08007E7510 /* DrawerSubmenuCell.xib in Resources */,
 				FCAFD6D52025F3DE00233292 /* Assets.xcassets in Resources */,
 				FCD35AE8215219DA0068C4FD /* CftLoc5.xib in Resources */,
 				FCD78167206020B800F8800B /* CRM.storyboard in Resources */,
+				FC3707CA219008AB007E7510 /* VisionBoard.storyboard in Resources */,
 				FCAFD6D32025F3DE00233292 /* Main.storyboard in Resources */,
 				FCD35ACF2151195F0068C4FD /* AddEmail2.xib in Resources */,
 				FCD35AED215241090068C4FD /* AddMember2.xib in Resources */,
@@ -1804,15 +1871,18 @@
 				FCBE0A7D20C1962F008483C4 /* AccessSettingCell.swift in Sources */,
 				FCBF1A81217436AA0009918C /* TeamCampaignsVC.swift in Sources */,
 				FCBBF4FC2052C1AC008A430F /* PopUpWeeklyRepeatTVC.swift in Sources */,
+				FC572125219A92840091F292 /* ViewDetailsVB.swift in Sources */,
 				FCBBF4FE2052E577008A430F /* PopUpMonthlyRepeatTVC.swift in Sources */,
 				FCD35B0E215610740068C4FD /* GrowingTextView.swift in Sources */,
 				FCD90283206EA59300A981C7 /* NetworkController.swift in Sources */,
+				FC65B27721A2BEA500DC9999 /* AssignECforMultipleCrm.swift in Sources */,
 				FC1B08E72102ED2300F39FE4 /* RadioButton.swift in Sources */,
 				FCBBF50420530F93008A430F /* TimeAnalysisVC.swift in Sources */,
 				FCA6751E212A845300A389DF /* PackagesFilterVC.swift in Sources */,
 				FCAFD6E02025F40200233292 /* AppCommon.swift in Sources */,
 				FC794D8520AE138B002A7984 /* SirenViewController.swift in Sources */,
 				FC6A332520693300007CE88C /* ShowHideGoalsVC.swift in Sources */,
+				FCF0846721AD1F50004C6DBA /* StartTextCampaignVC.swift in Sources */,
 				FC99EA77208D1339005BD8F8 /* CustomCampaignVC.swift in Sources */,
 				FCC181472144AA0C0012197A /* EditViewRecruitVCNew.swift in Sources */,
 				FCBE0A9120C1B97D008483C4 /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */,
@@ -1839,6 +1909,7 @@
 				FC1427EC202B77950055BADC /* Reachability.swift in Sources */,
 				FCC1818C214E00DE0012197A /* EmailCampaignView.swift in Sources */,
 				FC6A331C2065855F007CE88C /* ViewAndEditCustomerVC.swift in Sources */,
+				FC3707CC219008D2007E7510 /* DashboardVB.swift in Sources */,
 				FCBE0A8720C1B7E4008483C4 /* UIViewController+BIZChildViewController.m in Sources */,
 				FCAFD6E52025F58D00233292 /* TabLayout.swift in Sources */,
 				FCBF1A8D2175A2D30009918C /* TeamCampaignDetailCell.swift in Sources */,
@@ -1846,6 +1917,7 @@
 				FCA2DA642098B5E600EA3A0D /* TagView.swift in Sources */,
 				FC5CFED420506DF2004A7EC1 /* WeeklyScoreGraphVC.swift in Sources */,
 				FCAFD6D02025F3DE00233292 /* ViewController.swift in Sources */,
+				FCA879D421A574A800BCDC22 /* NewCftLocVC.swift in Sources */,
 				FC8C39922054394A00C97602 /* FSPagerViewLayoutAttributes.swift in Sources */,
 				FC5CFED720517939004A7EC1 /* CalenderVC.swift in Sources */,
 				FCBBF4FA2052C0B1008A430F /* PKYStepper.m in Sources */,
@@ -1861,6 +1933,7 @@
 				FCBF1A78216F35B50009918C /* RemoveMemberCell.swift in Sources */,
 				FC1427E5202B5FCD0055BADC /* ReorderController.swift in Sources */,
 				FC1B08E52101DDE500F39FE4 /* DailyTopTenCell.swift in Sources */,
+				FC572123219A78D00091F292 /* VBCell.swift in Sources */,
 				FC618DAB2119A2A000AF2A3E /* CustomOverlay.swift in Sources */,
 				FC763C9E204D861100230CF9 /* LineChart.swift in Sources */,
 				FC794D7C20AE138B002A7984 /* SirenBundleExtension.swift in Sources */,
@@ -1873,7 +1946,9 @@
 				FC5CFEE720518388004A7EC1 /* JJFloatingActionButtonState.swift in Sources */,
 				FCF48FC02053280500DCD76B /* CompanyCampaignVC.swift in Sources */,
 				FCF9669320EA538500DE94A4 /* EditTextCampaignVC.swift in Sources */,
+				FC572149219FEF6E0091F292 /* AddVB.swift in Sources */,
 				FCC18188214CCCE20012197A /* WalkthroughViewController.swift in Sources */,
+				FCF0846521AC0D88004C6DBA /* SavedDocListVC.swift in Sources */,
 				FC0B3B1F20E908B10040D4D9 /* TextCampDetailVC.swift in Sources */,
 				FCBF1A452164C32A0009918C /* VPAutoComplete.swift in Sources */,
 				FC1427E3202B5FCD0055BADC /* UITableView+Reorder.swift in Sources */,
@@ -1900,8 +1975,10 @@
 				FC8C39912054394A00C97602 /* FSPageControl.swift in Sources */,
 				FC8C398F2054394A00C97602 /* FSPagerViewCell.swift in Sources */,
 				FC5CFEEE20518388004A7EC1 /* JJCircleView.swift in Sources */,
+				FC8FCE6A21B133A900213670 /* HelpGuideCell.swift in Sources */,
 				FCEEDBF920DC1B1700D60A1D /* EventListCell.swift in Sources */,
 				FCD90285206EA5A700A981C7 /* GoogleContactXMLDeserializable.swift in Sources */,
+				FC65B27921A3D44600DC9999 /* StartCampaignVC.swift in Sources */,
 				FCD90281206E9C5300A981C7 /* GmailContactVC.swift in Sources */,
 				FC99EA75208BF7B3005BD8F8 /* CompanyCampDetailCell.swift in Sources */,
 				FCD7816B2060307500F8800B /* CrmHeaderCell.swift in Sources */,
@@ -1914,6 +1991,7 @@
 				FCA61D5521132CF500369A07 /* LocationTracker.swift in Sources */,
 				FC2523A520B34DA3005321FB /* CFTFeedbackDashboard.swift in Sources */,
 				FC2523CF20B7457E005321FB /* TaskListVC.swift in Sources */,
+				FCF0846921AD533D004C6DBA /* StartTextCampCell.swift in Sources */,
 				FCBF1A6C216CE91A0009918C /* ViewNoteDetails.swift in Sources */,
 				FCBF1A70216DE3B10009918C /* ScratchNotificationVC.swift in Sources */,
 				FCC18141213E6CF10012197A /* NewEmailSetTimeIntervalVC.swift in Sources */,
@@ -1924,6 +2002,7 @@
 				FCBF1A852174819B0009918C /* AddTeamCampaignVC.swift in Sources */,
 				FCBF1A83217479270009918C /* TeamCampaignCell.swift in Sources */,
 				FC5CFECA204F47F9004A7EC1 /* WeeklyTrackingVC.swift in Sources */,
+				FC8FCE6821B1308400213670 /* HelpGuideVC.swift in Sources */,
 				FC794D8720AE138B002A7984 /* SirenDelegate.swift in Sources */,
 				FCA2DA8520A4C71600EA3A0D /* AddEditGoalsVC.swift in Sources */,
 				FCF113AF211815410074EB46 /* CFTUserListCell.swift in Sources */,
@@ -1937,6 +2016,7 @@
 				FC3C8846208FBAAF00F0DD6A /* SetSelfReminderVC.swift in Sources */,
 				FC3C8800208E108B00F0DD6A /* SetTimeIntervalVC.swift in Sources */,
 				FCE76EC6210AD95400A8AFAB /* WeeklyArchiveVC.swift in Sources */,
+				FC572127219AA8610091F292 /* AACarousel.swift in Sources */,
 				FC7F3B6B20CF374B005C0660 /* DeleteRecurringEvent.swift in Sources */,
 				FCBF1A89217493EA0009918C /* AddTemplateForTC.swift in Sources */,
 				FCBE0A7B20C1961A008483C4 /* AccessSettingVC.swift in Sources */,
@@ -1966,6 +2046,7 @@
 				FC3C8806208F630900F0DD6A /* TemplateSelectionCell.swift in Sources */,
 				FC6A3327206A8C54007CE88C /* AddRecruitVC.swift in Sources */,
 				FC5CFED020506D04004A7EC1 /* WeeklyGraphVC.swift in Sources */,
+				FC3707CE2190131B007E7510 /* DetailsVB.swift in Sources */,
 				FCA2DA7B20A395B800EA3A0D /* UITextField+fixCaretPosition.swift in Sources */,
 				FCF9668F20E9EC8500DE94A4 /* TextTemplatePreviewVC.swift in Sources */,
 				FC6A331A20657048007CE88C /* AddCustomerVC.swift in Sources */,
@@ -1999,8 +2080,10 @@
 				FCA2DA6E209B50A800EA3A0D /* EditGroupCell.swift in Sources */,
 				FC6A3329206A98DA007CE88C /* ViewAndEditRecruitVC.swift in Sources */,
 				FC8181632057100D0013BF02 /* AddEmailTVC.swift in Sources */,
+				FC65B27B21A3D46D00DC9999 /* StartCampaignCell.swift in Sources */,
 				FC5CFEC3204F2C75004A7EC1 /* MyExpandableTableViewSectionHeader.swift in Sources */,
 				FCF9158F20B3397E008518F7 /* ACTabScrollView+Protocol.swift in Sources */,
+				FC8FCE6C21B1576300213670 /* pdfViewVC.swift in Sources */,
 				FC5CFEEB20518388004A7EC1 /* AnimationConfiguration.swift in Sources */,
 				FCD9028C206EA61900A981C7 /* SWXMLHash+TypeConversion.swift in Sources */,
 				FC618DA021199F6400AF2A3E /* SwiftyOnboard.swift in Sources */,
@@ -2113,6 +2196,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.0;
 				SWIFT_WHOLE_MODULE_OPTIMIZATION = YES;
 			};
 			name = Debug;
@@ -2165,6 +2249,7 @@
 				PROVISIONING_PROFILE = "0ae725cf-1645-4dda-8a47-5740a87b8974";
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 4.0;
 				SWIFT_WHOLE_MODULE_OPTIMIZATION = YES;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -2188,10 +2273,10 @@
 				INFOPLIST_FILE = SuccessEnSwift/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.bringmax.BringMaxDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bundle.Successen;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "229aa89d-eb0d-48da-8e95-989a5c58feb1";
-				PROVISIONING_PROFILE_SPECIFIER = "BringMax Demo Dev Prof";
+				PROVISIONING_PROFILE_SPECIFIER = "SE dev profile";
 				SWIFT_OBJC_BRIDGING_HEADER = "SuccessEnSwift/ModalClass/SuccessEnSwift-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
@@ -2217,10 +2302,10 @@
 				INFOPLIST_FILE = SuccessEnSwift/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.bringmax.BringMaxDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bundle.Successen;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "229aa89d-eb0d-48da-8e95-989a5c58feb1";
-				PROVISIONING_PROFILE_SPECIFIER = "BringMax Demo Dev Prof";
+				PROVISIONING_PROFILE = "efae2fbc-1459-4093-ac55-f0c8338487f7";
+				PROVISIONING_PROFILE_SPECIFIER = "SE dev profile";
 				SWIFT_OBJC_BRIDGING_HEADER = "SuccessEnSwift/ModalClass/SuccessEnSwift-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 1;

@@ -61,24 +61,6 @@ class DailyChecklistView: SliderVC, TableViewReorderDelegate, UITableViewDataSou
         self.dropDown.optionsTextAlignment = NSTextAlignment.center
     }
     
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(true)
-//
-//        let moduleIds = UserDefaults.standard.value(forKey: "PACKAGES") as? [String] ?? []
-//        if moduleIds.contains(moduleId) {
-//
-//            if let vc = UIStoryboard(name: "Packages", bundle: nil).instantiateViewController(withIdentifier: "idPackagesFilterVC") as? PackagesFilterVC {
-//
-//                let bizVC = BIZPopupViewController.init(contentViewController: vc, contentSize: CGSize(width: self.view.frame.width - 30, height: 300))
-//                bizVC?.showDismissButton = true
-//                self.present(bizVC!, animated: false, completion: nil)
-//            }
-//
-//        }
-//
-//    }
-    
-    
     func createIntroductionView(){
         let ingropage1 = EAIntroPage.init(customViewFromNibNamed: "page1")
         let ingropage2 = EAIntroPage.init(customViewFromNibNamed: "page2")

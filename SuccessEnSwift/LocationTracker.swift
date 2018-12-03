@@ -29,15 +29,19 @@ class LocationTracker: NSObject, CLLocationManagerDelegate {
         locman.requestAlwaysAuthorization()
         switch CLLocationManager.authorizationStatus() {
         case .notDetermined:
+            
             locman.delegate = self
-            locman.desiredAccuracy = kCLLocationAccuracyBest
-            locman.distanceFilter = kCLDistanceFilterNone
-//            locman.startMonitoringSignificantLocationChanges()
             locman.startUpdatingLocation()
+            locman.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+            locman.activityType = CLActivityType.otherNavigation
+            locman.distanceFilter = 1
+            locman.headingFilter = 1
+            locman.startMonitoringSignificantLocationChanges()
 
         case .restricted:
             break
         case .denied:
+            
 //            let alertController = UIAlertController(title: "\"SuccessEntellus\" would like to access your location.", message: "SuccessEntellus app needs access to your current location to connect you with CFTs near you. If you are a CFT, then your current location will be tracked. Please click Settings and select Always for best optimal experience and maximum sales leads.", preferredStyle: .alert)
 //            let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) -> Void in
 //                guard let settingsUrl = URL(string: UIApplicationOpenSettingsURLString) else {
@@ -54,21 +58,20 @@ class LocationTracker: NSObject, CLLocationManagerDelegate {
             break
         case .authorizedAlways:
             locman.delegate = self
-            locman.desiredAccuracy = kCLLocationAccuracyBest
-            locman.distanceFilter = kCLDistanceFilterNone
-//            locman.startMonitoringSignificantLocationChanges()
             locman.startUpdatingLocation()
-            //locman.requestAlwaysAuthorization()
-//            locman.allowsBackgroundLocationUpdates = true
-//            locman.pausesLocationUpdatesAutomatically = false
+            locman.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+            locman.activityType = CLActivityType.otherNavigation
+            locman.distanceFilter = 1
+            locman.headingFilter = 1
+            locman.startMonitoringSignificantLocationChanges()
         case .authorizedWhenInUse:
             locman.delegate = self
-            locman.desiredAccuracy = kCLLocationAccuracyBest
-            locman.distanceFilter = kCLDistanceFilterNone
-//            locman.startMonitoringSignificantLocationChanges()
             locman.startUpdatingLocation()
-//            locman.allowsBackgroundLocationUpdates = true
-//            locman.pausesLocationUpdatesAutomatically = false
+            locman.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+            locman.activityType = CLActivityType.otherNavigation
+            locman.distanceFilter = 1
+            locman.headingFilter = 1
+            locman.startMonitoringSignificantLocationChanges()
         }
     }
     

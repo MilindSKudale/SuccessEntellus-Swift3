@@ -660,7 +660,7 @@ extension CalenderVC {
 ////                    var endTime = dict["ondate"] as! String
 ////                    endTime = endTime.replacingOccurrences(of: "-", with: "")
 ////                    recRule = "RRULE:FREQ=weekly;UNTIL=\(endTime);INTERVAL=\(dict["repeatEvery"] as? String ?? "");BYDAY=\(dict["day"] as? String ?? "")"
-////                }else if endOn == "after" {
+////                }else if` endOn == "after" {
 ////                    recRule = "RRULE:FREQ=weekly;INTERVAL=\(dict["repeatEvery"] as? String ?? "");COUNT=\(dict["Occurences"] as? String ?? "")"
 ////                }else{
 ////                    recRule = "RRULE:FREQ=weekly;UNTIL=20250628;BYDAY=\(dict["day"] as? String ?? "")"

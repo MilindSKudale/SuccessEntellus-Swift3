@@ -111,7 +111,7 @@ class MyGroupVC: SliderVC, UITextFieldDelegate {
                 self.arrSelectedRecords = []
                 for obj in self.arrGroupData {
                     self.arrGroupName.append(obj.value(forKey: "group_name") as! String)
-                    self.arrGroupType.append(obj.value(forKey: "group_type") as AnyObject)
+                    self.arrGroupType.append(obj.value(forKey: "campaign_name") as AnyObject)
                     self.arrGroupMembers.append(obj.value(forKey: "group_member_names") as AnyObject)
                     self.arrGroupId.append(obj.value(forKey: "group_id") as! String)
                 }
@@ -254,14 +254,20 @@ class MyGroupVC: SliderVC, UITextFieldDelegate {
     @IBAction func actionAssignCampaign(_ sender: UIButton) {
         self.arrSelectedRecords.removeAll()
         var arrId = [String]()
+        var arrGName = [String]()
+        
         if isFilter {
             arrId = arrGroupIdSearch
+            arrGName = self.arrGroupNameSearch
         }else{
             arrId = arrGroupId
+            arrGName = self.arrGroupName
         }
+        
         let storyboard = UIStoryboard(name: "CRM", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "idPopUpAssignCampaign") as! PopUpAssignCampaign
         vc.contactId = arrId[sender.tag]
+        vc.contactName = "\(arrGName[sender.tag])"
         vc.isGroup = true
         vc.modalPresentationStyle = .custom
         vc.modalTransitionStyle = .crossDissolve
@@ -287,25 +293,25 @@ extension MyGroupVC: LUExpandableTableViewDataSource {
         }
 
         if isFilter {
-            let grType : [String] = self.arrGroupTypeSearch[indexPath.section] as! [String]
-            var grTypeVal = ""
-            for i in 0..<grType.count {
-                if grType[i] != "" {
-                    if i == grType.count - 1 {
-                        grTypeVal = grTypeVal.appending("\(grType[i])")
-                    }else{
-                        grTypeVal = grTypeVal.appending("\(grType[i]), ")
-                    }
-                }
-            }
+          //  let grType : [String] = self.arrGroupTypeSearch[indexPath.section] as! [String]
+            let grTypeVal = self.arrGroupTypeSearch[indexPath.section] as! String
+//            for i in 0..<grType.count {
+//                if grType[i] != "" {
+//                    if i == grType.count - 1 {
+//                        grTypeVal = grTypeVal.appending("\(grType[i])")
+//                    }else{
+//                        grTypeVal = grTypeVal.appending("\(grType[i]), ")
+//                    }
+//                }
+//            }
             let formattedString = NSMutableAttributedString()
             formattedString
-                .bold("Group type : ")
+                .bold("Assigned email campaigns : ")
                 .normal(grTypeVal)
             
             cell.lblGrType.attributedText = formattedString
-            cell.lblGrType.lineBreakMode = .byWordWrapping
-            cell.lblGrType.numberOfLines = 0
+            cell.lblGrType.lineBreakMode = .byTruncatingTail
+            cell.lblGrType.numberOfLines = 2
             
             let grMemb : [String] = self.arrGroupMembersSearch[indexPath.section] as! [String]
             var grMembVal = ""
@@ -325,28 +331,29 @@ extension MyGroupVC: LUExpandableTableViewDataSource {
                 .normal(grMembVal)
             
             cell.lblGrMembers.attributedText = formattedStr
-            cell.lblGrMembers.lineBreakMode = .byWordWrapping
-            cell.lblGrMembers.numberOfLines = 0
+            cell.lblGrMembers.lineBreakMode = .byTruncatingTail
+            cell.lblGrMembers.numberOfLines = 2
         }else{
-            let grType : [String] = self.arrGroupType[indexPath.section] as! [String]
-            var grTypeVal = ""
-            for i in 0..<grType.count {
-                if grType[i] != "" {
-                    if i == grType.count - 1 {
-                        grTypeVal = grTypeVal.appending("\(grType[i])")
-                    }else{
-                        grTypeVal = grTypeVal.appending("\(grType[i]), ")
-                    }
-                }
-            }
+           // let grType : [String] = self.arrGroupType[indexPath.section] as! [String]
+            let grTypeVal = self.arrGroupType[indexPath.section] as? String ?? ""
+//            let arrGrVal = grTypeVal.components(separatedBy: ",")
+//            for i in 0..<arrGrVal.count {
+//                if arrGrVal[i] != "" {
+//                    if i == arrGrVal.count - 1 {
+//                        grTypeVal = grTypeVal.appending("\(grType[i])")
+//                    }else{
+//                        grTypeVal = grTypeVal.appending("\(grType[i]), ")
+//                    }
+//                }
+//            }
             let formattedString = NSMutableAttributedString()
             formattedString
-                .bold("Group type : ")
+                .bold("Assigned email campaigns : ")
                 .normal(grTypeVal)
 
             cell.lblGrType.attributedText = formattedString
-            cell.lblGrType.lineBreakMode  = .byWordWrapping
-            cell.lblGrType.numberOfLines  = 0
+            cell.lblGrType.lineBreakMode  = .byTruncatingTail
+            cell.lblGrType.numberOfLines  = 2
             
             let grMemb : [String] = self.arrGroupMembers[indexPath.section] as! [String]
             var grMembVal = ""
@@ -365,8 +372,8 @@ extension MyGroupVC: LUExpandableTableViewDataSource {
                 .normal(grMembVal)
             
             cell.lblGrMembers.attributedText = formattedStr
-            cell.lblGrMembers.lineBreakMode  = .byWordWrapping
-            cell.lblGrMembers.numberOfLines  = 0
+            cell.lblGrMembers.lineBreakMode  = .byTruncatingTail
+            cell.lblGrMembers.numberOfLines  = 2
         }
     
         cell.btnViewMore.setTitle("View More", for: .normal)
@@ -382,7 +389,7 @@ extension MyGroupVC: LUExpandableTableViewDataSource {
         cell.btnAssignCampaign.tag = indexPath.section
 
         cell.btnEdit.addTarget(self, action: #selector(actionEditRecord), for: .touchUpInside)
-        cell.btnViewMore.addTarget(self, action: #selector(actionEditRecord), for: .touchUpInside)
+        cell.btnViewMore.addTarget(self, action: #selector(viewGroupDetails(_:)), for: .touchUpInside)
         cell.btnDelete.addTarget(self, action: #selector(actionDeleteRecord), for: .touchUpInside)
         cell.btnAssignCampaign.addTarget(self, action: #selector(actionAssignCampaign), for: .touchUpInside)
         
@@ -426,7 +433,7 @@ extension MyGroupVC: LUExpandableTableViewDataSource {
 // MARK: - LUExpandableTableViewDelegate
 
 extension MyGroupVC: LUExpandableTableViewDelegate {
-    func expandableTableView(_ expandableTableView: LUExpandableTableView, heightForRowAt indexPath: IndexPath) -> CGFloat { return 160 }
+    func expandableTableView(_ expandableTableView: LUExpandableTableView, heightForRowAt indexPath: IndexPath) -> CGFloat { return 180 }
     
     func expandableTableView(_ expandableTableView: LUExpandableTableView, heightForHeaderInSection section: Int) -> CGFloat { return 44.0 }
     
@@ -462,6 +469,21 @@ extension MyGroupVC: LUExpandableTableViewDelegate {
 }
 
 extension MyGroupVC {
+    
+    @objc func viewGroupDetails(_ sender:UIButton){
+        var arrId = [String]()
+        if isFilter {
+            arrId = arrGroupIdSearch
+        }else{
+            arrId = arrGroupId
+        }
+        print("Did select section header at section \(sender.tag)")
+        let storyboard = UIStoryboard(name: "CRM", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "idGroupDetailsVC") as! GroupDetailsVC
+        vc.groupId = arrId[sender.tag]
+        vc.modalTransitionStyle = .crossDissolve
+        self.present(vc, animated: false, completion: nil)
+    }
     
     func editGroup(GroupId: String){
         let storyboard = UIStoryboard(name: "CRM", bundle: nil)
@@ -539,7 +561,7 @@ extension MyGroupVC {
 
 extension NSMutableAttributedString {
     @discardableResult func bold(_ text: String) -> NSMutableAttributedString {
-        let attrs: [NSAttributedStringKey: Any] = [.font: UIFont.boldSystemFont(ofSize: 15)]
+        let attrs: [NSAttributedStringKey: Any] = [.font: UIFont.boldSystemFont(ofSize: 17)]
         let boldString = NSMutableAttributedString(string:text, attributes: attrs)
         append(boldString)
         

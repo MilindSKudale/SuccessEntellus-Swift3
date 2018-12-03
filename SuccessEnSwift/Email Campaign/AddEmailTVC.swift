@@ -18,6 +18,8 @@ class AddEmailTVC: UIViewController {
    // @IBOutlet var txtPhone : SkyFloatingLabelTextField!
     @IBOutlet var btnClose : UIButton!
     @IBOutlet var btnAddEmail : UIButton!
+    @IBOutlet var btnAddAndStartCamp : UIButton!
+ //   @IBOutlet var btnAddAndStartCampHeight : NSLayoutConstraint!
     
     var arrGroupTitle = [String]()
     var arrGroupID = [String]()
@@ -51,6 +53,7 @@ class AddEmailTVC: UIViewController {
     func designUI(){
         btnClose.layer.cornerRadius = 5.0
         btnAddEmail.layer.cornerRadius = 5.0
+        btnAddAndStartCamp.layer.cornerRadius = 5.0
         lblCampaignTitle.text = campaignTitle
     }
     
@@ -60,7 +63,12 @@ class AddEmailTVC: UIViewController {
     
     @IBAction func actionBtnAddEmail(_ sender: Any) {
         if isValidation() == true {
-            checkEmailIsExists()
+            checkEmailIsExists(isAdd:"0")
+        }
+    }
+    @IBAction func actionBtnAddAndStartCampaign(_ sender: Any) {
+        if isValidation() == true {
+            checkEmailIsExists(isAdd:"1")
         }
     }
 }
@@ -117,7 +125,7 @@ extension AddEmailTVC {
         }
     }
     
-    func checkEmailIsExists() {
+    func checkEmailIsExists(isAdd:String) {
         
         let dictParam = ["userId": userID,
                          "platform":"3",
@@ -136,7 +144,12 @@ extension AddEmailTVC {
             if success == "true"{
                 let result = JsonDict!["result"] as! String
                 print(result)
-                self.addEmailAPI()
+                if isAdd == "1" {
+                    self.addEmailAPI(addAndAssinged: "1")
+                }else{
+                    self.addEmailAPI(addAndAssinged: "0")
+                }
+                
             }else{
                 let result = JsonDict!["result"] as! String
                 OBJCOM.setAlert(_title: "", message: result)
@@ -145,7 +158,7 @@ extension AddEmailTVC {
         };
     }
     
-    func addEmailAPI() {
+    func addEmailAPI(addAndAssinged:String) {
         if callFirst == true {
             let dictParam = ["userId": userID,
                              "platform":"3",
@@ -154,7 +167,8 @@ extension AddEmailTVC {
                              "email":txtEmail.text!,
                              "phone":"",
                              "groupId":groupId,
-                             "campaignId":campaignId]
+                             "campaignId":campaignId,
+                             "addAndAssinged":addAndAssinged]
             
             let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
             let jsonString = String(data: jsonData!, encoding: .utf8)

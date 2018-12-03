@@ -41,10 +41,10 @@ class SetSelfReminderVC: UIViewController, UITextViewDelegate {
                 btnSMSEmail.isSelected = true
                 btnEmail.isSelected = false
             }
-            btnSubmit.setTitle("Update", for: .normal)
+            btnSubmit.setTitle("Update Reminder", for: .normal)
         }else{
             btnEmail.isSelected = true
-            btnSubmit.setTitle("Add", for: .normal)
+            btnSubmit.setTitle("Set Reminder", for: .normal)
         }
         txtNotes.text = "This is a self-reminder for yourself. We'll send you with the status of prospects email."
         txtNotes.textColor = UIColor.lightGray

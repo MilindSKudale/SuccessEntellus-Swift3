@@ -185,7 +185,7 @@ extension UIImageView {
             if error != nil {
                 print(error ?? "")
                 DispatchQueue.main.async {
-                    self.image = #imageLiteral(resourceName: "profile")
+                    self.image = #imageLiteral(resourceName: "libraryButton")
                 }
                 
                 return

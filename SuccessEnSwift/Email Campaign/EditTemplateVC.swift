@@ -64,6 +64,10 @@ class EditTemplateVC: UIViewController, UIImagePickerControllerDelegate, UIDocum
         return toolbar
     }()
     
+    @IBOutlet var rdoButtonFooterYes: UIButton!
+    @IBOutlet var rdoButtonFooterNo: UIButton!
+    var isFooterShow = ""
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -83,8 +87,8 @@ class EditTemplateVC: UIViewController, UIImagePickerControllerDelegate, UIDocum
             OBJCOM.NoInternetConnectionCall()
         }
         
-        txtEmailSubject.text = emailSubject
-        txtEmailHeading.text = emailHeading
+//        txtEmailSubject.text = emailSubject
+//        txtEmailHeading.text = emailHeading
         
         editorView.layer.cornerRadius = 5.0
         editorView.clipsToBounds = true
@@ -151,11 +155,24 @@ class EditTemplateVC: UIViewController, UIImagePickerControllerDelegate, UIDocum
             if success == "true"{
                 let data = JsonDict!["result"] as! [AnyObject]
                 let result  = data[0]
+                self.txtEmailSubject.text = result["campaignStepSubject"] as? String ?? ""
+                self.txtEmailHeading.text = result["campaignStepTitle"] as? String ?? ""
                 self.timeIntervalValue = result["campaignStepSendInterval"] as? String ?? "0"
                 self.timeIntervalType = result["campaignStepSendIntervalType"] as? String ?? "days"
                 self.txtRepeatWeek.text = result["campRepeatWeeks"] as? String ?? "0"
-                let reminderType = result["campaignStepRepeat"] as? String ?? "0"
                 
+                self.isFooterShow = result["campaignStepFooterFlag"] as? String ?? "0"
+                if self.isFooterShow == "1" {
+                    self.rdoButtonFooterYes.isSelected = true
+                    self.rdoButtonFooterNo.isSelected = false
+                    //self.isFooterShow = "1"
+                }else{
+                    self.rdoButtonFooterYes.isSelected = false
+                    self.rdoButtonFooterNo.isSelected = true
+                }
+                
+                
+                let reminderType = result["campaignStepRepeat"] as? String ?? "0"
                 if reminderType == "1" {
                     self.btnImmediate.isSelected = false
                     self.btnSchedule.isSelected = false
@@ -314,9 +331,9 @@ class EditTemplateVC: UIViewController, UIImagePickerControllerDelegate, UIDocum
         }else{
             if OBJCOM.isConnectedToNetwork(){
                 OBJCOM.setLoader()
-                DispatchQueue.main.async {
+                //DispatchQueue.main.async {
                     self.actionUpdateTemplate()
-                }
+                //}
             }else{
                 OBJCOM.NoInternetConnectionCall()
             }
@@ -439,9 +456,9 @@ extension EditTemplateVC : UITextFieldDelegate {
 
     func textFieldDidEndEditing(_ textField: UITextField) {
         if textField == txtInterval {
-            if txtInterval.text == "" {
-                self.timeIntervalValue = "0"
-                self.timeIntervalType = "days"
+            if txtInterval.text == "" || txtInterval.text == "0" {
+                self.timeIntervalValue = "1"
+                self.timeIntervalType = "hours"
                 self.txtInterval.text = timeIntervalValue
                 self.btnIntervalType.setTitle(timeIntervalType, for: .normal)
             }else{
@@ -641,7 +658,8 @@ extension EditTemplateVC {
                          "selectType": self.isImmediate,
                          "repeat_every_weeks":self.txtRepeatWeek.text!,
                          "repeat_on":self.repeatOn,
-                         "repeat_ends_after":self.repeatEnd] as [String : Any]
+                         "repeat_ends_after":self.repeatEnd,
+                         "campaignStepFooterFlag":self.isFooterShow] as [String : Any]
         print(dictParam)
         
         let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
@@ -846,9 +864,7 @@ extension EditTemplateVC: RichEditorToolbarDelegate {
                 upload.uploadProgress(closure: { (progress) in
                     print(progress)
                 })
-                
                 upload.responseJSON { response in
-                   
                     let data = response.value as AnyObject
                     let success = data["IsSuccess"] as! String
                     if success == "true" {
@@ -860,7 +876,6 @@ extension EditTemplateVC: RichEditorToolbarDelegate {
                         OBJCOM.hideLoader()
                     }
                 }
-                
             case .failure(let encodingError):
                 print(encodingError)
                 break
@@ -939,7 +954,6 @@ extension EditTemplateVC: RichEditorToolbarDelegate {
                 }
             }
         }
-        
     }
 }
 
@@ -1083,5 +1097,15 @@ extension EditTemplateVC  {
         print(self.arrSelectedDays)
     }
     
+    @IBAction func actionIsFooterYes(_ sender : UIButton){
+        self.rdoButtonFooterYes.isSelected = true
+        self.rdoButtonFooterNo.isSelected = false
+        self.isFooterShow = "1"
+    }
+    @IBAction func actionIsFooterNo(_ sender : UIButton){
+        self.rdoButtonFooterYes.isSelected = false
+        self.rdoButtonFooterNo.isSelected = true
+        self.isFooterShow = "0"
+    }
 }
 

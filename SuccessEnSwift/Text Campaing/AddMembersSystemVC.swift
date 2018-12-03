@@ -20,6 +20,9 @@ class AddMembersSystemVC: UIViewController, UITextFieldDelegate {
     @IBOutlet var btnRecruit : UIButton!
     @IBOutlet var btnCancel : UIButton!
     @IBOutlet var btnAssign : UIButton!
+    @IBOutlet var btnAddAndStartCamp : UIButton!
+    @IBOutlet var btnAddAndStartCampHeight : NSLayoutConstraint!
+    
     
     var mainArrayList = [String]()
     var mainArrayID = [String]()
@@ -47,6 +50,16 @@ class AddMembersSystemVC: UIViewController, UITextFieldDelegate {
         btnCancel.clipsToBounds = true
         btnAssign.layer.cornerRadius = 5.0
         btnAssign.clipsToBounds = true
+        btnAddAndStartCamp.layer.cornerRadius = 5.0
+        btnAddAndStartCamp.clipsToBounds = true
+        
+//        if CampaignType == "EmailCampaign" {
+//            self.btnAddAndStartCamp.isHidden = false
+//            self.btnAddAndStartCampHeight.constant = 30.0
+//        }else{
+//            self.btnAddAndStartCamp.isHidden = true
+//            self.btnAddAndStartCampHeight.constant = 0.0
+//        }
         
         self.setSelected(btnContact)
         self.setDeSelected(btnProspect)
@@ -235,11 +248,27 @@ extension AddMembersSystemVC {
             if OBJCOM.isConnectedToNetwork(){
                 OBJCOM.setLoader()
                 if CampaignType == "TextCampaign" {
-                    self.assignTextMembers()
+                    self.assignTextMembers("0")
                 }else if CampaignType == "EmailCampaign" {
-                    self.assignEmaiMembers()
+                    self.assignEmailMembers(addAndAssinged: "0")
                 }
-                
+            }else{
+                OBJCOM.NoInternetConnectionCall()
+            }
+        }
+    }
+    
+    @IBAction func actionBtnAddAndStartCampaign(_ sender: Any) {
+        if self.arrSelectedIDs.count == 0 {
+            OBJCOM.setAlert(_title: "", message: "Please select atleast one member.")
+        }else{
+            if OBJCOM.isConnectedToNetwork(){
+                OBJCOM.setLoader()
+                if CampaignType == "EmailCampaign" {
+                    self.assignEmailMembers(addAndAssinged: "1")
+                }else if CampaignType == "TextCampaign" {
+                    self.assignTextMembers("1")
+                }
             }else{
                 OBJCOM.NoInternetConnectionCall()
             }
@@ -392,12 +421,13 @@ extension AddMembersSystemVC {
         };
     }
    
-    func assignTextMembers(){
+    func assignTextMembers(_ addAndAssinged:String){
         let strSelect = self.arrSelectedIDs.joined(separator: ",")
         let dictParam = ["userId": userID,
                          "platform":"3",
                          "txt_contact_ids": strSelect,
-                         "txtcontactMainCampaignId":CampaignId] as [String : Any]
+                         "txtcontactMainCampaignId":CampaignId,
+                         "addAndAssinged": addAndAssinged] as [String : Any]
         
         let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
         let jsonString = String(data: jsonData!, encoding: .utf8)
@@ -427,12 +457,13 @@ extension AddMembersSystemVC {
         };
     }
     
-    func assignEmaiMembers(){
+    func assignEmailMembers(addAndAssinged:String){
         let strSelect = self.arrSelectedIDs.joined(separator: ",")
         let dictParam = ["userId": userID,
                          "platform":"3",
                          "contact_ids": strSelect,
-                         "contactCampaignAssignId":CampaignId] as [String : Any]
+                         "contactCampaignAssignId":CampaignId,
+                         "addAndAssinged":addAndAssinged] as [String : Any]
         
         let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
         let jsonString = String(data: jsonData!, encoding: .utf8)

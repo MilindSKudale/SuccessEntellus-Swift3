@@ -48,16 +48,24 @@ class PopUpCreateCampaign: UIViewController, UITextFieldDelegate {
     }
     @IBAction func actionBtnSave(_ sender: Any) {
         if isValidation() == true {
-            let campStepId = self.arrSelectedTemplate.joined(separator: ",")
-            print(campStepId)
-            addCampaignAPI(campStepId: campStepId)
+            if self.btnNoneOfThem.isSelected == false && self.arrSelectedTemplate.count > 0 {
+                let campStepId = self.arrSelectedTemplate.joined(separator: ",")
+                print(campStepId)
+                addCampaignAPI(campStepId: campStepId)
+            }else if self.btnNoneOfThem.isSelected == true {
+                addCampaignAPI(campStepId: "")
+            }else{
+                OBJCOM.setAlert(_title: "", message: "Please select atleast one template from list.")
+                return
+            }
+            
         }
     }
 }
 
 extension PopUpCreateCampaign {
     func getCampaignData(dictParam : [String:String], action:String) {
-        
+        //getAllCampaign
         
         let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
         let jsonString = String(data: jsonData!, encoding: .utf8)
@@ -90,11 +98,11 @@ extension PopUpCreateCampaign {
         self.DDSelectCampaign.textColor = .black
         self.DDSelectCampaign.tint = .black
         self.DDSelectCampaign.optionsSize = 15.0
-        self.DDSelectCampaign.placeholder = " Select Campaign"
+        self.DDSelectCampaign.placeholder = " Select Email Campaign"
         self.DDSelectCampaign.optionsTextAlignment = NSTextAlignment.left
         self.DDSelectCampaign.textAlignment = NSTextAlignment.left
         self.DDSelectCampaign.options = self.arrCampaignTitle
-        campaignTitle = " Select Campaign"
+        campaignTitle = " Select Email Campaign"
         self.DDSelectCampaign.didSelect { (item, index) in
             self.campaignTitle = self.arrCampaignTitle[index]
             self.campaignId = self.arrCampaignID[index]
@@ -193,6 +201,9 @@ extension PopUpCreateCampaign {
         if txtCampaignName.text == "" {
             OBJCOM.setAlert(_title: "", message: "Please enter campaign name.")
             isValid = false
+        }else if btnNoneOfThem.isSelected == false && self.campaignTitle == " Select Email Campaign" {
+            OBJCOM.setAlert(_title: "", message: "Please select atleast one campaign from drop down.")
+            isValid = false
         }else{
             isValid = true
         }
@@ -289,7 +300,7 @@ extension PopUpCreateCampaign {
         btnNoneOfThem.isSelected = false
         campaignAndTemplateView.isHidden = false
         self.isCompanyCampaign = false
-        self.DDSelectCampaign.resign()
+        self.DDSelectCampaign.resignFirstResponder()
         
         let dictParam = ["userId": userID,
                          "platform":"3"]
@@ -311,7 +322,7 @@ extension PopUpCreateCampaign {
         btnNoneOfThem.isSelected = true
         campaignAndTemplateView.isHidden = true
         self.isCompanyCampaign = false
-        self.DDSelectCampaign.resign()
+        self.DDSelectCampaign.resignFirstResponder()
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {

@@ -20,7 +20,11 @@ class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMen
     @IBOutlet var btnCancel : UIButton!
     @IBOutlet var btnUpdate : UIButton!
     @IBOutlet var btnAddFiles : UIButton!
-    //@IBOutlet var btnSetInterval : UIButton!
+    //@IBOutlet var btnSetInterval : UIButton!'
+    
+    @IBOutlet var rdoButtonFooterYes: UIButton!
+    @IBOutlet var rdoButtonFooterNo: UIButton!
+    var isFooterShow = "1"
     
     @IBOutlet var btnAddUrls : UIButton!
     @IBOutlet var vwAddUrls : TagListView!
@@ -44,8 +48,8 @@ class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMen
     var templateId = ""
     var CampaignId = ""
 
-    var timeIntervalValue = "0"
-    var timeIntervalType = "Select"
+    var timeIntervalValue = "1"
+    var timeIntervalType = "hours"
     var isImmediate = "1"
     var repeatWeeks = ""
     var repeatOn = ""
@@ -145,8 +149,18 @@ class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMen
                 self.CampaignId = result["txtTemplateCampId"] as? String ?? ""
                 self.txtTemplatename.text = result["txtTemplateTitle"] as? String ?? ""
                 self.lblTxtMessage.text = result["txtTemplateMsg"] as? String ?? ""
-                self.timeIntervalValue = result["txtTemplateInterval"] as? String ?? "0"
+                self.timeIntervalValue = result["txtTemplateInterval"] as? String ?? "1"
                 self.timeIntervalType = result["txtTemplateIntervalType"] as? String ?? "hours"
+                
+                self.isFooterShow = result["txtTemplateFooterFlag"] as? String ?? "0"
+                if self.isFooterShow == "1" {
+                    self.rdoButtonFooterYes.isSelected = true
+                    self.rdoButtonFooterNo.isSelected = false
+                    //self.isFooterShow = "1"
+                }else{
+                    self.rdoButtonFooterYes.isSelected = false
+                    self.rdoButtonFooterNo.isSelected = true
+                }
                 
                 let reminderType = result["txtTemplateRepeat"] as? String ?? "0"
                 
@@ -190,7 +204,7 @@ class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMen
                         }
                     }
                     
-                    self.timeIntervalValue = "0"
+                    self.timeIntervalValue = "1"
                     self.timeIntervalType = "hours"
                     self.txtInterval.text = self.timeIntervalValue
                     self.btnIntervalType.setTitle(self.timeIntervalType, for: .normal)
@@ -212,7 +226,7 @@ class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMen
                         UIView.animate(withDuration: 0.3, animations: {
                             self.view.layoutIfNeeded()
                         })
-                        self.timeIntervalValue = "0"
+                        self.timeIntervalValue = "1"
                         self.timeIntervalType = "hours"
                         self.txtInterval.text = self.timeIntervalValue
                         self.btnIntervalType.setTitle(self.timeIntervalType, for: .normal)
@@ -254,7 +268,6 @@ class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMen
                         let url = URL(fileURLWithPath: filePath)
                         self.arrFile.append(url)
                         self.arrAttachFileId.append(fileId)
-                        
                     }
                 }
                 
@@ -282,12 +295,21 @@ class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMen
     }
     
     @IBAction func actionUpdate(_ sender:UIButton){
-       
-        if OBJCOM.isConnectedToNetwork(){
-            OBJCOM.setLoader()
-            self.updateTextMessage()
+        
+        if self.isImmediate == "1" {
+            if OBJCOM.isConnectedToNetwork(){
+                OBJCOM.setLoader()
+                self.actionCheckMemberAssignedOrNot()
+            }else{
+                OBJCOM.NoInternetConnectionCall()
+            }
         }else{
-            OBJCOM.NoInternetConnectionCall()
+            if OBJCOM.isConnectedToNetwork(){
+                OBJCOM.setLoader()
+                self.updateTextMessage()
+            }else{
+                OBJCOM.NoInternetConnectionCall()
+            }
         }
     }
     
@@ -366,13 +388,14 @@ class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMen
                          "txtTemplateCampId":self.CampaignId,
                          "txtTemplateTitle":txtTemplatename.text!,
                          "txtTemplateMsg": lblTxtMessage.text!,
-                         "txtTemplateInterval":self.txtRepeatWeek.text!,
+                         "txtTemplateInterval":self.timeIntervalValue,
                          "txtTemplateIntervalType":self.timeIntervalType,
                          "addLinkUrl" : self.arrlinks,
                          "selectType": self.isImmediate,
                          "repeat_every_weeks":self.txtRepeatWeek.text!,
                          "repeat_on":self.repeatOn,
-                         "repeat_ends_after":self.repeatEnd] as [String : Any]
+                         "repeat_ends_after":self.repeatEnd,
+                         "txtTemplateFooterFlag":self.isFooterShow] as [String : Any]
         
         let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
         let jsonString = String(data: jsonData!, encoding: .utf8)
@@ -861,8 +884,8 @@ extension EditTextCampTemplate {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         if textField == txtInterval {
-            if txtInterval.text == "" {
-                self.timeIntervalValue = "0"
+            if txtInterval.text == "" || txtInterval.text == "0"{
+                self.timeIntervalValue = "1"
                 self.timeIntervalType = "hours"
                 self.txtInterval.text = timeIntervalValue
                 self.btnIntervalType.setTitle(timeIntervalType, for: .normal)
@@ -878,6 +901,77 @@ extension EditTextCampTemplate {
             return false
         }
         return true
+    }
+    
+    @IBAction func actionIsFooterYes(_ sender : UIButton){
+        self.rdoButtonFooterYes.isSelected = true
+        self.rdoButtonFooterNo.isSelected = false
+        self.isFooterShow = "1"
+    }
+    @IBAction func actionIsFooterNo(_ sender : UIButton){
+        self.rdoButtonFooterYes.isSelected = false
+        self.rdoButtonFooterNo.isSelected = true
+        self.isFooterShow = "0"
+    }
+    
+    func actionCheckMemberAssignedOrNot() {
+        
+        let dictParam = ["userId" : userID,
+                         "platform": "3",
+                         "txtCampId":self.CampaignId,
+                         "stepId":self.templateId]
+        print(dictParam)
+        let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
+        let jsonString = String(data: jsonData!, encoding: .utf8)
+        let dictParamTemp = ["param":jsonString];
+        
+        typealias JSONDictionary = [String:Any]
+        OBJCOM.modalAPICall(Action: "checkMemberAssignedOrNot", param:dictParamTemp as [String : AnyObject],  vcObject: self) {
+            JsonDict, staus in
+            let success:String = JsonDict!["IsSuccess"] as! String
+            if success == "true"{
+                OBJCOM.hideLoader()
+                let result = JsonDict!["result"] as AnyObject
+                
+                
+                if "\(result)" != "0" {
+                    let alert = UIAlertController(title: nil, message: "Members are assinged with this campaign. Text message will send to that member 'Immediately'. Do you want to proceed?", preferredStyle: .alert)
+                    
+                    let actionOk = UIAlertAction(title: "Proceed", style: .default)
+                    {
+                        UIAlertAction in
+                        if OBJCOM.isConnectedToNetwork(){
+                            OBJCOM.setLoader()
+                            self.updateTextMessage()
+                        }else{
+                            OBJCOM.NoInternetConnectionCall()
+                        }
+                    }
+                    actionOk.setValue(UIColor.black, forKey: "titleTextColor")
+                    let actionCancel = UIAlertAction(title: "Cancel", style: .cancel)
+                    {
+                        UIAlertAction in
+                    }
+                    actionCancel.setValue(UIColor.red, forKey: "titleTextColor")
+                    
+                    alert.addAction(actionOk)
+                    alert.addAction(actionCancel)
+                    self.present(alert, animated: true, completion: nil)
+                }else{
+                    if OBJCOM.isConnectedToNetwork(){
+                        OBJCOM.setLoader()
+                        self.updateTextMessage()
+                    }else{
+                        OBJCOM.NoInternetConnectionCall()
+                    }
+                }
+                
+                
+            }else{
+                print("result:",JsonDict ?? "")
+                OBJCOM.hideLoader()
+            }
+        };
     }
 }
 

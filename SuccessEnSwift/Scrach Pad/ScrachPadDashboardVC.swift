@@ -12,6 +12,7 @@ import UIKit
 class ScrachPadDashboardVC: SliderVC, UITextFieldDelegate {
 
     @IBOutlet weak var notesView : UIView!
+    @IBOutlet weak var noNotesView : UIView!
     @IBOutlet weak var btnTakeNote : UIButton!
     @IBOutlet weak var tblNotes : UITableView!
     @IBOutlet weak var txtSearch : UITextField!
@@ -41,6 +42,7 @@ class ScrachPadDashboardVC: SliderVC, UITextFieldDelegate {
     }
     
     func designUI(){
+        self.noNotesView.isHidden = false
         btnTakeNote.layer.cornerRadius = btnTakeNote.frame.height/2
         btnTakeNote.layer.borderWidth = 0.5
         btnTakeNote.layer.borderColor = UIColor.darkGray.cgColor
@@ -238,11 +240,15 @@ extension ScrachPadDashboardVC  {
                     self.arrNoteText = self.arrNotesData.compactMap { $0["scratchNoteText"] as? String }
                     self.arrNoteColor = self.arrNotesData.compactMap { $0["scratchNoteColor"] as? String }
                     self.arrReminderDate = self.arrNotesData.compactMap { $0["scratchNoteReminderDate"] as? String }
+                    self.noNotesView.isHidden = true
                 }
+                
+                
                 
                 self.tblNotes.reloadData()
                 OBJCOM.hideLoader()
             }else{
+                self.noNotesView.isHidden = false
                 self.tblNotes.reloadData()
                 OBJCOM.hideLoader()
             }

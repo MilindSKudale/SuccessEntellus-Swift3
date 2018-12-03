@@ -11,55 +11,67 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="DrawerCell" rowHeight="23" id="KGk-i7-Jjw" customClass="DrawerCell" customModule="SuccessEnSwift" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="320" height="50"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="DrawerCell" rowHeight="25" id="KGk-i7-Jjw" customClass="DrawerCell" customModule="SuccessEnSwift" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="284" height="52"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
-                <rect key="frame" x="0.0" y="0.0" width="320" height="49.5"/>
+                <rect key="frame" x="0.0" y="0.0" width="284" height="51.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Dashboard" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="k8i-ve-dGy">
-                        <rect key="frame" x="50" y="5" width="245" height="39"/>
-                        <fontDescription key="fontDescription" name="EuphemiaUCAS-Bold" family="Euphemia UCAS" pointSize="18"/>
-                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <nil key="highlightedColor"/>
-                    </label>
                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="profile" translatesAutoresizingMaskIntoConstraints="NO" id="3FX-YQ-KZA">
-                        <rect key="frame" x="10" y="10" width="30" height="30"/>
+                        <rect key="frame" x="22" y="10" width="30" height="30"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="30" id="9Di-IY-hGX"/>
                             <constraint firstAttribute="height" constant="30" id="r0W-Sy-Zh7"/>
                         </constraints>
                     </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Dashboard" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="k8i-ve-dGy">
+                        <rect key="frame" x="62" y="5" width="197" height="41.5"/>
+                        <fontDescription key="fontDescription" name="EuphemiaUCAS-Bold" family="Euphemia UCAS" pointSize="18"/>
+                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <nil key="highlightedColor"/>
+                    </label>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="green_avail" translatesAutoresizingMaskIntoConstraints="NO" id="I3l-lf-xQO">
-                        <rect key="frame" x="303" y="21" width="7" height="7"/>
+                        <rect key="frame" x="10" y="22.5" width="7" height="7"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="7" id="5Ue-Hq-4GL"/>
-                            <constraint firstAttribute="height" constant="7" id="8x1-pM-ZKI"/>
+                            <constraint firstAttribute="width" constant="7" id="K5H-iV-llX"/>
+                            <constraint firstAttribute="height" constant="7" id="SLq-pD-S6E"/>
                         </constraints>
                     </imageView>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9Hy-wv-rhR">
+                        <rect key="frame" x="3" y="3" width="278" height="45.5"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <inset key="imageEdgeInsets" minX="230" minY="0.0" maxX="0.0" maxY="0.0"/>
+                        <state key="normal" image="right-arrow"/>
+                    </button>
                 </subviews>
                 <constraints>
-                    <constraint firstAttribute="trailing" secondItem="I3l-lf-xQO" secondAttribute="trailing" constant="10" id="1C9-VD-9wY"/>
-                    <constraint firstItem="I3l-lf-xQO" firstAttribute="centerY" secondItem="k8i-ve-dGy" secondAttribute="centerY" id="6nu-IR-0Q9"/>
+                    <constraint firstItem="I3l-lf-xQO" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="10" id="2Q3-Cn-sgB"/>
                     <constraint firstAttribute="bottom" secondItem="k8i-ve-dGy" secondAttribute="bottom" constant="5" id="DnA-4f-qHj"/>
+                    <constraint firstItem="3FX-YQ-KZA" firstAttribute="leading" secondItem="I3l-lf-xQO" secondAttribute="trailing" constant="5" id="HmD-nI-bky"/>
+                    <constraint firstAttribute="trailing" secondItem="9Hy-wv-rhR" secondAttribute="trailing" constant="3" id="NCQ-sU-zeP"/>
                     <constraint firstItem="k8i-ve-dGy" firstAttribute="leading" secondItem="3FX-YQ-KZA" secondAttribute="trailing" constant="10" id="NWq-M6-k7N"/>
                     <constraint firstItem="3FX-YQ-KZA" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="XHV-RR-oBy"/>
                     <constraint firstItem="k8i-ve-dGy" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="5" id="a8i-y8-Yeq"/>
+                    <constraint firstItem="I3l-lf-xQO" firstAttribute="centerY" secondItem="9Hy-wv-rhR" secondAttribute="centerY" id="boL-T4-ByE"/>
                     <constraint firstAttribute="trailing" secondItem="k8i-ve-dGy" secondAttribute="trailing" constant="25" id="hBr-6F-8h9"/>
-                    <constraint firstItem="3FX-YQ-KZA" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="10" id="mma-rp-9KS"/>
+                    <constraint firstItem="9Hy-wv-rhR" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="3" id="kza-v5-KEc"/>
+                    <constraint firstItem="9Hy-wv-rhR" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="3" id="lcO-ZO-ucj"/>
+                    <constraint firstAttribute="bottom" secondItem="9Hy-wv-rhR" secondAttribute="bottom" constant="3" id="mqB-Jh-NEn"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>
+                <outlet property="btnSelectCell" destination="9Hy-wv-rhR" id="cs6-ib-Ysw"/>
                 <outlet property="imgController" destination="3FX-YQ-KZA" id="sAi-mj-DYd"/>
                 <outlet property="lblController" destination="k8i-ve-dGy" id="S8c-IV-3ud"/>
                 <outlet property="pkgAvailable" destination="I3l-lf-xQO" id="eVc-hB-bvE"/>
             </connections>
-            <point key="canvasLocation" x="26" y="55"/>
+            <point key="canvasLocation" x="8" y="56"/>
         </tableViewCell>
     </objects>
     <resources>
         <image name="green_avail" width="8" height="8"/>
         <image name="profile" width="100" height="100"/>
+        <image name="right-arrow" width="16" height="16"/>
     </resources>
 </document>

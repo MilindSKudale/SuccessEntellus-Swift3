@@ -10,6 +10,8 @@ import UIKit
 
 class TextTemplatePreviewVC: UIViewController, TagListViewDelegate  {
     
+    @IBOutlet var lblCampName : UILabel!
+    @IBOutlet var lblCampDate : UILabel!
     @IBOutlet var txtTemplatename : SkyFloatingLabelTextField!
     @IBOutlet var lblTxtMessage : UILabel!
     @IBOutlet var lblTxtTimeInterval : UILabel!
@@ -24,7 +26,8 @@ class TextTemplatePreviewVC: UIViewController, TagListViewDelegate  {
     var arrlinks = [String]()
     
     var templateId = ""
-
+    var campaignName = ""
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     
@@ -52,6 +55,9 @@ class TextTemplatePreviewVC: UIViewController, TagListViewDelegate  {
         }else{
             OBJCOM.NoInternetConnectionCall()
         }
+        
+        lblCampName.text = self.campaignName
+        
     }
     
     func designUI(){
@@ -78,6 +84,10 @@ class TextTemplatePreviewVC: UIViewController, TagListViewDelegate  {
                // self.lblTxtMessage.text = result["txtTemplateMsg"] as? String ?? ""
                 let isPredefine = result["txtTemplateFeature"] as? String ?? ""
                 let html = result["txtTemplateMsg"] as? String ?? ""
+                
+                let tempDate = result["txtTemplateAddDate"] as? String ?? ""
+                let arrDate = tempDate.components(separatedBy: " ")
+                self.lblCampDate.text = "Campaign created on \(arrDate[0])"
                 
                 if isPredefine == "1" {
                     let dataHtml = Data(html.utf8)

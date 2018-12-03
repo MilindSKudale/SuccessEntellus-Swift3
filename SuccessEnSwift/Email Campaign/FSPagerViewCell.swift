@@ -61,6 +61,7 @@ open class FSPagerViewCell: UICollectionViewCell {
             return _imageView
         }
         let imageView = UIImageView(frame: .zero)
+        imageView.contentMode = .scaleAspectFit
         self.contentView.addSubview(imageView)
         _imageView = imageView
         return imageView
@@ -72,8 +73,8 @@ open class FSPagerViewCell: UICollectionViewCell {
             return _btnDelete
         }
         let btn = UIButton(frame: .zero)
-        btn.backgroundColor = APPGRAYCOLOR
-        btn.setImage(#imageLiteral(resourceName: "delete"), for: .normal)
+        btn.backgroundColor = .white
+        btn.setImage(#imageLiteral(resourceName: "ic_close_orange"), for: .normal)
         btn.layer.cornerRadius = btn.frame.size.width/2
         self.contentView.addSubview(btn)
         _btnDelete = btn
@@ -119,7 +120,8 @@ open class FSPagerViewCell: UICollectionViewCell {
         imageView.addSubview(view)
         let imgVw = UIImageView(frame:CGRect(x: 0, y: 0, width: 50, height: 50))
         imgVw.center = view.center
-        imgVw.image = #imageLiteral(resourceName: "preview-1")
+        imgVw.image = nil
+//        imgVw.contentMode = .scaleAspectFit
         view.addSubview(imgVw)
         _selectedForegroundView = view
         return view
@@ -160,10 +162,10 @@ open class FSPagerViewCell: UICollectionViewCell {
     }
     
     fileprivate func commonInit() {
-        self.contentView.backgroundColor = UIColor.clear
-        self.backgroundColor = UIColor.clear
+        self.contentView.backgroundColor = UIColor.white
+        self.backgroundColor = UIColor.white
         self.contentView.layer.shadowColor = UIColor.black.cgColor
-        self.contentView.layer.shadowRadius = 5
+        self.contentView.layer.shadowRadius = 10
         self.contentView.layer.shadowOpacity = 0.75
         self.contentView.layer.shadowOffset = .zero
     }
@@ -235,5 +237,4 @@ open class FSPagerViewCell: UICollectionViewCell {
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
         }
     }
-    
 }

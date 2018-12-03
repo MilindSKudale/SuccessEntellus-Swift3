@@ -17,6 +17,7 @@ class MyProspectVC: SliderVC, UITextFieldDelegate, UIDocumentPickerDelegate, UID
     @IBOutlet var tblProspectList : LUExpandableTableView!
     @IBOutlet var btnMove : UIButton!
     @IBOutlet var btnDelete : UIButton!
+    @IBOutlet var btnAssignCampaign : UIButton!
     @IBOutlet weak var actionViewHeight: NSLayoutConstraint!
     @IBOutlet var noRecView : UIView!
     
@@ -65,9 +66,14 @@ class MyProspectVC: SliderVC, UITextFieldDelegate, UIDocumentPickerDelegate, UID
         
         actionViewHeight.constant = 0.0
         btnMove.layer.cornerRadius = 5.0
+        btnAssignCampaign.layer.cornerRadius = 5.0
         btnDelete.layer.cornerRadius = 5.0
         btnMove.clipsToBounds = true
         btnDelete.clipsToBounds = true
+        btnAssignCampaign.clipsToBounds = true
+        //btnMove.alignTextBelow()
+        //btnDelete.alignTextBelow()
+        //btnAssignCampaign.alignTextBelow()
         
         let actionButton = JJFloatingActionButton()
         actionButton.buttonColor = APPORANGECOLOR
@@ -100,7 +106,7 @@ class MyProspectVC: SliderVC, UITextFieldDelegate, UIDocumentPickerDelegate, UID
    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
-        
+        arrSelectedRecords = []
         if OBJCOM.isConnectedToNetwork(){
             OBJCOM.setLoader()
             getProspectData()
@@ -199,7 +205,7 @@ class MyProspectVC: SliderVC, UITextFieldDelegate, UIDocumentPickerDelegate, UID
     
     func showHideMoveDeleteButtons(){
         if self.arrSelectedRecords.count > 0{
-            self.actionViewHeight.constant = 40.0
+            self.actionViewHeight.constant = 75.0
         }else{
             self.actionViewHeight.constant = 0.0
         }
@@ -216,6 +222,34 @@ class MyProspectVC: SliderVC, UITextFieldDelegate, UIDocumentPickerDelegate, UID
             let selected = arrSelectedRecords.joined(separator: ",")
             self.selectOptionsForMoveProspects(prospectId: selected)
         }
+    }
+    
+    @IBAction func actionAssignCampaignsToAllRecords(_ sender: UIButton) {
+        if arrSelectedRecords.count > 0 && arrSelectedRecords.count <= 50 {
+            let strContactId = arrSelectedRecords.joined(separator: ",")
+            let storyboard = UIStoryboard(name: "Profile", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "idAssignECforMultipleCrm") as! AssignECforMultipleCrm
+            
+            vc.contactsId = strContactId
+            vc.modalPresentationStyle = .custom
+            vc.modalTransitionStyle = .crossDissolve
+            vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
+            self.present(vc, animated: false, completion: nil)
+            
+        }else if arrSelectedRecords.count > 50{
+            
+            let alertController = UIAlertController(title: "", message: "You can assign email campaign only 50 prospects.", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default) {
+                UIAlertAction in
+                self.dismiss(animated: true, completion: nil)
+            }
+            alertController.addAction(okAction)
+            self.present(alertController, animated: true, completion: nil)
+        } else{
+            OBJCOM.setAlert(_title: "", message: "Please select at least one prospect to continue")
+            return
+        }
+        
     }
     
     @IBAction func actionDeleteMultipleRecord(_ sender: UIButton) {
@@ -330,22 +364,35 @@ class MyProspectVC: SliderVC, UITextFieldDelegate, UIDocumentPickerDelegate, UID
         print("SelectedID >> ",selectedID)
     }
     @IBAction func actionAssignCampaign(_ sender: UIButton) {
-        self.arrSelectedRecords.removeAll()
-        var arrId = [String]()
-        if isFilter {
-            arrId = arrProspectIdSearch
+        if self.arrEmail[sender.tag] == "" {
+            OBJCOM.setAlert(_title: "", message: "Email-id required for assign campaigns")
+            return
         }else{
-            arrId = arrProspectId
+            self.arrSelectedRecords.removeAll()
+            var arrId = [String]()
+            var arrfName = [String]()
+            var arrlName = [String]()
+            if isFilter {
+                arrId = arrProspectIdSearch
+                arrfName = self.arrFirstNameSearch
+                arrlName = self.arrLastNameSearch
+            }else{
+                arrId = arrProspectId
+                arrfName = self.arrFirstName
+                arrlName = self.arrLastName
+            }
+            
+            let storyboard = UIStoryboard(name: "CRM", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "idPopUpAssignCampaign") as! PopUpAssignCampaign
+            vc.contactId = arrId[sender.tag]
+            vc.contactName = "\(arrfName[sender.tag]) \(arrlName[sender.tag])"
+            vc.isGroup = false
+            vc.modalPresentationStyle = .custom
+            vc.modalTransitionStyle = .crossDissolve
+            vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
+            self.present(vc, animated: false, completion: nil)
         }
         
-        let storyboard = UIStoryboard(name: "CRM", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "idPopUpAssignCampaign") as! PopUpAssignCampaign
-        vc.contactId = arrId[sender.tag]
-        vc.isGroup = false
-        vc.modalPresentationStyle = .custom
-        vc.modalTransitionStyle = .crossDissolve
-        vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
-        self.present(vc, animated: false, completion: nil)
     }
     @IBAction func actionSetTag(_ sender: UIButton) {
         var arrId : [String] = []
@@ -400,11 +447,11 @@ extension MyProspectVC: LUExpandableTableViewDataSource {
             
             category = self.arrCategorySearch[indexPath.section]
             
-            if self.arrEmailSearch[indexPath.section] == "" {
-                cell.btnAssignCampaign.isHidden = true
-            }else{
-                cell.btnAssignCampaign.isHidden = false
-            }
+//            if self.arrEmailSearch[indexPath.section] == "" {
+//                cell.btnAssignCampaign.isHidden = true
+//            }else{
+//                cell.btnAssignCampaign.isHidden = false
+//            }
             
         }else{
             cell.selectionStyle = .none
@@ -415,11 +462,11 @@ extension MyProspectVC: LUExpandableTableViewDataSource {
             
             category = self.arrCategory[indexPath.section]
             
-            if self.arrEmail[indexPath.section] == "" {
-                cell.btnAssignCampaign.isHidden = true
-            }else{
-                cell.btnAssignCampaign.isHidden = false
-            }
+//            if self.arrEmail[indexPath.section] == "" {
+//                cell.btnAssignCampaign.isHidden = true
+//            }else{
+//                cell.btnAssignCampaign.isHidden = false
+//            }
             
         }
         
@@ -985,3 +1032,14 @@ extension UIViewController {
     
 }
 
+extension UIButton {
+    func alignTextBelow(spacing: CGFloat = 3.0) {
+        if let image = self.imageView?.image {
+            let imageSize: CGSize = image.size
+            self.titleEdgeInsets = UIEdgeInsetsMake(spacing, -imageSize.width, -(imageSize.height), 0.0)
+            let labelString = NSString(string: self.titleLabel!.text!)
+            let titleSize = labelString.size(withAttributes: [NSAttributedStringKey.font: self.titleLabel!.font])
+            self.imageEdgeInsets = UIEdgeInsetsMake(-(titleSize.height + spacing), 0.0, 0.0, -titleSize.width)
+        }
+    }
+}

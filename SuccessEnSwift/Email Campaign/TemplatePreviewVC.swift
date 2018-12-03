@@ -18,6 +18,10 @@ class TemplatePreviewVC: UIViewController, UITextViewDelegate, UIDocumentInterac
     @IBOutlet var htmlString : String!
     @IBOutlet var templateName : String!
     @IBOutlet var btnEditCampaign : UIButton!
+    @IBOutlet var tempFooterView : UIView!
+    @IBOutlet var tempFooterLbl : UILabel!
+    @IBOutlet var heightTempFooterView : NSLayoutConstraint!
+    
     var bgColor = UIColor()
     var isCustomCampaign : Bool!
     var dictData = [String : Any]()
@@ -27,6 +31,8 @@ class TemplatePreviewVC: UIViewController, UITextViewDelegate, UIDocumentInterac
     var arrFileName = [String]()
     var arrFile = [String]()
     var editFlag = ""
+    var isFooterView = ""
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,14 +53,38 @@ class TemplatePreviewVC: UIViewController, UITextViewDelegate, UIDocumentInterac
         vwAttachFiles.tagBackgroundColor = .groupTableViewBackground
         vwAttachFiles.textColor = .black
         
+        
+        
+        let str = "Success Entellus respects your privacy. For more information, please review our privacy policy"
+        let attributedString = NSMutableAttributedString(string: str)
+        var foundRange = attributedString.mutableString.range(of: "Terms of use")
+        foundRange = attributedString.mutableString.range(of: "privacy policy")
+        attributedString.addAttribute(.link, value: "https://successentellus.com/home/privacyPolicy", range: foundRange)
+        
+        tempFooterLbl.attributedText = attributedString
+        let tapAction = UITapGestureRecognizer(target: self, action:#selector(tapLabel(_:)))
+        tempFooterLbl?.isUserInteractionEnabled = true
+        tempFooterLbl?.addGestureRecognizer(tapAction)
+        
+        if isFooterView == "1" {
+            tempFooterView.isHidden = false
+            heightTempFooterView.constant = 100
+        }else{
+            tempFooterView.isHidden = true
+            heightTempFooterView.constant = 0
+        }
+
+        
         if isCustomCampaign {
-            btnEditCampaign.isHidden = false
+            
             if templateName == "Self Reminder" {
+                btnEditCampaign.isHidden = true
                 btnEditCampaign.setTitle(" Edit Self Reminder ", for: .normal)
                 lblAttachFiles.isHidden = true
                 vwAttachFiles.isHidden = true
                 editFlag = "Self Reminder"
             }else{
+                btnEditCampaign.isHidden = false
                 btnEditCampaign.setTitle(" Edit Template ", for: .normal)
                 lblAttachFiles.isHidden = false
                 vwAttachFiles.isHidden = false
@@ -132,6 +162,21 @@ class TemplatePreviewVC: UIViewController, UITextViewDelegate, UIDocumentInterac
     func textViewDidBeginEditing(_ textView: UITextView) {
         textView.resignFirstResponder()
     }
+    
+    @IBAction func tapLabel(_ gesture: UITapGestureRecognizer) {
+        let text = (tempFooterLbl.text)!
+
+        let privacyRange = (text as NSString).range(of: "privacy policy")
+        
+        if gesture.didTapAttributedTextInLabel(label: tempFooterLbl, inRange: privacyRange) {
+            print("Tapped privacy")
+            if let url = URL(string: "https://successentellus.com/home/privacyPolicy") {
+                UIApplication.shared.open(url, options: [:])
+            }
+        } else {
+            print("Tapped none")
+        }
+    }
 }
 
 extension String {
@@ -146,3 +191,36 @@ extension String {
     var htmlToString: String {
         return htmlToAttributedString?.string ?? ""
     }}
+
+extension UITapGestureRecognizer {
+    
+    func didTapAttributedTextInLabel(label: UILabel, inRange targetRange: NSRange) -> Bool {
+        // Create instances of NSLayoutManager, NSTextContainer and NSTextStorage
+        let layoutManager = NSLayoutManager()
+        let textContainer = NSTextContainer(size: CGSize.zero)
+        let textStorage = NSTextStorage(attributedString: label.attributedText!)
+        
+        // Configure layoutManager and textStorage
+        layoutManager.addTextContainer(textContainer)
+        textStorage.addLayoutManager(layoutManager)
+        
+        // Configure textContainer
+        textContainer.lineFragmentPadding = 0.0
+        textContainer.lineBreakMode = label.lineBreakMode
+        textContainer.maximumNumberOfLines = label.numberOfLines
+        let labelSize = label.bounds.size
+        textContainer.size = labelSize
+        
+        // Find the tapped character location and compare it to the specified range
+        let locationOfTouchInLabel = self.location(in: label)
+        let textBoundingBox = layoutManager.usedRect(for: textContainer)
+        let textContainerOffset = CGPoint(x:(labelSize.width - textBoundingBox.size.width) * 0.5 - textBoundingBox.origin.x,
+                                          y:(labelSize.height - textBoundingBox.size.height) * 0.5 - textBoundingBox.origin.y);
+        let locationOfTouchInTextContainer = CGPoint(x:locationOfTouchInLabel.x - textContainerOffset.x,
+                                                     y:locationOfTouchInLabel.y - textContainerOffset.y);
+        let indexOfCharacter = layoutManager.characterIndex(for: locationOfTouchInTextContainer, in: textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
+        
+        return NSLocationInRange(indexOfCharacter, targetRange)
+    }
+    
+}

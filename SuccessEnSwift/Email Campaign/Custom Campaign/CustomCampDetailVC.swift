@@ -11,8 +11,10 @@ import UIKit
 class CustomCampDetailVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
 
     @IBOutlet var customCollectView : UICollectionView!
+    @IBOutlet var lblCampTitle : UILabel!
     @IBOutlet var noDataView : UIView!
     var companyCampaign = ""
+    var CampaignTitle = ""
     
     var bgColor = UIColor()
     var arrTemplateTitle = [String]()
@@ -30,10 +32,12 @@ class CustomCampDetailVC: UIViewController, UICollectionViewDelegate, UICollecti
     override func viewDidLoad() {
         super.viewDidLoad()
         self.noDataView.isHidden = true
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
+        self.lblCampTitle.text = CampaignTitle
         if OBJCOM.isConnectedToNetwork(){
             OBJCOM.setLoader()
             DispatchQueue.main.async {
@@ -177,7 +181,7 @@ extension CustomCampDetailVC {
         vc.isCustomCampaign = true
         vc.bgColor = bgColor
         vc.dictData = dict
-        
+        vc.isFooterView = arrTemplates[sender.tag]["campaignStepFooterFlag"] as! String
         vc.modalPresentationStyle = .custom
         vc.modalTransitionStyle = .crossDissolve
         vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
@@ -311,8 +315,14 @@ extension CustomCampDetailVC {
         
         let campId = self.arrCampaignId[sender.tag]
         let tempId = self.arrTemplateId[sender.tag]
-        
-        let alertController = UIAlertController(title: "", message: "https://successentellus.com says\nAre you sure you want to delete this email template?", preferredStyle: .alert)
+        var msg = ""
+        let isSelfReminder = self.arrCampiagnEmailReminder[sender.tag]
+        if isSelfReminder == "1" {
+            msg = "https://successentellus.com says\nAre you sure you want to delete this self reminder?"
+        }else{
+            msg = "https://successentellus.com says\nAre you sure you want to delete this email template?"
+        }
+        let alertController = UIAlertController(title: "", message: msg, preferredStyle: .alert)
         let okAction = UIAlertAction(title: "Delete", style: UIAlertActionStyle.default) {
             UIAlertAction in
             if OBJCOM.isConnectedToNetwork(){

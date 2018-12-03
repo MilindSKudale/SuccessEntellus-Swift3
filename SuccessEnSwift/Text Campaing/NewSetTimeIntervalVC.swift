@@ -29,8 +29,8 @@ class NewSetTimeIntervalVC: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var stepperRepeatOccurance: PKYStepper!
     
     var arrSelectedDays = [String]()
-    var timeIntervalValue = "0"
-    var timeIntervalType = "Select"
+    var timeIntervalValue = "1"
+    var timeIntervalType = "hours"
     var isImmediate = "1"
     var repeatWeeks = ""
     var repeatOn = ""
@@ -79,8 +79,10 @@ extension NewSetTimeIntervalVC {
         self.setCornerRedius(btnCancel)
         self.setCornerRedius(btnUpdate)
         self.setCornerRedius(btnIntervalType)
+        self.setCornerRedius(txtInterval)
         self.btnIntervalType.layer.borderColor = APPGRAYCOLOR.cgColor
         self.btnIntervalType.layer.borderWidth = 0.5
+        self.txtInterval.layer.borderWidth = 0.5
         for btn in btnDaysCollection {
             btn.layer.borderColor = APPGRAYCOLOR.cgColor
             btn.layer.borderWidth = 0.5
@@ -105,7 +107,7 @@ extension NewSetTimeIntervalVC {
                 let result  = data[0]
                 OBJCOM.hideLoader()
                 
-                self.timeIntervalValue = result["txtTemplateInterval"] as? String ?? "0"
+                self.timeIntervalValue = result["txtTemplateInterval"] as? String ?? "1"
                 self.timeIntervalType = result["txtTemplateIntervalType"] as? String ?? "hours"
                 
                 let reminderType = result["txtTemplateRepeat"] as? String ?? "0"
@@ -153,14 +155,6 @@ extension NewSetTimeIntervalVC {
                             }
                         }
                     }
-                    
-                    
-                    
-                    
-                    //self.timeIntervalValue = "0"
-                   // self.timeIntervalType = "hours"
-                    
-                    
                 }else{
                     self.repeatWeeks = ""
                     self.repeatOn = ""
@@ -196,9 +190,8 @@ extension NewSetTimeIntervalVC {
                         UIView.animate(withDuration: 0.3, animations: {
                             self.view.layoutIfNeeded()
                         })
-                        
-//                        self.txtInterval.text = self.timeIntervalValue
-//                        self.btnIntervalType.setTitle(self.timeIntervalType, for: .normal)
+                        self.txtInterval.text = self.timeIntervalValue
+                        self.btnIntervalType.setTitle(self.timeIntervalType, for: .normal)
                     }
                 }
             }else{
@@ -235,6 +228,13 @@ extension NewSetTimeIntervalVC {
         btnSchedule.isSelected = true
         btnReapeat.isSelected = false
         self.isImmediate = "2"
+        if self.timeIntervalValue == "0" {
+            self.timeIntervalValue = "1"
+            self.timeIntervalType = "hours"
+        }
+        self.txtInterval.text = self.timeIntervalValue
+        self.btnIntervalType.setTitle(self.timeIntervalType, for: .normal)
+        
         self.view.layoutIfNeeded()
         viewScheduleHeight.constant = 50.0
         viewReapeatHeight.constant = 0.0
@@ -455,8 +455,8 @@ extension NewSetTimeIntervalVC {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         if textField == txtInterval {
-            if txtInterval.text == "" {
-                self.timeIntervalValue = "0"
+            if txtInterval.text == "" || txtInterval.text == "0" {
+                self.timeIntervalValue = "1"
                 self.timeIntervalType = "hours"
                 self.txtInterval.text = timeIntervalValue
                 self.btnIntervalType.setTitle(timeIntervalType, for: .normal)

@@ -9,7 +9,7 @@
 import UIKit
 
 // Delegate protocolo for parsing viewcontroller to push the selected viewcontroller
-var selectedCellIndex = 4
+var selectedCellIndex = 1
 protocol DrawerControllerDelegate: class {
     func pushTo(viewController : UIViewController)
 }
@@ -33,11 +33,11 @@ class DrawerView: UIView, drawerProtocolNew, UITableViewDelegate, UITableViewDat
     var fontNew : UIFont?
     var moduleIds = [String]()
     var moduleNames = [String]()
-  
+    var data = [[String:Any]]()
     
-    
+//    #imageLiteral(resourceName: "ic_visionBoard")
     var userInfo = [String : Any]()
-    var drawerIcon = [#imageLiteral(resourceName: "top_10_2x"), #imageLiteral(resourceName: "ic_scratchpad"), #imageLiteral(resourceName: "ic_calendar"), #imageLiteral(resourceName: "time-analysis"), #imageLiteral(resourceName: "dashboard"), #imageLiteral(resourceName: "daily-checklist"), #imageLiteral(resourceName: "weekly-tracking"), #imageLiteral(resourceName: "weekly-graph"), #imageLiteral(resourceName: "add-edit-goals"), #imageLiteral(resourceName: "CFT-dashboard"), #imageLiteral(resourceName: "CFT_Community"), #imageLiteral(resourceName: "Email-campaign"), #imageLiteral(resourceName: "ic_textCamp"), #imageLiteral(resourceName: "upload-Doc"), #imageLiteral(resourceName: "my-group"), #imageLiteral(resourceName: "my-prospects"), #imageLiteral(resourceName: "My-Contacts"), #imageLiteral(resourceName: "my-customers"), #imageLiteral(resourceName: "My-Recruits"), #imageLiteral(resourceName: "change-profile"), #imageLiteral(resourceName: "help-center")]
+    var drawerIcon = [#imageLiteral(resourceName: "ic_myTools"), #imageLiteral(resourceName: "dashboard"), #imageLiteral(resourceName: "daily-checklist"), #imageLiteral(resourceName: "weekly-tracking"), #imageLiteral(resourceName: "weekly-graph"), #imageLiteral(resourceName: "add-edit-goals"), #imageLiteral(resourceName: "CFT-dashboard"), #imageLiteral(resourceName: "CFT_Community"), #imageLiteral(resourceName: "icd_myCampaigns"), #imageLiteral(resourceName: "icd_crm"), #imageLiteral(resourceName: "change-profile"), #imageLiteral(resourceName: "help-center")]
     // #imageLiteral(resourceName: "ic_teamCampaign"),
 
     fileprivate var imgProPic = UIImageView()
@@ -47,6 +47,9 @@ class DrawerView: UIView, drawerProtocolNew, UITableViewDelegate, UITableViewDat
     fileprivate var imgUserStatus = UIImageView()
     fileprivate var switchAvailable = UISwitch()
     fileprivate var gradientLayer: CAGradientLayer!
+    var isCollapseCrm = true
+    var isCollapseCampaign = true
+    var isCollapseTools = true
     
     var PopupDelegate: PopupProtocol?
 
@@ -56,10 +59,46 @@ class DrawerView: UIView, drawerProtocolNew, UITableViewDelegate, UITableViewDat
             userInfo = UserDefaults.standard.value(forKey: "USERINFO") as! [String : Any]
         }
         
+        if selectedCellIndex == 9 {
+            isCollapseCrm = false
+            isCollapseCampaign = true
+            isCollapseTools = true
+        }else if selectedCellIndex == 8 {
+            isCollapseCampaign = false
+            isCollapseCrm = true
+            isCollapseTools = true
+        }else if selectedCellIndex == 0 {
+            isCollapseTools = false
+            isCollapseCampaign = true
+            isCollapseCrm = true
+        }else{
+            isCollapseCampaign = true
+            isCollapseCrm = true
+            isCollapseTools = true
+        }
+//["sectionHeader": "Vision Board","isCollapsed":true,"items":[], "icons":[]],
+        data = [["sectionHeader": "My Tools","isCollapsed":true,"items":["Daily Top 10", "Vision Board", "Scratch Pad", "Calendar", "Time Analysis"], "icons":[#imageLiteral(resourceName: "top_10_2x"), #imageLiteral(resourceName: "ic_visionBoard"), #imageLiteral(resourceName: "ic_scratchpad"), #imageLiteral(resourceName: "ic_calendar"), #imageLiteral(resourceName: "time-analysis")]],
+//            ["sectionHeader": "Calendar","isCollapsed":true,"items":[], "icons":[]],
+//            ["sectionHeader": "Time Analysis","isCollapsed":true,"items":[], "icons":[]],
+            ["sectionHeader": "Dashboard","isCollapsed":true,"items":[], "icons":[]],
+            ["sectionHeader": "Daily Checklist","isCollapsed":true,"items":[], "icons":[]],
+            ["sectionHeader": "Weekly Tracking","isCollapsed":true,"items":[], "icons":[]],
+            ["sectionHeader": "Weekly Graph","isCollapsed":true,"items":[], "icons":[]],
+            ["sectionHeader": "Add/Edit Goals","isCollapsed":true,"items":[], "icons":[]],
+            ["sectionHeader": "CFT Dashboard","isCollapsed":true,"items":[], "icons":[]],
+            ["sectionHeader": "CFT Locator","isCollapsed":true,"items":[], "icons":[]],
+            ["sectionHeader": "My Campaigns","isCollapsed":isCollapseCampaign,"items":["Email Campaigns", "Text Campaigns", "Upload Documents"], "icons":[ #imageLiteral(resourceName: "Email-campaign"), #imageLiteral(resourceName: "ic_textCamp"), #imageLiteral(resourceName: "upload-Doc")]],
+            
+            ["sectionHeader": "My CRM", "isCollapsed":isCollapseCrm,"items":["My Groups","My Prospects", "My Contacts", "My Customers", "My Recruits"], "icons":[ #imageLiteral(resourceName: "my-group"), #imageLiteral(resourceName: "my-prospects"), #imageLiteral(resourceName: "My-Contacts"), #imageLiteral(resourceName: "my-customers"), #imageLiteral(resourceName: "My-Recruits")]],
+            ["sectionHeader": "My Profile","isCollapsed":true,"items":[], "icons":[]],
+            ["sectionHeader": "Help","isCollapsed":true,"items":[], "icons":[]]]
+        
         self.tblVw.register(UINib.init(nibName: "DrawerCell", bundle: nil), forCellReuseIdentifier: "DrawerCell")
-        self.initialise(controllers: aryControllers, isBlurEffect: isBlurEffect, isHeaderInTop: isHeaderInTop, controller:controller)
+        self.tblVw.register(UINib.init(nibName: "DrawerSubmenuCell", bundle: nil), forCellReuseIdentifier: "DrawerSubmenuCell")
+        self.initialise(controllers: aryViewControllers, isBlurEffect: isBlurEffect, isHeaderInTop: isHeaderInTop, controller:controller)
         moduleIds = UserDefaults.standard.value(forKey: "PACKAGES") as? [String] ?? []
         moduleNames = UserDefaults.standard.value(forKey: "PACKAGESNAME") as? [String] ?? []
+        
     }
     
     override init(frame: CGRect) {
@@ -217,309 +256,17 @@ class DrawerView: UIView, drawerProtocolNew, UITableViewDelegate, UITableViewDat
         lblUserName.textColor = UIColor.lightText
         vwForHeader.addSubview(lblUserName)
         
-//        imgUserStatus = UIImageView(frame:CGRect(x:lblUserName.frame.origin.x, y:lblUserName.frame.origin.y+25, width:15, height:15))
-//        imgUserStatus.layer.cornerRadius = imgUserStatus.frame.size.height/2
-//        imgUserStatus.layer.masksToBounds = true
-//        imgUserStatus.contentMode = .center
-//        imgUserStatus.image = #imageLiteral(resourceName: "green_avail")
-//        vwForHeader.addSubview(imgUserStatus)
-
         lblUserStatus = UILabel(frame:CGRect(x:lblUserName.frame.origin.x, y:lblUserName.frame.origin.y+35, width:lblUserName.frame.size.width, height:15))
         lblUserStatus.text = versionNumber
         lblUserStatus.font = UIFont(name: "Euphemia UCAS", size: 12)
         lblUserStatus.textAlignment = .left
         lblUserStatus.textColor = UIColor.lightText
         vwForHeader.addSubview(lblUserStatus)
-        
-//        switchAvailable = UISwitch(frame:CGRect(x:100, y:lblUserName.frame.origin.y+25, width:50, height:20))
-//
-//        vwForHeader.addSubview(switchAvailable)
-        
+    
         drawerView.addSubview(vwForHeader)
         addSubview(drawerView)
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return aryViewControllers.count
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 44
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "DrawerCell") as! DrawerCell
-        
-        if selectedCellIndex == indexPath.row {
-            cell.backgroundColor = UIColor(red:0.51, green:0.51, blue:0.51, alpha:1.0)
-        }else{
-           cell.backgroundColor = UIColor.clear
-        }
-        
-        if indexPath.row == 0 || indexPath.row == 1 || indexPath.row == 2 || indexPath.row == 3 || indexPath.row == 19 || indexPath.row == 20 {
-            cell.pkgAvailable.image = nil
-        }else{
-            if moduleNames.contains(aryViewControllers[indexPath.row] as! String){
-                cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
-            }else{
-                cell.pkgAvailable.image = #imageLiteral(resourceName: "red_avail")
-            }
-            
-        }
-        
-        cell.lblController?.text = aryViewControllers[indexPath.row] as? String
-        cell.imgController?.image = drawerIcon[indexPath.row]
-        cell.lblController.textColor = self.cellTextColor ?? UIColor.white
-        cell.lblController.font = fontNew ?? UIFont(name: "Euphemia UCAS", size: 16)
-        cell.selectionStyle = UITableViewCellSelectionStyle.none
-
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        actDissmiss()
-        
-        selectedCellIndex = indexPath.row
-        switch indexPath.row {
-        case 0:
-            repeatCall = false
-            let storyBoard = UIStoryboard(name:"DailyTopTen", bundle:nil)
-            let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idDailyTopTenVC"))
-            controllerName.hidesBottomBarWhenPushed = true
-            self.delegate?.pushTo(viewController: controllerName)
-            break
-        case 1:
-            repeatCall = false
-            let storyBoard = UIStoryboard(name:"Scrachpad", bundle:nil)
-            let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idScrachPadDashboardVC"))
-            controllerName.hidesBottomBarWhenPushed = true
-            self.delegate?.pushTo(viewController: controllerName)
-            break
-        case 2:
-            repeatCall = false
-            if !moduleIds.contains("5") {
-                goTOSubscription()
-            }else{
-                let storyBoard = UIStoryboard(name:"Calender", bundle:nil)
-                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idCalenderVC"))
-                controllerName.hidesBottomBarWhenPushed = true
-                self.delegate?.pushTo(viewController: controllerName)
-            }
-            break
-            
-        case 3:
-            repeatCall = false
-            if !moduleIds.contains("6") {
-                goTOSubscription()
-            }else{
-                let storyBoard = UIStoryboard(name:"TimeAnalysis", bundle:nil)
-                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idTimeAnalysisVC"))
-                controllerName.hidesBottomBarWhenPushed = true
-                self.delegate?.pushTo(viewController: controllerName)
-            }
-            break
-        case 4:
-            repeatCall = false
-            
-            if !moduleIds.contains("17") {
-                goTOSubscription()
-            }else{
-                let storyBoard = UIStoryboard(name:"Main", bundle:nil)
-                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idDashboardVC"))
-                controllerName.hidesBottomBarWhenPushed = true
-                self.delegate?.pushTo(viewController: controllerName)
-            }
-            break
-        case 5:
-            repeatCall = false
-            if !moduleIds.contains("1") {
-                goTOSubscription()
-            }else{
-                let storyBoard = UIStoryboard(name:"Main", bundle:nil)
-                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idDailyChecklistView"))
-                controllerName.hidesBottomBarWhenPushed = true
-                self.delegate?.pushTo(viewController: controllerName)
-            }
-            break
-        case 6:
-            repeatCall = false
-            if !moduleIds.contains("4") {
-                goTOSubscription()
-            }else{
-                let storyBoard = UIStoryboard(name:"WeeklyTracking", bundle:nil)
-                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idWeeklyTracking"))
-                controllerName.hidesBottomBarWhenPushed = true
-                self.delegate?.pushTo(viewController: controllerName)}
-            break
-        case 7:
-            user = ""
-            repeatCall = false
-            if !moduleIds.contains("3") {
-                goTOSubscription()
-            }else{
-                let storyBoard = UIStoryboard(name:"WeeklyTracking", bundle:nil)
-                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idWeeklyGraphVC"))
-                controllerName.hidesBottomBarWhenPushed = true
-                self.delegate?.pushTo(viewController: controllerName)
-            }
-            break
-        
-        case 8:
-            repeatCall = false
-            if !moduleIds.contains("2") {
-                goTOSubscription()
-            }else{
-                let storyBoard = UIStoryboard(name:"Main", bundle:nil)
-                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idAddEditGoalsVC"))
-                controllerName.hidesBottomBarWhenPushed = true
-                self.delegate?.pushTo(viewController: controllerName)
-            }
-            break
-        case 9:
-            user = "cft"
-            repeatCall = false
-            if !moduleIds.contains("8") {
-                goTOSubscription()
-            }else{
-                let storyBoard = UIStoryboard(name:"CFT", bundle:nil)
-                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idCFTDashboard"))
-                controllerName.hidesBottomBarWhenPushed = true
-                self.delegate?.pushTo(viewController: controllerName)
-            }
-            break
-        case 10:
-            user = ""
-            repeatCall = true
-            if !moduleIds.contains("21") {
-                goTOSubscription()
-            }else{
-                let storyBoard = UIStoryboard(name:"CFTCommunity", bundle:nil)
-                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idCFTCommunityVC"))
-                controllerName.hidesBottomBarWhenPushed = true
-                self.delegate?.pushTo(viewController: controllerName)
-            }
-            break
-        case 11:
-            repeatCall = false
-            if !moduleIds.contains("9") {
-                goTOSubscription()
-            }else{
-                let storyBoard = UIStoryboard(name:"EmailCampaign", bundle:nil)
-                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idEmailCampaignDashboardVC"))
-                controllerName.hidesBottomBarWhenPushed = true
-                self.delegate?.pushTo(viewController: controllerName)
-            }
-            break
-//        case 12:
-//            repeatCall = false
-//            if !moduleIds.contains("9") {
-//                goTOSubscription()
-//            }else{
-//                let storyBoard = UIStoryboard(name:"TeamCampaigns", bundle:nil)
-//                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idTeamCampaignsVC"))
-//                controllerName.hidesBottomBarWhenPushed = true
-//                self.delegate?.pushTo(viewController: controllerName)
-//            }
-//
-//            break
-        case 12:
-            repeatCall = false
-            if !moduleIds.contains("10") {
-                goTOSubscription()
-            } else {
-                let storyBoard = UIStoryboard(name:"TextCampaign", bundle:nil)
-                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idTextCampaignVC"))
-                controllerName.hidesBottomBarWhenPushed = true
-                self.delegate?.pushTo(viewController: controllerName)
-            }
-            break
-        case 13:
-            repeatCall = false
-            if !moduleIds.contains("15") {
-                goTOSubscription()
-            } else {
-                let storyBoard = UIStoryboard(name:"Document", bundle:nil)
-                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idDocumentVC"))
-                controllerName.hidesBottomBarWhenPushed = true
-                self.delegate?.pushTo(viewController: controllerName)
-            }
-            break
-        case 14:
-            repeatCall = false
-            if !moduleIds.contains("7") {
-                goTOSubscription()
-            }else{
-                let storyBoard = UIStoryboard(name:"CRM", bundle:nil)
-                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idMyGroupVC"))
-                controllerName.hidesBottomBarWhenPushed = true
-                self.delegate?.pushTo(viewController: controllerName)
-            }
-            break
-        case 15:
-            repeatCall = false
-            if !moduleIds.contains("13") {
-                goTOSubscription()
-            }else{
-                let storyBoard = UIStoryboard(name:"CRM", bundle:nil)
-                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idMyProspectVC"))
-                controllerName.hidesBottomBarWhenPushed = true
-                self.delegate?.pushTo(viewController: controllerName)
-            }
-            break
-        case 16:
-            repeatCall = false
-            if !moduleIds.contains("11") {
-                goTOSubscription()
-            }else{
-                let storyBoard = UIStoryboard(name:"CRM", bundle:nil)
-                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idMyContactVC"))
-                controllerName.hidesBottomBarWhenPushed = true
-                self.delegate?.pushTo(viewController: controllerName)
-            }
-            break
-        case 17:
-            repeatCall = false
-            if !moduleIds.contains("12") {
-                goTOSubscription()
-            }else{
-                let storyBoard = UIStoryboard(name:"CRM", bundle:nil)
-                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idMyCustomerVC"))
-                controllerName.hidesBottomBarWhenPushed = true
-                self.delegate?.pushTo(viewController: controllerName)
-            }
-            break
-        case 18:
-            repeatCall = false
-            if !moduleIds.contains("16") {
-                goTOSubscription()
-            }else{
-                let storyBoard = UIStoryboard(name:"CRM", bundle:nil)
-                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idMyRecruitVC"))
-                controllerName.hidesBottomBarWhenPushed = true
-                self.delegate?.pushTo(viewController: controllerName)
-            }
-            break
-        case 19:
-            repeatCall = false
-            let storyBoard = UIStoryboard(name:"Profile", bundle:nil)
-            let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idChangeProfileVC"))
-            controllerName.hidesBottomBarWhenPushed = true
-            self.delegate?.pushTo(viewController: controllerName)
-            break
-        case 20:
-            repeatCall = false
-            let storyBoard = UIStoryboard(name:"CMS", bundle:nil)
-            let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idCMSDashboard"))
-            controllerName.hidesBottomBarWhenPushed = true
-            self.delegate?.pushTo(viewController: controllerName)
-            break
-        
-        default:
-            repeatCall = false
-            break
-        }
-        
-    }
 
     // To dissmiss the current view controller tab bar along with navigation drawer
     @objc func actDissmiss() {
@@ -557,5 +304,469 @@ class DrawerView: UIView, drawerProtocolNew, UITableViewDelegate, UITableViewDat
         self.window?.rootViewController = initialViewController
         self.window?.makeKeyAndVisible()
     }
+}
+
+extension DrawerView {
     
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return data.count
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 50
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let cell = tblVw.dequeueReusableCell(withIdentifier: "DrawerCell") as! DrawerCell
+        
+        if selectedCellIndex == section {
+            cell.backgroundColor = UIColor(red:0.51, green:0.51, blue:0.51, alpha:1.0)
+        }else{
+            cell.backgroundColor = UIColor.clear
+        }
+        
+        cell.lblController.text = data[section]["sectionHeader"] as? String
+        cell.imgController.image = drawerIcon[section]
+        cell.btnSelectCell.tag = section
+        cell.btnSelectCell.addTarget(self, action: #selector(self.sectionButtonTapped(_:)), for: .touchUpInside)
+        //cell.backgroundColor = .black
+        
+        //section == 1 || section == 2 ||
+        if section == 0 || section == 10 || section == 11 {
+            cell.pkgAvailable.image = nil
+        }else{
+            if moduleNames.contains(data[section]["sectionHeader"] as! String){
+                cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
+            }else if section == 8 {
+                if moduleIds.contains("9") || moduleIds.contains("10"){
+                    cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
+                }else{
+                    cell.pkgAvailable.image = #imageLiteral(resourceName: "red_avail")
+                }
+            }else if section == 9 {
+                if moduleIds.contains("7"){
+                    cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
+                }else if moduleIds.contains("11"){
+                    cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
+                }else if moduleIds.contains("12"){
+                    cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
+                }else if moduleIds.contains("13"){
+                    cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
+                }else if moduleIds.contains("16"){
+                    cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
+                }
+            }else{
+                cell.pkgAvailable.image = #imageLiteral(resourceName: "red_avail")
+            }
+        }
+
+        
+        if section == 8 {
+            let isCollapsed = data[section]["isCollapsed"] as! Bool
+            if isCollapsed {
+                cell.btnSelectCell.setImage(#imageLiteral(resourceName: "right-arrowd"), for: .normal)
+            } else {
+                cell.btnSelectCell.setImage(#imageLiteral(resourceName: "up-arrowd"), for: .normal)
+            }
+        }else if section == 9 {
+            let isCollapsed = data[section]["isCollapsed"] as! Bool
+            if isCollapsed {
+                cell.btnSelectCell.setImage(#imageLiteral(resourceName: "right-arrowd"), for: .normal)
+            } else {
+                cell.btnSelectCell.setImage(#imageLiteral(resourceName: "up-arrowd"), for: .normal)
+            }
+        }else if section == 0 {
+            let isCollapsed = data[section]["isCollapsed"] as! Bool
+            if isCollapsed {
+                cell.btnSelectCell.setImage(#imageLiteral(resourceName: "right-arrowd"), for: .normal)
+            } else {
+                cell.btnSelectCell.setImage(#imageLiteral(resourceName: "up-arrowd"), for: .normal)
+            }
+        }else{
+            cell.btnSelectCell.setImage(nil, for: .normal)
+        }
+
+        cell.lblController.textColor = self.cellTextColor ?? UIColor.white
+        cell.lblController.font = fontNew ?? UIFont(name: "Euphemia UCAS", size: 16)
+        cell.selectionStyle = UITableViewCellSelectionStyle.none
+        
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        let isCollapsed = data[section]["isCollapsed"] as! Bool
+        let item = data[section]["items"] as! [String]
+        return isCollapsed ? 0 : item.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tblVw.dequeueReusableCell(withIdentifier: "DrawerSubmenuCell", for: indexPath) as! DrawerSubmenuCell
+        let item = data[indexPath.section]["items"] as! [String]
+        let icon = data[indexPath.section]["icons"] as! [UIImage]
+        
+        cell.backgroundColor = UIColor.clear
+        
+        cell.lblController.text = item[indexPath.row]
+        cell.imgController.image = icon[indexPath.row]
+        cell.btnSelectSubCell.tag = indexPath.row
+        cell.btnSelectSubCell.addTarget(self, action: #selector(cellButtonTapped(_:)), for: .touchUpInside)
+        
+        cell.lblController.textColor = self.cellTextColor ?? UIColor.white
+        cell.lblController.font = fontNew ?? UIFont(name: "Euphemia UCAS", size: 15)
+        cell.selectionStyle = UITableViewCellSelectionStyle.none
+        cell.backgroundColor = APPGRAYCOLOR
+        
+        if indexPath.section == 0 {
+            cell.pkgAvailable.image = nil
+        }else if indexPath.section == 8 {
+            if moduleIds.contains("9") {
+                cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
+            }else if moduleIds.contains("10") {
+                cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
+            }else if moduleIds.contains("15"){
+                cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
+            }else{
+                cell.pkgAvailable.image = #imageLiteral(resourceName: "red_avail")
+            }
+        }else if indexPath.section == 9 {
+            if moduleIds.contains("7"){
+                cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
+            }else if moduleIds.contains("11"){
+                cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
+            }else if moduleIds.contains("12"){
+                cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
+            }else if moduleIds.contains("13,"){
+                cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
+            }else if moduleIds.contains("16"){
+                cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
+            }else{
+                cell.pkgAvailable.image = #imageLiteral(resourceName: "red_avail")
+            }
+        }
+        return cell
+    }
+    
+    @objc func sectionButtonTapped(_ button: UIButton) {
+        let section = button.tag
+    
+        switch section {
+        case 0:
+            repeatCall = false
+            selectedCellIndex = section
+            let isCollapsed = data[section]["isCollapsed"] as! Bool
+            if isCollapsed {
+                data[section]["isCollapsed"] = false
+            } else {
+                data[section]["isCollapsed"] = true
+            }
+            self.tblVw.reloadData()
+            break
+        case 1:
+            repeatCall = false
+            actDissmiss()
+            selectedCellIndex = section
+            if !moduleIds.contains("17") {
+                goTOSubscription()
+            }else{
+                let storyBoard = UIStoryboard(name:"Main", bundle:nil)
+                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idDashboardVC"))
+                controllerName.hidesBottomBarWhenPushed = true
+                self.delegate?.pushTo(viewController: controllerName)
+            }
+            break
+        case 2:
+            repeatCall = false
+            actDissmiss()
+            selectedCellIndex = section
+            if !moduleIds.contains("1") {
+                goTOSubscription()
+            }else{
+                let storyBoard = UIStoryboard(name:"Main", bundle:nil)
+                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idDailyChecklistView"))
+                controllerName.hidesBottomBarWhenPushed = true
+                self.delegate?.pushTo(viewController: controllerName)
+            }
+            break
+        case 3:
+            repeatCall = false
+            actDissmiss()
+            selectedCellIndex = section
+            if !moduleIds.contains("4") {
+                goTOSubscription()
+            }else{
+                let storyBoard = UIStoryboard(name:"WeeklyTracking", bundle:nil)
+                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idWeeklyTracking"))
+                controllerName.hidesBottomBarWhenPushed = true
+                self.delegate?.pushTo(viewController: controllerName)}
+            break
+        case 4:
+            user = ""
+            repeatCall = false
+            actDissmiss()
+            selectedCellIndex = section
+            if !moduleIds.contains("3") {
+                goTOSubscription()
+            }else{
+                let storyBoard = UIStoryboard(name:"WeeklyTracking", bundle:nil)
+                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idWeeklyGraphVC"))
+                controllerName.hidesBottomBarWhenPushed = true
+                self.delegate?.pushTo(viewController: controllerName)
+            }
+            break
+            
+        case 5:
+            repeatCall = false
+            actDissmiss()
+            selectedCellIndex = section
+            if !moduleIds.contains("2") {
+                goTOSubscription()
+            }else{
+                let storyBoard = UIStoryboard(name:"Main", bundle:nil)
+                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idAddEditGoalsVC"))
+                controllerName.hidesBottomBarWhenPushed = true
+                self.delegate?.pushTo(viewController: controllerName)
+            }
+            break
+        case 6:
+            user = "cft"
+            repeatCall = false
+            actDissmiss()
+            selectedCellIndex = section
+            if !moduleIds.contains("8") {
+                goTOSubscription()
+            }else{
+                let storyBoard = UIStoryboard(name:"CFT", bundle:nil)
+                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idCFTDashboard"))
+                controllerName.hidesBottomBarWhenPushed = true
+                self.delegate?.pushTo(viewController: controllerName)
+            }
+            break
+        case 7:
+            user = ""
+            repeatCall = true
+            actDissmiss()
+            selectedCellIndex = section
+            if !moduleIds.contains("21") {
+                goTOSubscription()
+            }else{
+                let storyBoard = UIStoryboard(name:"CFTCommunity", bundle:nil)
+                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idCFTCommunityVC")) //idNewCftLocVC
+                controllerName.hidesBottomBarWhenPushed = true
+                self.delegate?.pushTo(viewController: controllerName)
+            }
+            break
+        case 8:
+            repeatCall = false
+            selectedCellIndex = section
+            let isCollapsed = data[section]["isCollapsed"] as! Bool
+            if isCollapsed {
+                data[section]["isCollapsed"] = false
+            }
+            else {
+                data[section]["isCollapsed"] = true
+            }
+            self.tblVw.reloadData()
+            break
+       
+        case 9:
+            repeatCall = false
+            selectedCellIndex = section
+            let isCollapsed = data[section]["isCollapsed"] as! Bool
+            if isCollapsed {
+                data[section]["isCollapsed"] = false
+            }
+            else {
+                data[section]["isCollapsed"] = true
+            }
+            self.tblVw.reloadData()
+            break
+        case 10:
+            repeatCall = false
+            actDissmiss()
+            selectedCellIndex = section
+            let storyBoard = UIStoryboard(name:"Profile", bundle:nil)
+            let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idChangeProfileVC"))
+            controllerName.hidesBottomBarWhenPushed = true
+            self.delegate?.pushTo(viewController: controllerName)
+            break
+        case 11:
+            repeatCall = false
+            actDissmiss()
+            selectedCellIndex = section
+            let storyBoard = UIStoryboard(name:"CMS", bundle:nil)
+            let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idCMSDashboard"))
+            controllerName.hidesBottomBarWhenPushed = true
+            self.delegate?.pushTo(viewController: controllerName)
+            break
+
+            
+        default:
+            repeatCall = false
+            break
+        }
+    }
+    
+    @objc func cellButtonTapped(_ button: UIButton) {
+        let index = button.tag
+        if selectedCellIndex == 8 {
+            switch index {
+            case 0:
+                repeatCall = false
+                actDissmiss()
+                
+                if !moduleIds.contains("9") {
+                    goTOSubscription()
+                }else{
+                    let storyBoard = UIStoryboard(name:"EmailCampaign", bundle:nil)
+                    let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idEmailCampaignDashboardVC"))
+                    controllerName.hidesBottomBarWhenPushed = true
+                    self.delegate?.pushTo(viewController: controllerName)
+                }
+
+                break
+            case 1:
+                repeatCall = false
+                actDissmiss()
+                if !moduleIds.contains("10") {
+                    goTOSubscription()
+                } else {
+                    let storyBoard = UIStoryboard(name:"TextCampaign", bundle:nil)
+                    let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idTextCampaignVC"))
+                    controllerName.hidesBottomBarWhenPushed = true
+                    self.delegate?.pushTo(viewController: controllerName)
+                }
+                break
+            case 2:
+                repeatCall = false
+                actDissmiss()
+                if !moduleIds.contains("15") {
+                    goTOSubscription()
+                } else {
+                    let storyBoard = UIStoryboard(name:"Document", bundle:nil)
+                    let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idDocumentVC"))
+                    controllerName.hidesBottomBarWhenPushed = true
+                    self.delegate?.pushTo(viewController: controllerName)
+                }
+                break
+            
+            default:
+                repeatCall = false
+                break
+            }
+        }else if selectedCellIndex == 9 {
+            switch index {
+            case 0:
+                repeatCall = false
+                actDissmiss()
+                
+                if !moduleIds.contains("7") {
+                    goTOSubscription()
+                }else{
+                    let storyBoard = UIStoryboard(name:"CRM", bundle:nil)
+                    let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idMyGroupVC"))
+                    controllerName.hidesBottomBarWhenPushed = true
+                    self.delegate?.pushTo(viewController: controllerName)
+                }
+                break
+            case 1:
+                repeatCall = false
+                actDissmiss()
+                if !moduleIds.contains("13") {
+                    goTOSubscription()
+                }else{
+                    let storyBoard = UIStoryboard(name:"CRM", bundle:nil)
+                    let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idMyProspectVC"))
+                    controllerName.hidesBottomBarWhenPushed = true
+                    self.delegate?.pushTo(viewController: controllerName)
+                }
+                break
+            case 2:
+                repeatCall = false
+                actDissmiss()
+                if !moduleIds.contains("11") {
+                    goTOSubscription()
+                }else{
+                    let storyBoard = UIStoryboard(name:"CRM", bundle:nil)
+                    let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idMyContactVC"))
+                    controllerName.hidesBottomBarWhenPushed = true
+                    self.delegate?.pushTo(viewController: controllerName)
+                }
+                break
+            case 3:
+                repeatCall = false
+                actDissmiss()
+                if !moduleIds.contains("12") {
+                    goTOSubscription()
+                }else{
+                    let storyBoard = UIStoryboard(name:"CRM", bundle:nil)
+                    let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idMyCustomerVC"))
+                    controllerName.hidesBottomBarWhenPushed = true
+                    self.delegate?.pushTo(viewController: controllerName)
+                }
+                break
+            case 4:
+                repeatCall = false
+                actDissmiss()
+                if !moduleIds.contains("16") {
+                    goTOSubscription()
+                }else{
+                    let storyBoard = UIStoryboard(name:"CRM", bundle:nil)
+                    let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idMyRecruitVC"))
+                    controllerName.hidesBottomBarWhenPushed = true
+                    self.delegate?.pushTo(viewController: controllerName)
+                }
+                break
+            default:
+                repeatCall = false
+                break
+            }
+        }else if selectedCellIndex == 0 {
+            switch index {
+            case 0:
+                repeatCall = false
+                actDissmiss()
+                let storyBoard = UIStoryboard(name:"DailyTopTen", bundle:nil)
+                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idDailyTopTenVC"))
+                controllerName.hidesBottomBarWhenPushed = true
+                self.delegate?.pushTo(viewController: controllerName)
+                break
+            case 1:
+                repeatCall = false
+                actDissmiss()
+                let storyBoard = UIStoryboard(name:"VisionBoard", bundle:nil)
+                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idDashboardVB"))
+                controllerName.hidesBottomBarWhenPushed = true
+                self.delegate?.pushTo(viewController: controllerName)
+                break
+            case 2:
+                repeatCall = false
+                actDissmiss()
+                let storyBoard = UIStoryboard(name:"Scrachpad", bundle:nil)
+                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idScrachPadDashboardVC"))
+                controllerName.hidesBottomBarWhenPushed = true
+                self.delegate?.pushTo(viewController: controllerName)
+                break
+            case 3:
+                repeatCall = false
+                actDissmiss()
+                let storyBoard = UIStoryboard(name:"Calender", bundle:nil)
+                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idCalenderVC"))
+                controllerName.hidesBottomBarWhenPushed = true
+                self.delegate?.pushTo(viewController: controllerName)
+                break
+            case 4:
+                repeatCall = false
+                actDissmiss()
+                let storyBoard = UIStoryboard(name:"TimeAnalysis", bundle:nil)
+                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idTimeAnalysisVC"))
+                controllerName.hidesBottomBarWhenPushed = true
+                self.delegate?.pushTo(viewController: controllerName)
+                break
+            default:
+                repeatCall = false
+                break
+            }
+        }
+        
+    }
 }
