@@ -377,10 +377,10 @@ class WalkthroughViewController: UIViewController {
                 contactArray["contact_phone"] = arrPh["ph1"]
                 contactArray["contact_work_phone"] = arrPh["ph2"]
                 contactArray["contact_other_phone"] = arrPh["ph3"]
-                contactArray["contact_skype_id"] = ""
-                contactArray["contact_twitter_name"] = ""
-                contactArray["contact_facebookurl"] = ""
-                contactArray["contact_linkedinurl"] = ""
+//                contactArray["contact_skype_id"] = ""
+//                contactArray["contact_twitter_name"] = ""
+//                contactArray["contact_facebookurl"] = ""
+//                contactArray["contact_linkedinurl"] = ""
                 contactArray["contact_description"] = contact.note
                 contactArray["contact_address"] = arrAddrs["street"]
                 contactArray["contact_city"] = arrAddrs["city"]

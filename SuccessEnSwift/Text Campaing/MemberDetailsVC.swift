@@ -240,7 +240,7 @@ extension MemberDetailsVC {
                 print(result)
                 
                 self.lblTemplateName.text = result["campaignStepTitle"] as? String ?? ""
-                self.lblTemplateCreatedDate.text = "Email template created on : \(result["txtTemplateAddDate"] as? String ?? "")"
+                self.lblTemplateCreatedDate.text = "Text message created on : \(result["txtTemplateAddDate"] as? String ?? "")"
                 
                 let memberDetails = result["memberDetails"] as! [AnyObject]
                 

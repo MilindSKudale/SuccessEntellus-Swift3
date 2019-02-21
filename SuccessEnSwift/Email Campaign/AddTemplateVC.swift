@@ -53,6 +53,7 @@ class AddTemplateVC :UIViewController, UIImagePickerControllerDelegate, UIDocume
     var htmlString = ""
     var htmlTextToSend = ""
     
+    
     var attachFileUrl : URL!
     var arrAttachUrl = [URL]()
     var arrAttachFilename = [String]()
@@ -63,7 +64,6 @@ class AddTemplateVC :UIViewController, UIImagePickerControllerDelegate, UIDocume
     lazy var toolbar: RichEditorToolbar = {
         let toolbar = RichEditorToolbar(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 44))
         toolbar.options = RichEditorDefaultOption.all
-        
         return toolbar
     }()
     
@@ -110,7 +110,7 @@ class AddTemplateVC :UIViewController, UIImagePickerControllerDelegate, UIDocume
         editorView.inputAccessoryView = toolbar
         editorView.placeholder = "Type some text..."
         editorView.html = "Hi {firstName}, <br><br> \(userName) <br> \(phoneNum)"
-        
+    
         vwAttachFiles.delegate = self
         vwAttachFiles.textFont = UIFont.systemFont(ofSize: 13)
         vwAttachFiles.alignment = .left
@@ -120,16 +120,7 @@ class AddTemplateVC :UIViewController, UIImagePickerControllerDelegate, UIDocume
         toolbar.delegate = self
         toolbar.editor = editorView
         picker.delegate  = self
-        
-        // We will create a custom action that clears all the input text when it is pressed
-        let item = RichEditorOptionItem(image: nil, title: "Clear") { toolbar in
-            toolbar.editor?.html = ""
-        }
-        
-        var options = toolbar.options
-        options.append(item)
-        toolbar.options = options
-        
+       
         btnImmediate.isSelected = true
         btnSchedule.isSelected = false
         btnReapeat.isSelected = false
@@ -267,7 +258,7 @@ extension AddTemplateVC : UITextFieldDelegate {
         if textField == txtInterval {
             if txtInterval.text == "" || txtInterval.text == "0" {
                 self.timeIntervalValue = "1"
-                self.timeIntervalType = "hours"
+                self.timeIntervalType = ""
                 self.txtInterval.text = timeIntervalValue
                 self.btnIntervalType.setTitle(timeIntervalType, for: .normal)
             }else{
@@ -318,7 +309,7 @@ extension AddTemplateVC : UITextFieldDelegate {
 
     func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
         print("view was cancelled")
-        dismiss(animated: true, completion: nil)
+        controller.dismiss(animated: true, completion: nil)
     }
     
     func downloadfile(URL: NSURL) {
@@ -567,9 +558,37 @@ extension AddTemplateVC: RichEditorToolbarDelegate {
     }
     
     func richEditorToolbarInsertLink(_ toolbar: RichEditorToolbar) {
-        // Can only add links to selected text, so make sure there is a range selection first
         if toolbar.editor?.hasRangeSelection == true {
-            toolbar.editor?.insertLink("http://github.com/cjwirth/RichEditorView", title: "Github Link")
+            let alert:UIAlertController=UIAlertController(title: "Insert Link", message: "Ex.'http://www.successentellus.com'", preferredStyle: UIAlertControllerStyle.alert)
+            
+            alert.addTextField(configurationHandler: { (textField) in
+                textField.placeholder = "Enter link"
+            })
+            
+            let insertAction = UIAlertAction(title: "Insert", style: UIAlertActionStyle.default)
+            {
+                UIAlertAction in
+                
+                let strlnk = alert.textFields![0].text ?? ""
+                
+                if strlnk != "" {
+                    if OBJCOM.verifyUrl(urlString:strlnk) {
+                        toolbar.editor?.insertLink(strlnk, title: strlnk)
+                    } else {
+                        OBJCOM.setAlert(_title: "", message: "Please insert valid link.")
+                    }
+                }else{
+                    OBJCOM.setAlert(_title: "", message: "Please insert link.")
+                }
+            }
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel)
+            {
+                UIAlertAction in
+            }
+            alert.addAction(insertAction)
+            alert.addAction(cancelAction)
+            self.present(alert, animated: true, completion: nil)
         }
     }
     
@@ -579,11 +598,7 @@ extension AddTemplateVC: RichEditorToolbarDelegate {
             //picker.delegate = self
             self.present(picker, animated: true, completion: nil)
         }else{
-            let alert = UIAlertView()
-            alert.title = "Warning"
-            alert.message = "You don't have camera"
-            alert.addButton(withTitle: "OK")
-            alert.show()
+            OBJCOM.setAlert(_title: "Warning", message: "You don't have camera")
         }
     }
     func openGallary(){

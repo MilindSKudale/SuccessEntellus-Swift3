@@ -155,14 +155,6 @@ extension NewEmailSetTimeIntervalVC {
                             }
                         }
                     }
-                    
-                    
-                    
-                    
-                    //self.timeIntervalValue = "0"
-                    // self.timeIntervalType = "hours"
-                    
-                    
                 }else{
                     self.repeatWeeks = ""
                     self.repeatOn = ""
@@ -182,10 +174,6 @@ extension NewEmailSetTimeIntervalVC {
                         UIView.animate(withDuration: 0.3, animations: {
                             self.view.layoutIfNeeded()
                         })
-                        //                        self.timeIntervalValue = "0"
-                        //                        self.timeIntervalType = "hours"
-                        //                        self.txtInterval.text = self.timeIntervalValue
-                        //                        self.btnIntervalType.setTitle(self.timeIntervalType, for: .normal)
                     }else{
                         self.btnImmediate.isSelected = false
                         self.btnSchedule.isSelected = true
@@ -198,9 +186,6 @@ extension NewEmailSetTimeIntervalVC {
                         UIView.animate(withDuration: 0.3, animations: {
                             self.view.layoutIfNeeded()
                         })
-                        
-                        //self.txtInterval.text = self.timeIntervalValue
-                        //self.btnIntervalType.setTitle(self.timeIntervalType, for: .normal)
                     }
                 }
             }else{
@@ -359,26 +344,26 @@ extension NewEmailSetTimeIntervalVC {
     func selectIntervalType() {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
-        let actionDay = UIAlertAction(title: "hours", style: .default)
-        {
-            UIAlertAction in
-            self.timeIntervalType = "hours"
-            self.btnIntervalType.setTitle(self.timeIntervalType, for: .normal)
-        }
-        actionDay.setValue(UIColor.black, forKey: "titleTextColor")
-        
-        let actionWeek = UIAlertAction(title: "days", style: .default)
+        let actionDay = UIAlertAction(title: "Days", style: .default)
         {
             UIAlertAction in
             self.timeIntervalType = "days"
             self.btnIntervalType.setTitle(self.timeIntervalType, for: .normal)
         }
-        actionWeek.setValue(UIColor.black, forKey: "titleTextColor")
+        actionDay.setValue(UIColor.black, forKey: "titleTextColor")
         
-        let actionMonth = UIAlertAction(title: "weeks", style: .default)
+        let actionWeek = UIAlertAction(title: "Weeks", style: .default)
         {
             UIAlertAction in
             self.timeIntervalType = "week"
+            self.btnIntervalType.setTitle(self.timeIntervalType, for: .normal)
+        }
+        actionWeek.setValue(UIColor.black, forKey: "titleTextColor")
+        
+        let actionMonth = UIAlertAction(title: "Months", style: .default)
+        {
+            UIAlertAction in
+            self.timeIntervalType = "month"
             self.btnIntervalType.setTitle(self.timeIntervalType, for: .normal)
         }
         actionMonth.setValue(UIColor.black, forKey: "titleTextColor")
@@ -458,7 +443,7 @@ extension NewEmailSetTimeIntervalVC {
         if textField == txtInterval {
             if txtInterval.text == "" {
                 self.timeIntervalValue = "0"
-                self.timeIntervalType = "hours"
+                self.timeIntervalType = "days"
                 self.txtInterval.text = timeIntervalValue
                 self.btnIntervalType.setTitle(timeIntervalType, for: .normal)
             }else{

@@ -69,7 +69,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     
         customNavBar()
         setupSiren()
-//        registerForPushNotifications()
+        registerForPushNotifications()
+        if deviceTokenId != "" {
+            if UserDefaults.standard.value(forKey: "USERINFO") != nil {
+                let userInfo = UserDefaults.standard.value(forKey: "USERINFO") as! [String : Any]
+                userID = userInfo["zo_user_id"] as? String ?? ""
+                OBJCOM.sendUDIDToServer(deviceTokenId)
+            }
+        }
         
         DispatchQueue.main.async {
             OBJCOM.getPackagesInfo()
@@ -197,7 +204,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         siren.delegate = self
         // Optional
         siren.debugEnabled = true
-        siren.alertType = .option // or .force, .skip, .none
+        siren.alertType = .force  //, .skip, .none
         siren.majorUpdateAlertType = .option
         siren.minorUpdateAlertType = .option
         siren.patchUpdateAlertType = .option

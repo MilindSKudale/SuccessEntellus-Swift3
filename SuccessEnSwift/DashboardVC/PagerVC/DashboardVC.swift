@@ -11,6 +11,8 @@ import Parchment
 import Contacts
 import EAIntroView
 
+var subscriptionDate : Date = Date()
+
 
 class DashboardVC: SliderVC, PopupProtocol, EAIntroDelegate {
     
@@ -36,6 +38,7 @@ class DashboardVC: SliderVC, PopupProtocol, EAIntroDelegate {
         if motiFlag == "false" {
             motivatinalData()
         }
+        self.getSubscriptionDate()
         self.loadDashBoard()
     
 //        let moduleIds = UserDefaults.standard.value(forKey: "PACKAGES") as? [String] ?? []
@@ -85,7 +88,7 @@ class DashboardVC: SliderVC, PopupProtocol, EAIntroDelegate {
         DispatchQueue.main.async {
             if OBJCOM.isConnectedToNetwork(){
                 OBJCOM.setLoader()
-                self.fetchAllContacts()
+               // self.fetchAllContacts()
                 let userData = UserDefaults.standard.value(forKey: "USERINFO") as! [String:Any]
                 if userData.count > 0 {
                     let cft = userData["userCft"] as? String ?? "0"
@@ -121,6 +124,29 @@ class DashboardVC: SliderVC, PopupProtocol, EAIntroDelegate {
                     vc.modalTransitionStyle = .crossDissolve
                     vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
                     self.present(vc, animated: false, completion: nil)
+                }
+                OBJCOM.hideLoader()
+            }
+        };
+    }
+    
+    func getSubscriptionDate(){
+        
+        let dictParam = ["userId": userID,
+                         "platform": "3"]
+        let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
+        let jsonString = String(data: jsonData!, encoding: .utf8)
+        let dictParamTemp = ["param":jsonString];
+        OBJCOM.modalAPICall(Action: "getSubscriptionDate", param:dictParamTemp as [String : AnyObject],  vcObject: self){
+            JsonDict, staus in
+            let success:String = JsonDict!["IsSuccess"] as! String
+            if success == "true"{
+                let dictJsonData = (JsonDict!["result"] as AnyObject)
+                print(dictJsonData)
+                let subDate = "\(dictJsonData["sDate"] as? String ?? "")"
+                if subDate != "" {
+                    let dt = self.stringToDate(strDate: subDate)
+                    subscriptionDate = dt
                 }
                 OBJCOM.hideLoader()
             }
@@ -213,5 +239,11 @@ class DashboardVC: SliderVC, PopupProtocol, EAIntroDelegate {
         alert.addAction(actionWeeklyArchive)
         alert.addAction(actionCancel)
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    func stringToDate(strDate:String) -> Date {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        return dateFormatter.date(from: strDate)!
     }
 }

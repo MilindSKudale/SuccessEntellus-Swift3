@@ -51,6 +51,13 @@ class GmailContactVC: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate {
     }
    
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+        
+        if user == nil {
+            OBJCOM.setAlert(_title: "", message: error.localizedDescription)
+            OBJCOM.hideLoader()
+            return
+        }
+        
         let urlString = "https://www.google.com/m8/feeds/contacts/default/full?alt=json&max-results=500&access_token=\(user.authentication.accessToken!)&v=3.0"
         
         print(GIDSignIn.sharedInstance().scopes)
@@ -139,7 +146,7 @@ extension GmailContactVC : UITableViewDelegate, UITableViewDataSource {
         
         let dict = ["contact_other_email": "",
                     "contact_phone": "",
-                    "contact_skype_id": "",
+                    //"contact_skype_id": "",
                     "contact_company_name": "",
                     "contact_country": "",
                     "contact_description": "",
@@ -147,15 +154,15 @@ extension GmailContactVC : UITableViewDelegate, UITableViewDataSource {
                     "contact_work_email": "",
                     "contact_flag": "1",
                     "contact_other_phone": "",
-                    "contact_twitter_name": "",
+                    //"contact_twitter_name": "",
                     "contact_users_id": userID,
                     "contact_work_phone": "",
                     "contact_fname": lName,
-                    "contact_linkedinurl": "",
+                    //"contact_linkedinurl": "",
                     "contact_address": "",
                     "contact_city": "",
                     "contact_state": "",
-                    "contact_facebookurl": "",
+                    //"contact_facebookurl": "",
                     "contact_zip": "",
                     "contact_platform": "3",
                     "contact_email": arrEmail[indexPath.row]]

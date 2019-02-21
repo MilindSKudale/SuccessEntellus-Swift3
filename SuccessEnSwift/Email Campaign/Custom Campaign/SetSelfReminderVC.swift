@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SetSelfReminderVC: UIViewController, UITextViewDelegate {
+class SetSelfReminderVC: UIViewController, UITextViewDelegate, UITextFieldDelegate {
     
     @IBOutlet var btnEmail : UIButton!
     @IBOutlet var btnSMSEmail : UIButton!
@@ -21,6 +21,7 @@ class SetSelfReminderVC: UIViewController, UITextViewDelegate {
     var timeIntervalValue = "0"
     var timeIntervalType = "Select"
     var reminderType = "1"
+    var note = ""
     var campaignId = ""
     var isUpdate = false
     let dict = [String:String]()
@@ -42,12 +43,21 @@ class SetSelfReminderVC: UIViewController, UITextViewDelegate {
                 btnEmail.isSelected = false
             }
             btnSubmit.setTitle("Update Reminder", for: .normal)
+            
+            if note != "" {
+                self.txtNotes.text = note
+                txtNotes.textColor = UIColor.black
+            }else{
+                txtNotes.text = "This is a self-reminder for yourself. We'll send you with the status of prospects email."
+                txtNotes.textColor = UIColor.lightGray
+            }
         }else{
             btnEmail.isSelected = true
             btnSubmit.setTitle("Set Reminder", for: .normal)
+            txtNotes.text = "This is a self-reminder for yourself. We'll send you with the status of prospects email."
+            txtNotes.textColor = UIColor.lightGray
         }
-        txtNotes.text = "This is a self-reminder for yourself. We'll send you with the status of prospects email."
-        txtNotes.textColor = UIColor.lightGray
+        txtInterval.delegate = self
         txtInterval.text = timeIntervalValue
         btnIntervalType.setTitle(timeIntervalType, for: .normal)
     }
@@ -80,9 +90,12 @@ class SetSelfReminderVC: UIViewController, UITextViewDelegate {
     }
     
     @IBAction func actionBtnSubmit(sender: UIButton) {
-        if timeIntervalType == "Select" {
+        if txtInterval.text == "0" || txtInterval.text == "" {
+            OBJCOM.setAlert(_title: "", message: "Please select interval time.")
+        }else if timeIntervalType == "Select" {
             OBJCOM.setAlert(_title: "", message: "Please select interval type.")
         }else{
+            self.timeIntervalValue = txtInterval.text!
             if OBJCOM.isConnectedToNetwork(){
                 OBJCOM.setLoader()
                 DispatchQueue.main.async {

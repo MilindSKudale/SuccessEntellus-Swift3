@@ -10,13 +10,17 @@ import UIKit
 import McPicker
 import Alamofire
 import SwiftyJSON
+import RichEditorView
 
-class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMenuDelegate, UIDocumentPickerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
+class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMenuDelegate, UIDocumentPickerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UIImagePickerControllerDelegate {
     
     @IBOutlet var txtTemplatename : SkyFloatingLabelTextField!
-    @IBOutlet var lblTxtMessage : UITextView!
+    @IBOutlet var editorView: RichEditorView!
+    @IBOutlet var btnSetPlainText : UIButton!
+    @IBOutlet var btnSetFormattedText : UIButton!
     @IBOutlet var lblAttachFiles : UILabel!
     @IBOutlet var vwAttachFiles : TagListView!
+    @IBOutlet var viewAttachFiles : UIView!
     @IBOutlet var btnCancel : UIButton!
     @IBOutlet var btnUpdate : UIButton!
     @IBOutlet var btnAddFiles : UIButton!
@@ -24,11 +28,15 @@ class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMen
     
     @IBOutlet var rdoButtonFooterYes: UIButton!
     @IBOutlet var rdoButtonFooterNo: UIButton!
+    @IBOutlet var rdoButtonSignYes: UIButton!
+    @IBOutlet var rdoButtonSignNo: UIButton!
     var isFooterShow = "1"
+    var isSignShow = "0"
+    var templateType = "1"
     
-    @IBOutlet var btnAddUrls : UIButton!
-    @IBOutlet var vwAddUrls : TagListView!
-    var txtAddUrl: UITextField?
+//    @IBOutlet var btnAddUrls : UIButton!
+//    @IBOutlet var vwAddUrls : TagListView!
+//    var txtAddUrl: UITextField?
 
     var templateData = [String:Any]()
     var arrAttachUrlSaved = [URL]()
@@ -54,6 +62,9 @@ class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMen
     var repeatWeeks = ""
     var repeatOn = ""
     var repeatEnd = ""
+    var htmlString = ""
+    var htmlText = ""
+    var isPlainText = "1"
     
     @IBOutlet var btnImmediate: UIButton!
     @IBOutlet var btnSchedule: UIButton!
@@ -67,8 +78,18 @@ class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMen
     @IBOutlet weak var stepperRepeatOccurance: PKYStepper!
     @IBOutlet var btnIntervalType: UIButton!
     @IBOutlet var txtInterval: UITextField!
+    let picker = UIImagePickerController()
+    var pickedImagePath = ""
+    var arrImages = [UIImage]()
+    
     
     var arrSelectedDays = [String]()
+    
+    lazy var toolbar: RichEditorToolbar = {
+        let toolbar = RichEditorToolbar(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 44))
+        toolbar.options = RichEditorDoneOption.doneBtn
+        return toolbar
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,20 +103,32 @@ class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMen
         btnUpdate.layer.cornerRadius = 5.0
         btnUpdate.clipsToBounds = true
         
+        editorView.layer.cornerRadius = 5.0
+        editorView.clipsToBounds = true
+        editorView.layer.borderColor = APPGRAYCOLOR.cgColor
+        editorView.layer.borderWidth = 0.5
+        
+        toolbar.options = RichEditorDoneOption.doneBtn
+        editorView.delegate = self
+        editorView.inputAccessoryView = toolbar
+        editorView.placeholder = "Type text here.."
+        toolbar.delegate = self
+        toolbar.editor = editorView
+        
         btnAddFiles.layer.cornerRadius = 5.0
         btnAddFiles.layer.borderColor = APPGRAYCOLOR.cgColor
         btnAddFiles.layer.borderWidth = 0.75
         btnAddFiles.clipsToBounds = true
         
-        btnAddUrls.layer.cornerRadius = 5.0
-        btnAddUrls.layer.borderColor = APPGRAYCOLOR.cgColor
-        btnAddUrls.layer.borderWidth = 0.75
-        btnAddUrls.clipsToBounds = true
-    
-        vwAddUrls.delegate = self
-        vwAddUrls.textFont = UIFont.systemFont(ofSize: 13)
-        vwAddUrls.alignment = .left
-        vwAddUrls.enableRemoveButton = false
+//        btnAddUrls.layer.cornerRadius = 5.0
+//        btnAddUrls.layer.borderColor = APPGRAYCOLOR.cgColor
+//        btnAddUrls.layer.borderWidth = 0.75
+//        btnAddUrls.clipsToBounds = true
+//
+//        vwAddUrls.delegate = self
+//        vwAddUrls.textFont = UIFont.systemFont(ofSize: 13)
+//        vwAddUrls.alignment = .left
+//        vwAddUrls.enableRemoveButton = false
         
         vwAttachFiles.delegate = self
         vwAttachFiles.textFont = UIFont.systemFont(ofSize: 13)
@@ -148,7 +181,7 @@ class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMen
                 //self.templateId = result["txtTemplateId"] as? String ?? ""
                 self.CampaignId = result["txtTemplateCampId"] as? String ?? ""
                 self.txtTemplatename.text = result["txtTemplateTitle"] as? String ?? ""
-                self.lblTxtMessage.text = result["txtTemplateMsg"] as? String ?? ""
+             
                 self.timeIntervalValue = result["txtTemplateInterval"] as? String ?? "1"
                 self.timeIntervalType = result["txtTemplateIntervalType"] as? String ?? "hours"
                 
@@ -156,10 +189,54 @@ class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMen
                 if self.isFooterShow == "1" {
                     self.rdoButtonFooterYes.isSelected = true
                     self.rdoButtonFooterNo.isSelected = false
-                    //self.isFooterShow = "1"
                 }else{
                     self.rdoButtonFooterYes.isSelected = false
                     self.rdoButtonFooterNo.isSelected = true
+                }
+                
+                self.isSignShow = result["txtTemplateAddSignature"] as? String ?? "0"
+                if self.isSignShow == "0"{
+                    self.rdoButtonSignNo.isSelected = true
+                    self.rdoButtonSignYes.isSelected = false
+                }else{
+                    self.rdoButtonSignNo.isSelected = false
+                    self.rdoButtonSignYes.isSelected = true
+                }
+               // self.htmlString = result["txtTemplateMsg"] as? String ?? ""
+                var strMessageText = result["txtTemplateMsg"] as? String ?? ""
+                if self.isPlainText == "1" {
+                    strMessageText = strMessageText.replacingOccurrences(of: "\n", with: "<br>")
+                    if strMessageText == "<br>" {
+                        strMessageText = ""
+                    }
+                    self.htmlString = strMessageText
+                    self.editorView.html = strMessageText
+                    self.htmlText = self.htmlString
+                } else {
+                    self.editorView.html = strMessageText
+                    self.htmlText = self.htmlString
+                }
+                
+
+                self.templateType = result["txtTemplateType"] as? String ?? "1"
+                if self.templateType == "2" {
+                    self.btnSetPlainText.isSelected = false
+                    self.btnSetFormattedText.isSelected = true
+                    self.toolbar.options = RichEditorDefaultOption.all
+                    self.toolbar.delegate = self
+                    self.toolbar.editor = self.editorView
+                    self.editorView.delegate = self
+                    self.isPlainText = "2"
+                    self.viewAttachFiles.isHidden = false
+                }else{
+                    self.btnSetPlainText.isSelected = true
+                    self.btnSetFormattedText.isSelected = false
+                    self.toolbar.options = RichEditorDoneOption.doneBtn
+                    self.toolbar.delegate = self
+                    self.toolbar.editor = self.editorView
+                    self.isPlainText = "1"
+                    self.viewAttachFiles.isHidden = true
+                    self.editorView.delegate = self
                 }
                 
                 let reminderType = result["txtTemplateRepeat"] as? String ?? "0"
@@ -242,20 +319,11 @@ class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMen
                         UIView.animate(withDuration: 0.3, animations: {
                             self.view.layoutIfNeeded()
                         })
-                        
                         self.txtInterval.text = self.timeIntervalValue
                         self.btnIntervalType.setTitle(self.timeIntervalType, for: .normal)
                     }
-                    
                 }
-                
-                let arrUrl = result["links"] as! [String]
-                for obj in arrUrl {
-                    self.vwAddUrls.addTag(obj)
-                    self.vwAddUrls.enableRemoveButton = true
-                    let dict = ["link":obj]
-                    self.arrlinks.append(dict)
-                }
+    
                 self.arrFile = []
                 self.arrFileName = []
                 self.arrFileId = []
@@ -276,10 +344,8 @@ class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMen
                         self.vwAttachFiles.addTag(self.arrFileName[i])
                         self.vwAttachFiles.enableRemoveButton = true
                     }
-                }else{
-//                    self.vwAttachFiles.enableRemoveButton = false
-//                    self.vwAttachFiles.addTag("No attachment added yet.")
                 }
+                
                 OBJCOM.hideLoader()
             }else{
                 let result = JsonDict!["result"] as! String
@@ -289,72 +355,66 @@ class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMen
         }
     }
     
+    @IBAction func actionSetPlainText(_ sender:UIButton){
+        
+        self.btnSetPlainText.isSelected = true
+        self.btnSetFormattedText.isSelected = false
+        self.viewAttachFiles.isHidden = true
+        
+        self.toolbar.options = RichEditorDoneOption.doneBtn
+        self.toolbar.delegate = self
+        self.toolbar.editor = self.editorView
+        self.isPlainText = "1"
+        self.editorView.delegate = self
+        
+        
+        self.isPlainText = "1"
+        if self.templateType == "2" {
+        
+            self.editorView.html = " "
+        }else{
+            self.editorView.html = self.htmlText
+        }
+//        toolbar.options = RichEditorDoneOption.doneBtn
+//        toolbar.delegate = self
+//        toolbar.editor = self.editorView
+//        editorView.inputAccessoryView = toolbar
+//        editorView.delegate = self
+    }
+    
+    @IBAction func actionSetFormattedText(_ sender:UIButton){
+        toolbar.options = RichEditorDefaultOption.all
+        toolbar.delegate = self
+        toolbar.editor = editorView
+        editorView.delegate = self
+        btnSetPlainText.isSelected = false
+        btnSetFormattedText.isSelected = true
+        
+        editorView.inputAccessoryView = toolbar
+        self.viewAttachFiles.isHidden = false
+        self.isPlainText = "2"
+       // if self.templateType == "1" {
+            self.editorView.html = self.htmlText
+//        }else{
+//            self.editorView.html = self.htmlString
+//        }
+    }
+    
+    @IBAction func actionCustomToolTip(_ sender:UIButton){
+        OBJCOM.popUp(context: self, msg: "By using custom message, you can create formatted text with adding images, links and attachments.")
+    }
+    
     @IBAction func actionClose(_ sender:UIButton){
         NotificationCenter.default.post(name: Notification.Name("UpdateTextTemplateVC"), object: nil)
         self.dismiss(animated: true, completion: nil)
     }
     
     @IBAction func actionUpdate(_ sender:UIButton){
-        
-        if self.isImmediate == "1" {
-            if OBJCOM.isConnectedToNetwork(){
-                OBJCOM.setLoader()
-                self.actionCheckMemberAssignedOrNot()
-            }else{
-                OBJCOM.NoInternetConnectionCall()
-            }
-        }else{
-            if OBJCOM.isConnectedToNetwork(){
-                OBJCOM.setLoader()
-                self.updateTextMessage()
-            }else{
-                OBJCOM.NoInternetConnectionCall()
-            }
-        }
-    }
-    
-    @IBAction func actionAddUrl(_ sender:UIButton){
-        self.openAlertView()
-    }
-    
-    func configurationTextField(textField: UITextField!) {
-        if (textField) != nil {
-            self.txtAddUrl = textField! 
-            self.txtAddUrl?.placeholder = "Add link/url..";
-            self.txtAddUrl?.text = "http://"
-            self.txtAddUrl?.keyboardType = .URL
-        }
-    }
-    
-    func openAlertView() {
-        let alert = UIAlertController(title: "Add Link/URL", message: nil, preferredStyle: UIAlertControllerStyle.alert)
-        alert.addTextField(configurationHandler: configurationTextField)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler:nil))
-        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler:{ (UIAlertAction) in
-        
-            if self.txtAddUrl?.text! == "http://" || self.txtAddUrl?.text! == "https://" {
-                OBJCOM.setAlert(_title: "", message: "Please add url or link.")
-            }else{
-                if OBJCOM.verifyUrl(urlString: self.txtAddUrl?.text!) == true {
-                    self.vwAddUrls.addTag((self.txtAddUrl?.text!)!)
-                    self.vwAddUrls.enableRemoveButton = true
-                    let dict = ["link":(self.txtAddUrl?.text!)!]
-                    self.arrlinks.append(dict)
-                }else{
-                    OBJCOM.setAlert(_title: "", message: "Please enter valid url or link.")
-                }
-            }
-            
-        }))
-        self.present(alert, animated: true, completion: nil)
-    }
-    
-    func updateTextMessage(){
         if txtTemplatename.text == "" {
             OBJCOM.setAlert(_title: "", message: "Please enter template name to update template.")
             OBJCOM.hideLoader()
             return
-        }else if lblTxtMessage.text == "" {
+        }else if htmlString == "" || htmlString == "<br>" || htmlString == " " {
             OBJCOM.setAlert(_title: "", message: "Please enter text message.")
             OBJCOM.hideLoader()
             return
@@ -368,7 +428,28 @@ class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMen
                 OBJCOM.hideLoader()
                 return
             }
+        }else{
+            if self.isImmediate == "1" {
+                if OBJCOM.isConnectedToNetwork(){
+                    OBJCOM.setLoader()
+                    self.actionCheckMemberAssignedOrNot()
+                }else{
+                    OBJCOM.NoInternetConnectionCall()
+                }
+            }else{
+                if OBJCOM.isConnectedToNetwork(){
+                    OBJCOM.setLoader()
+                    self.updateTextMessage()
+                }else{
+                    OBJCOM.NoInternetConnectionCall()
+                }
+            }
         }
+        
+    }
+    
+    func updateTextMessage(){
+        
         
         if self.isImmediate == "1" || self.isImmediate == "2" {
             self.repeatWeeks = ""
@@ -382,12 +463,20 @@ class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMen
             self.repeatEnd = self.stepperRepeatOccurance.countLabel.text ?? "1"
         }
         
+        var strMessageText = ""
+        if isPlainText == "1" {
+            strMessageText = htmlString.htmlToString
+        }else{
+            strMessageText = htmlString
+        }
+        print(strMessageText)
+        
         let dictParam = ["userId":userID,
                          "platform":"3",
                          "txtTemplateId":self.templateId,
                          "txtTemplateCampId":self.CampaignId,
                          "txtTemplateTitle":txtTemplatename.text!,
-                         "txtTemplateMsg": lblTxtMessage.text!,
+                         "txtTemplateMsg": strMessageText,
                          "txtTemplateInterval":self.timeIntervalValue,
                          "txtTemplateIntervalType":self.timeIntervalType,
                          "addLinkUrl" : self.arrlinks,
@@ -395,7 +484,9 @@ class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMen
                          "repeat_every_weeks":self.txtRepeatWeek.text!,
                          "repeat_on":self.repeatOn,
                          "repeat_ends_after":self.repeatEnd,
-                         "txtTemplateFooterFlag":self.isFooterShow] as [String : Any]
+                         "txtTemplateFooterFlag":self.isFooterShow,
+                         "txtTemplateAddSignature":self.isSignShow,
+                         "txtTemplateType":self.isPlainText] as [String : Any]
         
         let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
         let jsonString = String(data: jsonData!, encoding: .utf8)
@@ -453,7 +544,7 @@ class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMen
     
     func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
         print("view was cancelled")
-        dismiss(animated: true, completion: nil)
+        controller.dismiss(animated: true, completion: nil)
     }
     
     func downloadfile(URL: NSURL) {
@@ -533,18 +624,7 @@ class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMen
     }
     
     func tagRemoveButtonPressed(_ title: String, tagView: TagView, sender: TagListView) {
-        if sender == self.vwAddUrls {
-            let linkurl = tagView.titleLabel?.text!
-            guard let index = self.arrlinks.index(where: {
-                guard let indx = $0["link"] else { return false }
-                return indx == linkurl
-            }) else {
-                return
-            }
-            self.arrlinks.remove(at: index)
-            print(self.arrlinks)
-            sender.removeTagView(tagView)
-        }else{
+//
             let fname = tagView.titleLabel?.text!
             if  self.arrAttachSaved.contains(fname!) {
                 let index = self.arrAttachSaved.index(of: fname!)
@@ -564,7 +644,7 @@ class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMen
                     self.arrAttachFileId.remove(at: index!)
                 }
             }
-        }
+//        }
     }
     
     
@@ -617,9 +697,7 @@ class EditTextCampTemplate: UIViewController, TagListViewDelegate, UIDocumentMen
         
         print(notification.object!)
         let fileData = notification.object as! [AnyObject]
-//        if fileData.count > 0 && self.arrFile.count == 0{
-//            self.vwAttachFiles.removeAllTags()
-//        }
+
         for obj in fileData {
             let fileOri = obj["fileOri"] as? String ?? ""
             let filePath = obj["filePath"] as? String ?? ""
@@ -914,6 +992,17 @@ extension EditTextCampTemplate {
         self.isFooterShow = "0"
     }
     
+    @IBAction func actionIsSignYes(_ sender : UIButton){
+        self.rdoButtonSignYes.isSelected = true
+        self.rdoButtonSignNo.isSelected = false
+        self.isSignShow = "1"
+    }
+    @IBAction func actionIsSignNo(_ sender : UIButton){
+        self.rdoButtonSignYes.isSelected = false
+        self.rdoButtonSignNo.isSelected = true
+        self.isSignShow = "0"
+    }
+    
     func actionCheckMemberAssignedOrNot() {
         
         let dictParam = ["userId" : userID,
@@ -965,8 +1054,7 @@ extension EditTextCampTemplate {
                         OBJCOM.NoInternetConnectionCall()
                     }
                 }
-                
-                
+    
             }else{
                 print("result:",JsonDict ?? "")
                 OBJCOM.hideLoader()
@@ -975,7 +1063,212 @@ extension EditTextCampTemplate {
     }
 }
 
+extension EditTextCampTemplate : RichEditorDelegate, RichEditorToolbarDelegate {
+    
+    func richEditor(_ editor: RichEditorView, contentDidChange content: String) {
+        if content == "" {
+            htmlString = ""
+        } else if content == "Type text here.." {
+            htmlString = ""
+        }else{
+            htmlString = content
+        }
+    }
+    
+    fileprivate func randomColor() -> UIColor {
+        let colors: [UIColor] = [
+            .red,
+            .orange,
+            .yellow,
+            .green,
+            .blue,
+            .purple
+        ]
+        
+        let color = colors[Int(arc4random_uniform(UInt32(colors.count)))]
+        return color
+    }
+    
+    func richEditorToolbarChangeTextColor(_ toolbar: RichEditorToolbar) {
+        let color = randomColor()
+        toolbar.editor?.setTextColor(color)
+    }
+    
+    func richEditorToolbarChangeBackgroundColor(_ toolbar: RichEditorToolbar) {
+        let color = randomColor()
+        toolbar.editor?.setTextBackgroundColor(color)
+    }
+    
+    func richEditorToolbarInsertImage(_ toolbar: RichEditorToolbar) {
+        
+        let alert:UIAlertController=UIAlertController(title: "Choose Image", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+        let cameraAction = UIAlertAction(title: "Camera", style: UIAlertActionStyle.default)
+        {
+            UIAlertAction in
+            self.openCamera()
+        }
+        let gallaryAction = UIAlertAction(title: "Gallary", style: UIAlertActionStyle.default)
+        {
+            UIAlertAction in
+            self.openGallary()
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel)
+        {
+            UIAlertAction in
+        }
+        
+        // Add the actions
+        picker.delegate = self
+        alert.addAction(cameraAction)
+        alert.addAction(gallaryAction)
+        alert.addAction(cancelAction)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func richEditorToolbarInsertLink(_ toolbar: RichEditorToolbar) {
+        // Can only add links to selected text, so make sure there is a range selection first
+        if toolbar.editor?.hasRangeSelection == true {
+            let alert:UIAlertController=UIAlertController(title: "Insert Link", message: "Ex.'http://www.successentellus.com'", preferredStyle: UIAlertControllerStyle.alert)
+            
+            alert.addTextField(configurationHandler: { (textField) in
+                textField.placeholder = "Enter link"
+            })
+            
+            let insertAction = UIAlertAction(title: "Insert", style: UIAlertActionStyle.default)
+            {
+                UIAlertAction in
+                
+                let strlnk = alert.textFields![0].text ?? ""
+                
+                if strlnk != "" {
+                    if OBJCOM.verifyUrl(urlString:strlnk) {
+                        toolbar.editor?.insertLink(strlnk, title: strlnk)
+                    } else {
+                        OBJCOM.setAlert(_title: "", message: "Please insert valid link.")
+                    }
+                }else{
+                    OBJCOM.setAlert(_title: "", message: "Please insert link.")
+                }
+            }
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel)
+            {
+                UIAlertAction in
+            }
+            alert.addAction(insertAction)
+            alert.addAction(cancelAction)
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func openCamera(){
+        if(UIImagePickerController .isSourceTypeAvailable(UIImagePickerControllerSourceType.camera)){
+            picker.sourceType = UIImagePickerControllerSourceType.camera
+            //picker.delegate = self
+            self.present(picker, animated: true, completion: nil)
+        }else{
+            OBJCOM.setAlert(_title: "Warning", message: "You don't have camera")
+        }
+    }
+    func openGallary(){
+        picker.sourceType = UIImagePickerControllerSourceType.photoLibrary
+        //picker.delegate = self
+        self.present(picker, animated: true, completion: nil)
+    }
+    //MARK:UIImagePickerControllerDelegate
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        NSLog("\(info)")
+        if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            let filename = userID + "/\(NSUUID().uuidString)" + ".png"
+            let image = self.resizeImage(image: pickedImage, targetSize: CGSize(width: 200.0, height: 200.0))
+              self.uploadImage(filename: filename, image: image)
+            self.picker.dismiss(animated: true, completion: nil)
+            
+        } else {
+            self.picker.dismiss(animated: true, completion: nil)
+        }
+    }
+    
+    @objc func imagePickerController(_ picker: UIImagePickerController, pickedImage: UIImage?) {
+    }
+    
+    func imagePickerControllerDidCancel(picker: UIImagePickerController){
+        print("picker cancel.")
+    }
+    
+    func uploadImage(filename:String, image:UIImage) {
+        
+        let param = ["userId" : userID]
+        Alamofire.upload(multipartFormData: { (multipartFormData) in
+            multipartFormData.append(UIImagePNGRepresentation(image)!, withName: "editorImage", fileName: filename, mimeType: "image/png")
+            for (key, value) in param {
+                multipartFormData.append((value as AnyObject).data(using: String.Encoding.utf8.rawValue)!, withName: key)
+            }
+        }, to: SITEURL+"uploadCkEditorImage")
+        { (result) in
+            switch result {
+            case .success(let upload, _, _):
+                
+                upload.uploadProgress(closure: { (progress) in
+                    //Print progress
+                    print(progress)
+                })
+                
+                upload.responseJSON { response in
+                    //print response.result
+                    
+                    print(response.value as AnyObject)
+                    //                    let success:String = response["IsSuccess"] as! String
+                    let data = response.value as AnyObject
+                    let success = data["IsSuccess"] as! String
+                    if success == "true" {
+                        OBJCOM.hideLoader()
+                        let result = data["result"] as! String
+                        self.toolbar.editor?.insertImage(result,alt: "image")
+                    }else{
+                        print("result:",response)
+                        OBJCOM.hideLoader()
+                    }
+                }
+            case .failure(let encodingError):
+                print(encodingError)
+                break
+            }
+        }
+    }
+    
+    func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
+        let size = image.size
+        
+        let widthRatio  = targetSize.width  / size.width
+        let heightRatio = targetSize.height / size.height
+        
+        var newSize: CGSize
+        if(widthRatio > heightRatio) {
+            newSize = CGSize(width: size.width * heightRatio, height: size.height * heightRatio)
+        } else {
+            newSize = CGSize(width: size.width * widthRatio,  height: size.height * widthRatio)
+        }
+        
+        let rect = CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height)
+        
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+        image.draw(in: rect)
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return newImage!
+    }
+}
 
-
-
-
+extension NSAttributedString {
+    var attributedStringToHtml: String? {
+        do {
+            let htmlData = try self.data(from:NSMakeRange(0, self.length), documentAttributes:[.documentType: NSAttributedString.DocumentType.html]);
+            return String.init(data: htmlData, encoding: String.Encoding.utf8)
+        } catch {
+            print("error:", error)
+            return nil
+        }
+    }
+}

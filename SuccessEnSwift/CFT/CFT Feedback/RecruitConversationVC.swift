@@ -521,7 +521,7 @@ extension RecruitConversationVC {
     
     func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
         print("view was cancelled")
-        dismiss(animated: true, completion: nil)
+        controller.dismiss(animated: true, completion: nil)
     }
     
     func downloadfile(URL: NSURL) {
@@ -534,9 +534,6 @@ extension RecruitConversationVC {
                 // Success
                 let statusCode = response?.mimeType
                 print("Success: \(String(describing: statusCode))")
-                
-                
-                
                 DispatchQueue.main.async(execute: {
                     self.uploadDocument(data!, filename: URL.lastPathComponent!)
                 })

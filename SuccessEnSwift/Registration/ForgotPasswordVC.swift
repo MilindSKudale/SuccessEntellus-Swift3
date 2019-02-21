@@ -68,7 +68,7 @@ extension ForgotPasswordVC {
             let success:String = JsonDict!["IsSuccess"] as! String
             if success == "true"{
                 let ResponseMessage = JsonDict!["ResponseMessage"] as? String ??
-                ""
+                "We could not find an account with this email address"
                 UserDefaults.standard.removeObject(forKey: "USERINFO")
                 UserDefaults.standard.synchronize()
                 
@@ -83,7 +83,7 @@ extension ForgotPasswordVC {
             }else{
                 if self.flag == true {
                     self.flag = false
-                    let result = JsonDict!["result"] as? String ?? ""
+                    let result = JsonDict!["ResponseMessage"] as? String ?? "We could not find an account with this email address"
                     OBJCOM.setAlert(_title: "", message: result)
                 }
                 OBJCOM.hideLoader()

@@ -77,7 +77,7 @@ class CompanyCampaignDetailVC: UIViewController, UICollectionViewDelegate, UICol
         vc.htmlString = self.arrCampaignHTMLContent[indexPath.row]
         vc.templateName = self.arrTemplateTitle[indexPath.row]
         vc.isCustomCampaign = false
-        vc.bgColor = bgColor
+        //vc.bgColor = bgColor
         vc.dictData = dict
         vc.modalPresentationStyle = .custom
         vc.modalTransitionStyle = .crossDissolve

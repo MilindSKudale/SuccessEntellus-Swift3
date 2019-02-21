@@ -13,10 +13,10 @@ import SKActivityIndicatorView
 
 let APPORANGECOLOR = UIColor(red:0.96, green:0.36, blue:0.14, alpha:1.0)
 let APPGRAYCOLOR = UIColor(red:0.24, green:0.24, blue:0.24, alpha:1.0)
-let SITEURL:String = "http://bringmax.com/successentellus/successapp/"
-//let SITEURL:String = "https://successentellus.com/successapp/"
+//let SITEURL:String = "http://bringmax.com/successentellus/successapp/"
+let SITEURL:String = "https://successentellus.com/successapp/"
 let SITEURLCHECK:String = "http://bringmax.com/successentellus/successapp/"
-let versionNumber = "Version 2.6.1"
+let versionNumber = "Version 2.6.9"
 var OBJCOM = AppCommon()
 
 class AppCommon: UIViewController, URLSessionDelegate, URLSessionTaskDelegate, URLSessionDataDelegate {
@@ -48,8 +48,6 @@ class AppCommon: UIViewController, URLSessionDelegate, URLSessionTaskDelegate, U
                 }
             case .failure(let error):
                 print(error)
-                
-                //self.setAlert(_title: "Error", message: error.localizedDescription)
                 self.hideLoader()
             }
         })
@@ -134,7 +132,7 @@ class AppCommon: UIViewController, URLSessionDelegate, URLSessionTaskDelegate, U
     func validateEmail(uiObj:String)  -> Bool{
         var isValidEmail: Bool {
             do {
-                let regex = try NSRegularExpression(pattern: "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}", options: .caseInsensitive)
+                let regex = try NSRegularExpression(pattern: "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}", options: .caseInsensitive)
                 return regex.firstMatch(in: uiObj, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, uiObj.count)) != nil
             } catch {
                 print("Mail not valid");
@@ -493,15 +491,25 @@ class AppCommon: UIViewController, URLSessionDelegate, URLSessionTaskDelegate, U
                     arrModuleList = []
                     arrModuleId = []
                     
-                    let success:String = JsonDict!["IsSuccess"] as! String
+                    let success:String = JsonDict!["IsSuccess"] as? String ?? ""
                     if success == "true"{
-                        let result = JsonDict!["result"] as! [AnyObject]
-                        arrModuleList = result.compactMap { $0["moduleName"] as? String }
-                        arrModuleId = result.compactMap { $0["moduleId"] as? String }
+                        if let result = JsonDict!["result"] as? [AnyObject] {
+                            arrModuleList = result.compactMap { $0["moduleName"] as? String }
+                            arrModuleId = result.compactMap { $0["moduleId"] as? String }
+                            
+                            UserDefaults.standard.set(arrModuleId, forKey: "PACKAGES")
+                            UserDefaults.standard.set(arrModuleList, forKey: "PACKAGESNAME")
+                            UserDefaults.standard.synchronize()
+                        }
                         
-                        UserDefaults.standard.set(arrModuleId, forKey: "PACKAGES")
-                        UserDefaults.standard.set(arrModuleList, forKey: "PACKAGESNAME")
-                        UserDefaults.standard.synchronize()
+                        if let showMenuList = JsonDict!["showMenuList"] as? [AnyObject] {
+                            arrMyToolsModuleList = showMenuList.compactMap { $0["moduleName"] as? String }
+                            arrMyToolsModuleId = showMenuList.compactMap { $0["moduleId"] as? String }
+                            
+//                            UserDefaults.standard.set(arrModuleId, forKey: "PACKAGES")
+//                            UserDefaults.standard.set(arrModuleList, forKey: "PACKAGESNAME")
+//                            UserDefaults.standard.synchronize()
+                        }
                         
                     }else{
                         OBJCOM.hideLoader()
@@ -535,6 +543,59 @@ class AppCommon: UIViewController, URLSessionDelegate, URLSessionTaskDelegate, U
                 OBJCOM.hideLoader()
             }
         };
+    }
+    
+    func importCSVfile(_ file:Data, filename:String, crmFlag:String, completionHandler: @escaping ([String:Any]?) -> ()) {
+        
+        let parameters = ["userId" : userID,
+                          "platform": "3",
+                          "contact_flag":crmFlag]
+        let fileData = file
+        let URL2 = try! URLRequest(url: "\(SITEURL)importCsvCrmAndroid", method: .post, headers: ["Content-Type":"application/x-www-form-urlencoded"])
+        print(URL2)
+        print(parameters)
+        Alamofire.upload(multipartFormData: { (multipartFormData) in
+            multipartFormData.append(fileData as Data, withName: "upload", fileName: filename, mimeType: "text/plain")
+            for (key, value) in parameters {
+                multipartFormData.append((value as AnyObject).data(using: String.Encoding.utf8.rawValue)!, withName: key)
+            }
+        }, with: URL2 , encodingCompletion: { (result) in
+            switch result {
+            case .success(let upload, _, _):
+                upload.responseJSON {
+                    response in
+                    if let JsonDict = response.result.value as? [String : Any]{
+                        print(JsonDict)
+                        completionHandler(JsonDict)
+                        self.hideLoader()
+                    }else {
+                        OBJCOM.setAlert(_title: "", message: "Failed to import file.")
+                        self.hideLoader()
+                    }
+                }
+            case .failure(_):
+                self.hideLoader()
+                break
+            }
+        })
+    }
+    
+    func stringToDate(strDate:String)-> Date {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return dateFormatter.date(from: strDate)!
+    }
+    
+    func dateToTimeString(dt:Date)-> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "hh:mm a"
+        return dateFormatter.string(from: dt)
+    }
+    
+    func dateToDateString(dt:Date)-> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MM-dd-yyyy"
+        return dateFormatter.string(from: dt)
     }
 }
 

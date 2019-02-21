@@ -12,7 +12,7 @@ import SwiftMultiSelect
 import Alamofire
 import SwiftyJSON
 
-class MyContactVC: SliderVC, UITextFieldDelegate, UIDocumentPickerDelegate, UIDocumentMenuDelegate  {
+class MyContactVC: SliderVC, UITextFieldDelegate{
 
     var items:[SwiftMultiSelectItem] = [SwiftMultiSelectItem]()
     var initialValues:[SwiftMultiSelectItem] = [SwiftMultiSelectItem]()
@@ -32,6 +32,7 @@ class MyContactVC: SliderVC, UITextFieldDelegate, UIDocumentPickerDelegate, UIDo
     @IBOutlet var btnMove : UIButton!
     @IBOutlet var btnDelete : UIButton!
     @IBOutlet var btnAssignCampaign : UIButton!
+    @IBOutlet var btnAddToGroup : UIButton!
     @IBOutlet weak var actionViewHeight: NSLayoutConstraint!
     @IBOutlet var noRecView : UIView!
     
@@ -45,19 +46,29 @@ class MyContactVC: SliderVC, UITextFieldDelegate, UIDocumentPickerDelegate, UIDo
     var arrEmail = [String]()
     var arrPhone = [String]()
     var arrContactId = [String]()
-    var arrMiddleName = [String]()
+//    var arrMiddleName = [String]()
     var arrCategory = [String]()
+    var arrDesc = [String]()
+    var arrDate = [String]()
     
     var arrFirstNameSearch = [String]()
     var arrLastNameSearch = [String]()
     var arrEmailSearch = [String]()
     var arrPhoneSearch = [String]()
-    var arrMiddleNameSearch = [String]()
+//    var arrMiddleNameSearch = [String]()
     var arrCategorySearch = [String]()
     var arrContactIdSearch = [String]()
+    var arrDescSearch = [String]()
+    var arrDateSearch = [String]()
     
     var arrSelectedContact = [String]()
+    var strSortBy = ""
 
+    var arrTagTitle = [String]()
+    var arrTagId = [String]()
+    var selectedTagTitle = ""
+    var selectedTagId = "0"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "My Contacts"
@@ -71,9 +82,11 @@ class MyContactVC: SliderVC, UITextFieldDelegate, UIDocumentPickerDelegate, UIDo
         btnMove.layer.cornerRadius = 5.0
         btnAssignCampaign.layer.cornerRadius = 5.0
         btnDelete.layer.cornerRadius = 5.0
+        btnAddToGroup.layer.cornerRadius = 5.0
         btnMove.clipsToBounds = true
         btnDelete.clipsToBounds = true
         btnAssignCampaign.clipsToBounds = true
+        btnAddToGroup.clipsToBounds = true
         
         Config.doneString = ""
         SwiftMultiSelect.dataSource     = self
@@ -92,11 +105,12 @@ class MyContactVC: SliderVC, UITextFieldDelegate, UIDocumentPickerDelegate, UIDo
         }
         actionButton.display(inViewController: self)
         
-        txtSearch.leftViewMode = UITextFieldViewMode.always
+        
         txtSearch.layer.cornerRadius = txtSearch.frame.size.height/2
         txtSearch.layer.borderColor = APPGRAYCOLOR.cgColor
         txtSearch.layer.borderWidth = 1.0
         txtSearch.clipsToBounds = true
+        txtSearch.leftViewMode = UITextFieldViewMode.always
         let uiView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
         let imageView = UIImageView(frame: CGRect(x: 5, y: 5, width: 20, height: 20))
         let image = #imageLiteral(resourceName: "icons8-search")
@@ -105,25 +119,29 @@ class MyContactVC: SliderVC, UITextFieldDelegate, UIDocumentPickerDelegate, UIDo
         uiView.addSubview(imageView)
         txtSearch.leftView = uiView
         self.txtSearch.delegate = self
+        strSortBy = ""
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
         arrSelectedContact = []
+        self.showHideMoveDeleteButtons()
         if OBJCOM.isConnectedToNetwork(){
             //DispatchQueue.main.sync {
                 OBJCOM.setLoader()
-                getContactData()
+                self.getContactData(sortBy: strSortBy)
+            self.getCategoryList()
            // }
         }else{
             OBJCOM.NoInternetConnectionCall()
         }
     }
 
-    func getContactData(){
+    func getContactData(sortBy:String){
         let dictParam = ["userId": userID,
                          "platform":"3",
-                         "crmFlag":"1"]
+                         "crmFlag":"1",
+                         "sortBy":sortBy]
         
         let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
         let jsonString = String(data: jsonData!, encoding: .utf8)
@@ -132,17 +150,24 @@ class MyContactVC: SliderVC, UITextFieldDelegate, UIDocumentPickerDelegate, UIDo
         typealias JSONDictionary = [String:Any]
         OBJCOM.modalAPICall(Action: "getListCrm", param:dictParamTemp as [String : AnyObject],  vcObject: self){
             JsonDict, staus in
+            self.arrSelectedContact = []
             let success:String = JsonDict!["IsSuccess"] as! String
             if success == "true"{
                 self.arrContactData = JsonDict!["result"] as! [AnyObject]
                 if self.arrContactData.count > 0 {
                     self.arrFirstName = self.arrContactData.compactMap { $0["contact_fname"] as? String }
-                    self.arrMiddleName = self.arrContactData.compactMap { $0["contact_middle"] as? String }
+//                    self.arrMiddleName = self.arrContactData.compactMap { $0["contact_middle"] as? String }
                     self.arrLastName = self.arrContactData.compactMap { $0["contact_lname"] as? String }
                     self.arrEmail = self.arrContactData.compactMap { $0["contact_email"] as? String }
                     self.arrPhone = self.arrContactData.compactMap { $0["contact_phone"] as? String }
                     self.arrContactId = self.arrContactData.compactMap { $0["contact_id"] as? String }
                     self.arrCategory = self.arrContactData.compactMap { $0["contact_category"] as? String }
+                    self.arrDesc = self.arrContactData.compactMap { $0["contact_description"] as? String }
+                    let aDate = self.arrContactData.compactMap { $0["contact_created"] as? String }
+                    for obj in aDate {
+                        let dt = obj.components(separatedBy: " ")
+                        self.arrDate.append(dt[0])
+                    }
                 }
                 if self.arrFirstName.count > 0 {
                     self.noRecView.isHidden = true
@@ -229,12 +254,50 @@ class MyContactVC: SliderVC, UITextFieldDelegate, UIDocumentPickerDelegate, UIDo
         
     }
     
+    @IBAction func actionAddToGroupMultiple(_ sender: UIButton) {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(self.UpdateContactList),
+            name: NSNotification.Name(rawValue: "UpdateContactList"),
+            object: nil)
+        if self.arrSelectedContact.count > 0 {
+            let storyBoard = UIStoryboard(name:"CRMM", bundle:nil)
+            let vc = (storyBoard.instantiateViewController(withIdentifier: "idAddToGroupMultipleVC")) as! AddToGroupMultipleVC
+            let selectedIDs = self.arrSelectedContact.joined(separator: ",")
+            vc.selectedIDs = selectedIDs
+            vc.className = "Contact"
+            let popupVC = PopupViewController(contentController: vc, popupWidth: vc.view.frame.width - 20, popupHeight: 300)
+            self.present(popupVC, animated: true, completion: nil)
+        }else{
+            OBJCOM.setAlert(_title: "", message: "Please select atleast one contact.")
+            return
+        }
+        
+    }
+    
+    @objc func UpdateContactList(notification: NSNotification){
+        
+        arrSelectedContact = []
+        self.showHideMoveDeleteButtons()
+        if OBJCOM.isConnectedToNetwork(){
+            OBJCOM.setLoader()
+            self.getContactData(sortBy: self.strSortBy)
+        }else{
+            OBJCOM.NoInternetConnectionCall()
+        }
+    }
+    
     @IBAction func actionAssignCampaignsToAllRecords(_ sender: UIButton) {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(self.UpdateContactList),
+            name: NSNotification.Name(rawValue: "UpdateContactList"),
+            object: nil)
         if arrSelectedContact.count > 0 && arrSelectedContact.count <= 50 {
             let strContactId = arrSelectedContact.joined(separator: ",")
             let storyboard = UIStoryboard(name: "Profile", bundle: nil)
             let vc = storyboard.instantiateViewController(withIdentifier: "idAssignECforMultipleCrm") as! AssignECforMultipleCrm
-            
+            vc.className = "Contact"
             vc.contactsId = strContactId
             vc.modalPresentationStyle = .custom
             vc.modalTransitionStyle = .crossDissolve
@@ -452,6 +515,10 @@ extension MyContactVC: LUExpandableTableViewDataSource {
                 cell.btnTag.setImage(#imageLiteral(resourceName: "rottenApple"), for: .normal)
                 cell.btnTag.setTitleColor(colorRottenApple, for: .normal)
                 cell.btnTag.layer.borderColor = colorRottenApple.cgColor
+            }else{
+                cell.btnTag.setImage(#imageLiteral(resourceName: "customTag"), for: .normal)
+                cell.btnTag.setTitleColor(.black, for: .normal)
+                cell.btnTag.layer.borderColor = UIColor.black.cgColor
             }
         }else{
             cell.btnTag.setTitle(" Add Tag ", for: .normal)
@@ -491,6 +558,8 @@ extension MyContactVC: LUExpandableTableViewDataSource {
             }else{
                 sectionHeader.selectRecordButton.isSelected = false
             }
+            
+            sectionHeader.labelDate.text = self.arrDateSearch[section]
         }else{
             fname = self.arrFirstName[section]
             lname = self.arrLastName[section]
@@ -499,6 +568,8 @@ extension MyContactVC: LUExpandableTableViewDataSource {
             }else{
                 sectionHeader.selectRecordButton.isSelected = false
             }
+           
+            sectionHeader.labelDate.text = self.arrDate[section]
         }
         sectionHeader.label.text = "\(fname) \(lname)"
         
@@ -514,7 +585,7 @@ extension MyContactVC: LUExpandableTableViewDataSource {
 extension MyContactVC: LUExpandableTableViewDelegate {
     func expandableTableView(_ expandableTableView: LUExpandableTableView, heightForRowAt indexPath: IndexPath) -> CGFloat { return 130 }
     
-    func expandableTableView(_ expandableTableView: LUExpandableTableView, heightForHeaderInSection section: Int) -> CGFloat { return 44.0 }
+    func expandableTableView(_ expandableTableView: LUExpandableTableView, heightForHeaderInSection section: Int) -> CGFloat { return 47.0 }
     
     // MARK: - Optional
     
@@ -563,12 +634,25 @@ extension MyContactVC {
         
         let actionImportDevice = UIAlertAction(title: "Import new phone contact(s)", style: .default)
         { UIAlertAction in
-            let storyboard = UIStoryboard(name: "CRM", bundle: nil)
-            let vc = storyboard.instantiateViewController(withIdentifier: "idNewContactListVC") as! NewContactListVC
-            vc.contact_flag = "1"
-            vc.modalTransitionStyle = .crossDissolve
-            vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
-            self.present(vc, animated: false, completion: nil)
+            let alertController = UIAlertController(title: "", message: "Your newly added contacts will be imported in prospects. Do you want to proceed?.", preferredStyle: .alert)
+            let okAction = UIKit.UIAlertAction(title: "Proceed", style: UIAlertActionStyle.default) {
+                UIAlertAction in
+                let storyboard = UIStoryboard(name: "CRM", bundle: nil)
+                let vc = storyboard.instantiateViewController(withIdentifier: "idNewContactListVC") as! NewContactListVC
+                vc.contact_flag = "1"
+                vc.modalTransitionStyle = .crossDissolve
+                vc.modalPresentationStyle = .overCurrentContext
+                vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
+                self.present(vc, animated: false, completion: nil)
+            }
+            let Cancel = UIKit.UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) {
+                UIAlertAction in
+                
+            }
+            alertController.addAction(Cancel)
+            alertController.addAction(okAction)
+            self.present(alertController, animated: true, completion: nil)
+            
         }
         actionImportDevice.setValue(UIColor.black, forKey: "titleTextColor")
         
@@ -580,10 +664,42 @@ extension MyContactVC {
     
         let actionImport = UIAlertAction(title: "Import Contact(s) CSV", style: .default)
         { UIAlertAction in
-            let documentPicker = UIDocumentPickerViewController(documentTypes: ["com.apple.iwork.pages.pages", "com.apple.iwork.numbers.numbers", "com.apple.iwork.keynote.key","public.image", "com.apple.application", "public.item","public.data", "public.content", "public.audiovisual-content", "public.movie", "public.audiovisual-content", "public.video", "public.audio", "public.text", "public.data", "public.zip-archive", "com.pkware.zip-archive", "public.composite-content", "public.text"], in: .import)
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(self.UpdateContactList),
+                name: NSNotification.Name(rawValue: "UpdateContactList"),
+                object: nil)
             
-            documentPicker.delegate = self
-            self.present(documentPicker, animated: true, completion: nil)
+            let storyboard = UIStoryboard(name: "CRMM", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "idImportCsvFileVC") as! ImportCsvFileVC
+            vc.crmFlag = "1"
+            vc.modalTransitionStyle = .crossDissolve
+            vc.modalPresentationStyle = .overCurrentContext
+            vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
+            self.present(vc, animated: false, completion: nil)
+            
+//            let alertController = UIAlertController(title: "Import Contact(s) CSV", message: "\n- Only CSV files (not exceeding to 5MB in size) can be imported.\n- Only the first 5000 rows of CSV file will be imported.", preferredStyle: .alert)
+//
+//            let action1 = UIKit.UIAlertAction(title: "Select and import CSV file", style: UIAlertActionStyle.default) {
+//                UIAlertAction in
+//                let documentPicker = UIDocumentPickerViewController(documentTypes: ["com.apple.iwork.pages.pages", "com.apple.iwork.numbers.numbers", "com.apple.iwork.keynote.key","public.image", "com.apple.application", "public.item","public.data", "public.content", "public.audiovisual-content", "public.movie", "public.audiovisual-content", "public.video", "public.audio", "public.text", "public.data", "public.zip-archive", "com.pkware.zip-archive", "public.composite-content", "public.text"], in: .import)
+//
+//                documentPicker.delegate = self
+//                self.present(documentPicker, animated: true, completion: nil)
+//            }
+//            let action2 = UIKit.UIAlertAction(title: "Download sample CSV file", style: UIAlertActionStyle.default) {
+//                UIAlertAction in
+//            }
+//
+//            let cancelAction = UIKit.UIAlertAction(title: "Cancel", style: UIAlertActionStyle.destructive) {
+//                UIAlertAction in }
+//
+//            alertController.addAction(action1)
+//            alertController.addAction(action2)
+//            alertController.addAction(cancelAction)
+//            self.present(alertController, animated: true, completion: nil)
+            
+            
         }
         actionImport.setValue(UIColor.black, forKey: "titleTextColor")
         
@@ -598,18 +714,17 @@ extension MyContactVC {
         }
         actionExport.setValue(UIColor.black, forKey: "titleTextColor")
         
-        let actionDuplicateContacts = UIAlertAction(title: "Remove duplicate  contact(s)", style: .default)
-        { UIAlertAction in
-            
-            if OBJCOM.isConnectedToNetwork(){
-                OBJCOM.setLoader()
-                self.removeDuplicateContacts()
-            }else{
-                OBJCOM.NoInternetConnectionCall()
-            }
-           
-        }
-        actionDuplicateContacts.setValue(UIColor.black, forKey: "titleTextColor")
+//        let actionDuplicateContacts = UIAlertAction(title: "Remove duplicate  contact(s)", style: .default)
+//        { UIAlertAction in
+//
+//            if OBJCOM.isConnectedToNetwork(){
+//                OBJCOM.setLoader()
+//                self.removeDuplicateContacts()
+//            }else{
+//                OBJCOM.NoInternetConnectionCall()
+//            }
+//        }
+//        actionDuplicateContacts.setValue(UIColor.black, forKey: "titleTextColor")
         
         let actionCancel = UIAlertAction(title: "Cancel", style: .cancel)
         { UIAlertAction in }
@@ -620,7 +735,7 @@ extension MyContactVC {
         alert.addAction(actionImportGoogleContact)
         alert.addAction(actionImport)
         alert.addAction(actionExport)
-        alert.addAction(actionDuplicateContacts)
+//        alert.addAction(actionDuplicateContacts)
         alert.addAction(actionCancel)
         self.present(alert, animated: true, completion: nil)
     }
@@ -685,20 +800,27 @@ extension MyContactVC {
             JsonDict, staus in
             let success:String = JsonDict!["IsSuccess"] as! String
             if success == "true"{
-                let result = JsonDict!["result"] as AnyObject
+                let result = JsonDict!["result"] as! String
                 OBJCOM.hideLoader()
-                OBJCOM.setAlert(_title: "", message: result as! String)
+               // OBJCOM.setAlert(_title: "", message: result as! String)
+                let alertController = UIAlertController(title: "", message: result, preferredStyle: .alert)
+                let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default) {
+                    UIAlertAction in
+                    if OBJCOM.isConnectedToNetwork(){
+                        OBJCOM.setLoader()
+                        self.getContactData(sortBy: self.strSortBy)
+                    }else{
+                        OBJCOM.NoInternetConnectionCall()
+                    }
+                }
+                alertController.addAction(okAction)
+                self.present(alertController, animated: true, completion: nil)
                 
             }else{
                 print("result:",JsonDict ?? "")
                 OBJCOM.hideLoader()
             }
-            if OBJCOM.isConnectedToNetwork(){
-                OBJCOM.setLoader()
-                self.getContactData()
-            }else{
-                OBJCOM.NoInternetConnectionCall()
-            }
+            
         };
     }
     
@@ -717,25 +839,29 @@ extension MyContactVC {
             JsonDict, staus in
             let success:String = JsonDict!["IsSuccess"] as! String
             if success == "true"{
-                let result = JsonDict!["result"] as AnyObject
+                let result = JsonDict!["result"] as! String
                 OBJCOM.hideLoader()
-                OBJCOM.setAlert(_title: "", message: result as! String)
-                self.showHideMoveDeleteButtons()
-                self.selectAllRecords = false
+                // OBJCOM.setAlert(_title: "", message: result as! String)
+                let alertController = UIAlertController(title: "", message: result, preferredStyle: .alert)
+                let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default) {
+                    UIAlertAction in
+                    if OBJCOM.isConnectedToNetwork(){
+                        OBJCOM.setLoader()
+                        self.getContactData(sortBy: self.strSortBy)
+                    }else{
+                        OBJCOM.NoInternetConnectionCall()
+                    }
+                }
+                alertController.addAction(okAction)
+                self.present(alertController, animated: true, completion: nil)
             }else{
                 print("result:",JsonDict ?? "")
                 OBJCOM.hideLoader()
             }
-            if OBJCOM.isConnectedToNetwork(){
-                OBJCOM.setLoader()
-                self.getContactData()
-            }else{
-                OBJCOM.NoInternetConnectionCall()
-            }
+            
         };
     }
     
-   
     func moveContact(ContactId: String, crmFlag: String){
         
         let dictParam = ["userId": userID,
@@ -762,7 +888,7 @@ extension MyContactVC {
             }
             if OBJCOM.isConnectedToNetwork(){
                 OBJCOM.setLoader()
-                self.getContactData()
+                self.getContactData(sortBy: self.strSortBy)
             }else{
                 OBJCOM.NoInternetConnectionCall()
             }
@@ -782,29 +908,35 @@ extension MyContactVC {
         
         arrFirstNameSearch.removeAll()
         arrLastNameSearch.removeAll()
-        arrMiddleNameSearch.removeAll()
+//        arrMiddleNameSearch.removeAll()
         arrEmailSearch.removeAll()
         arrPhoneSearch.removeAll()
         arrCategorySearch.removeAll()
         arrContactIdSearch.removeAll()
+        arrDescSearch.removeAll()
+        arrDateSearch.removeAll()
         
         if textfield.text?.count != 0 {
             for i in 0 ..< arrContactData.count {
                 let strfName = arrFirstName[i].lowercased().range(of: textfield.text!, options: .caseInsensitive, range: nil,   locale: nil)
-                let strmName = arrMiddleName[i].lowercased().range(of: textfield.text!, options: .caseInsensitive, range: nil,   locale: nil)
+//                let strmName = arrMiddleName[i].lowercased().range(of: textfield.text!, options: .caseInsensitive, range: nil,   locale: nil)
                 let strlName = arrLastName[i].lowercased().range(of: textfield.text!, options: .caseInsensitive, range: nil,   locale: nil)
                 let strEmail = arrEmail[i].lowercased().range(of: textfield.text!, options: .caseInsensitive, range: nil,   locale: nil)
                 let strPhone = arrPhone[i].lowercased().range(of: textfield.text!, options: .caseInsensitive, range: nil,   locale: nil)
                 let strCat = arrCategory[i].lowercased().range(of: textfield.text!, options: .caseInsensitive, range: nil,   locale: nil)
+                let strDesc = arrDesc[i].lowercased().range(of: textfield.text!, options: .caseInsensitive, range: nil,   locale: nil)
+                let strDate = arrDate[i].lowercased().range(of: textfield.text!, options: .caseInsensitive, range: nil,   locale: nil)
                 
-                if strfName != nil || strmName != nil || strlName != nil || strEmail != nil || strPhone != nil || strCat != nil{
+                if strfName != nil || strlName != nil || strEmail != nil || strPhone != nil || strCat != nil || strDesc != nil || strDate != nil{
                     arrFirstNameSearch.append(arrFirstName[i])
-                    arrMiddleNameSearch.append(arrMiddleName[i])
+//                    arrMiddleNameSearch.append(arrMiddleName[i])
                     arrLastNameSearch.append(arrLastName[i])
                     arrEmailSearch.append(arrEmail[i])
                     arrPhoneSearch.append(arrPhone[i])
                     arrCategorySearch.append(arrCategory[i])
                     arrContactIdSearch.append(arrContactId[i])
+                    arrDateSearch.append(arrDate[i])
+                    arrDescSearch.append(arrDesc[i])
                 }
             }
         } else {
@@ -816,57 +948,88 @@ extension MyContactVC {
 
 extension MyContactVC {
     func setTagCrm(contact_id:String) {
-        
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let actionGreenApple = UIAlertAction(title: "Green Apple", style: .default)
-        {
-            UIAlertAction in
-            self.apiCallForUpdateTag(tag: "Green Apple", contact_id: contact_id)
-        }
-        actionGreenApple.setValue(colorGreenApple, forKey: "titleTextColor")
-        actionGreenApple.setValue(arrAppleImages[2], forKey: "image")
         
-        let actionRedApple = UIAlertAction(title: "Red Apple", style: .default)
-        {
-            UIAlertAction in
-            self.apiCallForUpdateTag(tag: "Red Apple", contact_id: contact_id)
+        for i in 0..<self.arrTagTitle.count{
+            alert.addAction(UIAlertAction(title: self.arrTagTitle[i], style: .default , handler:{ (UIAlertAction)in
+                self.apiCallForUpdateTag(tag: self.arrTagTitle[i], tagId: self.arrTagId[i], contact_id: contact_id)
+                
+            }))
         }
-        actionRedApple.setValue(colorRedApple, forKey: "titleTextColor")
-        actionRedApple.setValue(arrAppleImages[1], forKey: "image")
+        alert.addAction(UIAlertAction(title: "Add Custom Tag", style: .default , handler:{ (UIAlertAction)in
+            
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(self.setCustomTagCRM),
+                name: NSNotification.Name(rawValue: "ADDCUSTOMTAG"),
+                object: nil)
+            
+            let storyboard = UIStoryboard(name: "CRMM", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "idAddCustomTagPopup") as! AddCustomTagPopup
+            vc.contact_id = contact_id
+            vc.modalTransitionStyle = .crossDissolve
+            vc.modalPresentationStyle = .overCurrentContext
+            vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
+            self.present(vc, animated: false, completion: nil)
+        }))
         
-        let actionBrownApple = UIAlertAction(title: "Brown Apple", style: .default)
-        {
-            UIAlertAction in
-            self.apiCallForUpdateTag(tag: "Brown Apple", contact_id: contact_id)
-        }
-        actionBrownApple.setValue(colorBrownApple, forKey: "titleTextColor")
-        actionBrownApple.setValue(arrAppleImages[3], forKey: "image")
-        
-        let actionRottenApple = UIAlertAction(title: "Rotten Apple", style: .default)
-        {
-            UIAlertAction in
-            self.apiCallForUpdateTag(tag: "Rotten Apple", contact_id: contact_id)
-        }
-        actionRottenApple.setValue(colorRottenApple, forKey: "titleTextColor")
-        actionRottenApple.setValue(arrAppleImages[4], forKey: "image")
-        
-        let actionCancel = UIAlertAction(title: "Cancel", style: .cancel)
-        {
-            UIAlertAction in
-        }
-        actionCancel.setValue(UIColor.black, forKey: "titleTextColor")
-        
-        alert.addAction(actionGreenApple)
-        alert.addAction(actionRedApple)
-        alert.addAction(actionBrownApple)
-        alert.addAction(actionRottenApple)
-        alert.addAction(actionCancel)
+        alert.addAction(UIAlertAction(title: "No Tag", style: .default , handler:{ (UIAlertAction)in
+            self.apiCallForUpdateTag(tag: "", tagId: "", contact_id: contact_id)
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler:nil))
         self.present(alert, animated: true, completion: nil)
     }
     
-    func apiCallForUpdateTag(tag:String, contact_id:String){
+    @objc func setCustomTagCRM(notification: NSNotification){
+        print(notification.userInfo as Any)
+        if let info = notification.userInfo {
+            let tagName = info["tagName"] as? String ?? ""
+            let contact_id = info["contact_id"] as? String ?? ""
+            self.apiCallForUpdateTag(tag: tagName, tagId: "", contact_id: contact_id)
+        }
+    }
+    
+    func getCategoryList(){
+        let dictParam = ["userId": userID,
+                         "platform":"3",
+                         "crmFlag":"1"]
+        
+        let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
+        let jsonString = String(data: jsonData!, encoding: .utf8)
+        let dictParamTemp = ["param":jsonString];
+        
+        typealias JSONDictionary = [String:Any]
+        OBJCOM.modalAPICall(Action: "fillDropDownCrm", param:dictParamTemp as [String : AnyObject],  vcObject: self){
+            JsonDict, staus in
+            
+            let success:String = JsonDict!["IsSuccess"] as! String
+            if success == "true"{
+                let dictJsonData = (JsonDict!["result"] as AnyObject)
+                if dictJsonData.count > 0 {
+                    self.arrTagTitle = []
+                    self.arrTagId = []
+                    let arrTag = dictJsonData.value(forKey: "contact_category") as! [AnyObject]
+                    for tag in arrTag {
+                        self.arrTagTitle.append("\(tag["userTagName"] as? String ?? "")")
+                        self.arrTagId.append("\(tag["userTagId"] as? String ?? "")")
+                    }
+                }
+                OBJCOM.hideLoader()
+            }else{
+                print("result:",JsonDict ?? "")
+                OBJCOM.hideLoader()
+                
+            }
+        };
+        
+    }
+    
+    func apiCallForUpdateTag(tag:String, tagId: String, contact_id:String){
         let dictParam = ["contact_id": contact_id,
-                         "contact_category":tag]
+                         "contact_category_title":tag,
+                         "contact_platform": "3",
+                         "contact_category":tagId,
+                         "contact_users_id":userID]
         
         typealias JSONDictionary = [String:Any]
         OBJCOM.modalAPICall(Action: "updateTag", param:dictParam as [String : AnyObject],  vcObject: self){
@@ -878,7 +1041,8 @@ extension MyContactVC {
                 OBJCOM.setAlert(_title: "", message: result as! String)
                 if OBJCOM.isConnectedToNetwork(){
                     OBJCOM.setLoader()
-                    self.getContactData()
+                    self.getContactData(sortBy:self.strSortBy)
+                    self.getCategoryList()
                 }else{
                     OBJCOM.NoInternetConnectionCall()
                 }
@@ -888,69 +1052,69 @@ extension MyContactVC {
             }
         };
     }
-    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL) {
-        print(url)
-        
-        print(url.lastPathComponent)
-        print(url.pathExtension)
-        
-        if controller.documentPickerMode == .import {
-            arrImpFname = [];
-            //   arrImpMiddle = [];
-            arrImpLname = [];
-            arrImpEmail = [];
-            arrImpPhone = [];
-            
-            let content = try? String(contentsOf: url, encoding: .ascii)
-            var rows = content?.components(separatedBy: "\n")
-            
-            var columnsTitle = rows![0].components(separatedBy: ",")
-            if columnsTitle.count >= 4 {
-                var fn = columnsTitle[0]
-                // let mn = columnsTitle[1]
-                var ln = columnsTitle[1]
-                var em = columnsTitle[2]
-                var ph = columnsTitle[3]
-                
-                fn = fn.replacingOccurrences(of: "\r", with: "")
-                ln = ln.replacingOccurrences(of: "\r", with: "")
-                em = em.replacingOccurrences(of: "\r", with: "")
-                ph = ph.replacingOccurrences(of: "\r", with: "")
-                
-                if fn == "fname" && ln == "lname" && em == "email" && ph == "phone"{
-                    for i in 1..<(rows?.count)!-1 {
-                        var columns = rows![i].components(separatedBy: ",")
-                        if columns.count > 0{
-                            arrImpFname.append(columns[0])
-                            // arrImpMiddle.append(columns[1])
-                            arrImpLname.append(columns[1])
-                            arrImpEmail.append(columns[2])
-                            arrImpPhone.append(columns[3])
-                        }
-                    }
-                    var importArray = [AnyObject]()
-                    for i in 0..<arrImpFname.count {
-                        let tempDict = ["fname": arrImpFname[i],
-                                        "lname": arrImpLname[i],
-                                        "email": arrImpEmail[i],
-                                        "phone": arrImpPhone[i]]
-                        importArray.append(tempDict as AnyObject)
-                    }
-                    if importArray.count > 0 {
-                        self.importCSVAPIContacts(impArray: importArray, crmFlag: "1")
-                    }
-                }else{
-                    OBJCOM.setAlert(_title: "", message: "Selected file format is invalid.")
-                }
-            }else{
-                OBJCOM.setAlert(_title: "", message: "Selected file format is invalid.")
-            }
-        }
-    }
-    
-    func documentMenu(_ documentMenu: UIDocumentMenuViewController, didPickDocumentPicker documentPicker: UIDocumentPickerViewController) {
-        
-    }
+//    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL) {
+//        print(url)
+//
+//        print(url.lastPathComponent)
+//        print(url.pathExtension)
+//
+//        if controller.documentPickerMode == .import {
+//            arrImpFname = [];
+//            //   arrImpMiddle = [];
+//            arrImpLname = [];
+//            arrImpEmail = [];
+//            arrImpPhone = [];
+//
+//            let content = try? String(contentsOf: url, encoding: .ascii)
+//            var rows = content?.components(separatedBy: "\n")
+//
+//            var columnsTitle = rows![0].components(separatedBy: ",")
+//            if columnsTitle.count >= 4 {
+//                var fn = columnsTitle[0]
+//                // let mn = columnsTitle[1]
+//                var ln = columnsTitle[1]
+//                var em = columnsTitle[2]
+//                var ph = columnsTitle[3]
+//
+//                fn = fn.replacingOccurrences(of: "\r", with: "")
+//                ln = ln.replacingOccurrences(of: "\r", with: "")
+//                em = em.replacingOccurrences(of: "\r", with: "")
+//                ph = ph.replacingOccurrences(of: "\r", with: "")
+//
+//                if fn == "fname" && ln == "lname" && em == "email" && ph == "phone"{
+//                    for i in 1..<(rows?.count)!-1 {
+//                        var columns = rows![i].components(separatedBy: ",")
+//                        if columns.count > 0{
+//                            arrImpFname.append(columns[0])
+//                            // arrImpMiddle.append(columns[1])
+//                            arrImpLname.append(columns[1])
+//                            arrImpEmail.append(columns[2])
+//                            arrImpPhone.append(columns[3])
+//                        }
+//                    }
+//                    var importArray = [AnyObject]()
+//                    for i in 0..<arrImpFname.count {
+//                        let tempDict = ["fname": arrImpFname[i],
+//                                        "lname": arrImpLname[i],
+//                                        "email": arrImpEmail[i],
+//                                        "phone": arrImpPhone[i]]
+//                        importArray.append(tempDict as AnyObject)
+//                    }
+//                    if importArray.count > 0 {
+//                        self.importCSVAPIContacts(impArray: importArray, crmFlag: "1")
+//                    }
+//                }else{
+//                    OBJCOM.setAlert(_title: "", message: "Selected file format is invalid.")
+//                }
+//            }else{
+//                OBJCOM.setAlert(_title: "", message: "Selected file format is invalid.")
+//            }
+//        }
+//    }
+//
+//    func documentMenu(_ documentMenu: UIDocumentMenuViewController, didPickDocumentPicker documentPicker: UIDocumentPickerViewController) {
+//
+//    }
 }
 
 extension MyContactVC : SwiftMultiSelectDelegate, SwiftMultiSelectDataSource {
@@ -1071,7 +1235,7 @@ extension MyContactVC : SwiftMultiSelectDelegate, SwiftMultiSelectDataSource {
 
                     if OBJCOM.isConnectedToNetwork(){
                         OBJCOM.setLoader()
-                        self.getContactData()
+                        self.getContactData(sortBy: self.strSortBy)
                     }else{
                         OBJCOM.NoInternetConnectionCall()
                     }
@@ -1094,7 +1258,7 @@ extension MyContactVC : SwiftMultiSelectDelegate, SwiftMultiSelectDataSource {
         let dictParamTemp = ["param":jsonString];
         
         typealias JSONDictionary = [String:Any]
-        OBJCOM.modalAPICall(Action: "deleteDuplicateCrm", param:dictParamTemp as [String : AnyObject],  vcObject: self){
+        OBJCOM.modalAPICall(Action: "deleteDuplicateCrm", param:dictParamTemp as [String : AnyObject],  vcObject: self) {
             JsonDict, staus in
             let success:String = JsonDict!["IsSuccess"] as! String
             if success == "true"{
@@ -1103,7 +1267,7 @@ extension MyContactVC : SwiftMultiSelectDelegate, SwiftMultiSelectDataSource {
                 OBJCOM.setAlert(_title: "", message: result as! String)
                 if OBJCOM.isConnectedToNetwork(){
                     OBJCOM.setLoader()
-                    self.getContactData()
+                    self.getContactData(sortBy: self.strSortBy)
                 }else{
                     OBJCOM.NoInternetConnectionCall()
                 }
@@ -1141,7 +1305,7 @@ extension MyContactVC : SwiftMultiSelectDelegate, SwiftMultiSelectDataSource {
                    // DispatchQueue.main.sync {
                         if OBJCOM.isConnectedToNetwork(){
                             OBJCOM.setLoader()
-                            self.getContactData()
+                           self.getContactData(sortBy: self.strSortBy)
                         }else{
                             OBJCOM.NoInternetConnectionCall()
                         }
@@ -1158,6 +1322,44 @@ extension MyContactVC : SwiftMultiSelectDelegate, SwiftMultiSelectDataSource {
             }
         };
     }
+    
+    @IBAction func actionSortBy(_ sender:UIButton) {
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let actionAlpha = UIAlertAction(title: "Sort by alphabetically", style: .default)
+        {
+            UIAlertAction in
+            self.strSortBy = ""
+            if OBJCOM.isConnectedToNetwork(){
+                OBJCOM.setLoader()
+                self.getContactData(sortBy:self.strSortBy)
+            }else{
+                OBJCOM.NoInternetConnectionCall()
+            }
+        }
+        
+        let actionDate = UIAlertAction(title: "Sort by date", style: .default)
+        {
+            UIAlertAction in
+            self.strSortBy = "contact_created"
+            if OBJCOM.isConnectedToNetwork(){
+                OBJCOM.setLoader()
+                self.getContactData(sortBy:self.strSortBy)
+            }else{
+                OBJCOM.NoInternetConnectionCall()
+            }
+        }
+        
+        let actionCancel = UIAlertAction(title: "Cancel", style: .cancel)
+        {
+            UIAlertAction in
+        }
+        actionCancel.setValue(UIColor.black, forKey: "titleTextColor")
+        
+        alert.addAction(actionAlpha)
+        alert.addAction(actionDate)
+        alert.addAction(actionCancel)
+        self.present(alert, animated: true, completion: nil)
+    }
 }
 
 extension Array {
@@ -1173,3 +1375,4 @@ extension Array {
         return false
     }
 }
+

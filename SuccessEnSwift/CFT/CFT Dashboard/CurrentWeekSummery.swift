@@ -100,6 +100,7 @@ class CurrentWeekSummery: UIViewController {
         }
         getWeeklyTrackingData(action: "getCftCheckList", param: dictParamTemp as [String : AnyObject])
     }
+    
     //get data after week selection
     public func getWTDataOnWeekSelection(weekID:String){
         let dictParam = ["userId": userID,

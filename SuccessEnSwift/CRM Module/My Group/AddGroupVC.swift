@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import Alamofire
+import SwiftyJSON
 
 class AddGroupVC: UIViewController, UITextFieldDelegate {
     
@@ -23,6 +25,7 @@ class AddGroupVC: UIViewController, UITextFieldDelegate {
     @IBOutlet var btnCustomer : UIButton!
     @IBOutlet var btnRecruit : UIButton!
     @IBOutlet var btnSelectAllSC : UIButton!
+    @IBOutlet var lblSelectedCount : UILabel!
     
     @IBOutlet var btnFromSystemContact : UIButton!
     @IBOutlet var btnImportCsvContact : UIButton!
@@ -67,6 +70,8 @@ class AddGroupVC: UIViewController, UITextFieldDelegate {
     var arrRecruitID = [String]()
     var arrSelectedIDs = [String]()
     var arrSelectedEmailsCampIDs = [String]()
+    var docController:UIDocumentInteractionController!
+    var dictCsvData = [String:AnyObject]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -92,6 +97,8 @@ class AddGroupVC: UIViewController, UITextFieldDelegate {
         self.btnSelectAllECRec.isSelected = false
         self.btnSelectAllSC.isSelected = false
         self.lblCsvFile.text = ""
+        self.dictCsvData = [:]
+        self.lblSelectedCount.text = "(0)"
         
         if OBJCOM.isConnectedToNetwork(){
             OBJCOM.setLoader()
@@ -245,6 +252,7 @@ extension AddGroupVC : UITableViewDataSource, UITableViewDelegate {
                     self.arrSelectedIDs.append(selId)
                 }
             }
+            self.lblSelectedCount.text = "(\(self.arrSelectedIDs.count))"
             self.tblList.reloadData()
         }else if tableView == tblMemberList {
             let selId = self.arrCampEmailID[indexPath.row]
@@ -443,6 +451,7 @@ extension AddGroupVC {
                 }
             }
         }
+        self.lblSelectedCount.text = "(\(self.arrSelectedIDs.count))"
         self.tblList.reloadData()
     }
     
@@ -451,8 +460,9 @@ extension AddGroupVC {
             OBJCOM.setAlert(_title: "", message: "Please enter group name.")
         } else if self.arrSelectedIDs.count == 0 && self.arrSelectedEmailsCampIDs.count == 0  && self.isImportCsv == false {
             OBJCOM.setAlert(_title: "", message: "Please select atleast one group member.")
-        }
-        else{
+        } else if self.dictCsvData == nil && self.isImportCsv == true{
+            OBJCOM.setAlert(_title: "", message: "Please select CSV file.")
+        } else{
             var strSelect = ""
             if self.fromEmailCampaigns == true {
                 if self.arrSelectedEmailsCampIDs.count > 0 {
@@ -460,7 +470,27 @@ extension AddGroupVC {
                     self.addGroup(strSelect: strSelect)
                 }
             }else if self.isImportCsv == true {
-                    self.addGroup(strSelect: strSelect)
+                self.importCSVfileInGroup(dictCsvData["fileData"] as! Data, filename: dictCsvData["fileName"] as! String, completionHandler: { JsonDict in
+                    let success:String = JsonDict!["IsSuccess"] as! String
+                    if success == "true"{
+                        let result = JsonDict!["result"] as? String ?? "Group created successfully!"
+                        
+                        OBJCOM.hideLoader()
+                        let alertController = UIAlertController(title: "", message: result, preferredStyle: .alert)
+                        let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default) {
+                            UIAlertAction in
+                            self.dismiss(animated: true, completion: nil)
+                        }
+                        alertController.addAction(okAction)
+                        self.present(alertController, animated: true, completion: nil)
+                        
+                    }else{
+                        OBJCOM.hideLoader()
+                        let result = JsonDict!["result"] as? String ?? "Nothing to import!"
+                        OBJCOM.setAlert(_title: "", message: result)
+                    }
+                }
+                )
             }else{
                 if self.arrSelectedIDs.count > 0 {
                     strSelect = self.arrSelectedIDs.joined(separator: ",")
@@ -637,12 +667,9 @@ extension AddGroupVC {
             let success:String = JsonDict!["IsSuccess"] as! String
             if success == "true"{
                 
-                let groupId = "\(JsonDict!["group_id"] ?? "")"
+//                let groupId = "\(JsonDict!["group_id"] ?? "")"
                 let groupName = "\(JsonDict!["group_name"] ?? "")"
-                
-                if self.importArray.count > 0 && groupId != ""{
-                    self.importCSVgroup(impArray: self.importArray, crmFlag: "3", grpId: groupId, grpName: groupName)
-                }else{
+
                     let result = JsonDict!["result"] as? String ?? ""
                     print(result)
                     let alertController = UIAlertController(title: "", message: "Group '\(groupName)' created successfully.", preferredStyle: .alert)
@@ -653,7 +680,7 @@ extension AddGroupVC {
                     }
                     alertController.addAction(okAction)
                     self.present(alertController, animated: true, completion: nil)
-                }
+//                }
                 OBJCOM.hideLoader()
             }else{
                 print("result:",JsonDict ?? "")
@@ -693,7 +720,7 @@ extension AddGroupVC {
     }
 }
 
-extension AddGroupVC : UIDocumentPickerDelegate, UIDocumentMenuDelegate  {
+extension AddGroupVC  {
     @IBAction func actionSelectSystemContacts(_ btn : UIButton){
         self.btnFromSystemContact.isSelected = true
         self.btnImportCsvContact.isSelected = false
@@ -702,6 +729,7 @@ extension AddGroupVC : UIDocumentPickerDelegate, UIDocumentMenuDelegate  {
         self.selectionView.isHidden = false
         self.importCsvView.isHidden = true
         self.fromEmailCampaigns = false
+        self.isImportCsv = false
     }
     
     @IBAction func actionImportCsvContacts(_ btn : UIButton){
@@ -712,6 +740,7 @@ extension AddGroupVC : UIDocumentPickerDelegate, UIDocumentMenuDelegate  {
         self.selectionView.isHidden = true
         self.importCsvView.isHidden = false
         self.fromEmailCampaigns = false
+        self.isImportCsv = true
     }
     
     @IBAction func actionSelectEmailCampaigns(_ btn : UIButton){
@@ -723,6 +752,7 @@ extension AddGroupVC : UIDocumentPickerDelegate, UIDocumentMenuDelegate  {
         self.importCsvView.isHidden = true
         self.fromEmailCampaigns = true
         self.btnSelectAllECRec.isSelected = false
+        self.isImportCsv = false
     }
     
     @IBAction func actionSelectCsvFile(_ btn : UIButton){
@@ -733,119 +763,149 @@ extension AddGroupVC : UIDocumentPickerDelegate, UIDocumentMenuDelegate  {
         
     }
     
-    @IBAction func actionImportCsvFile(_ btn : UIButton){
-//        if importArray.count > 0 && groupId != ""{
-//            self.importCSVgroup(impArray: importArray, crmFlag: "3", grpId: groupId)
-//        }
+    @IBAction func actionDownloadFullCsvFile(_ btn : UIButton){
+        self.downloadAndSaveFile("https://www.successentellus.com/assets/prospectfull.csv")
     }
     
-    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL) {
-        print(url)
+    @IBAction func actionDownloadSimpleCsvFile(_ btn : UIButton){
+        self.downloadAndSaveFile("https://www.successentellus.com/assets/prospect.csv")
+    }
+    
+    
+    func downloadAndSaveFile(_ urlStr : String){
         
-        print(url.lastPathComponent)
-        print(url.pathExtension)
-        
-        if controller.documentPickerMode == .import {
-            var arrImpFname = [String]();
-            // var arrImpMiddle = [String]();
-            var arrImpLname = [String]();
-            var arrImpEmail = [String]();
-            var arrImpPhone = [String]();
-            
-            let content = try? String(contentsOf: url, encoding: .ascii)
-            var rows = content?.components(separatedBy: "\n")
-            
-            var columnsTitle = rows![0].components(separatedBy: ",")
-            if columnsTitle.count >= 4 {
-                var fn = columnsTitle[0]
-                // let mn = columnsTitle[1]
-                var ln = columnsTitle[1]
-                var em = columnsTitle[2]
-                var ph = columnsTitle[3]
-                
-                fn = fn.replacingOccurrences(of: "\r", with: "")
-                ln = ln.replacingOccurrences(of: "\r", with: "")
-                em = em.replacingOccurrences(of: "\r", with: "")
-                ph = ph.replacingOccurrences(of: "\r", with: "")
-                
-                if fn == "fname" && ln == "lname" && em == "email" && ph == "phone"{
-                    for i in 1..<(rows?.count)!-1 {
-                        var columns = rows![i].components(separatedBy: ",")
-                        if columns.count > 0{
-                            arrImpFname.append(columns[0])
-                            // arrImpMiddle.append(columns[1])
-                            arrImpLname.append(columns[1])
-                            arrImpEmail.append(columns[2])
-                            arrImpPhone.append(columns[3])
-                        }
-                    }
-                    
-                    for i in 0..<arrImpFname.count {
-                        let tempDict = ["fname": arrImpFname[i],
-                                        "lname": arrImpLname[i],
-                                        "email": arrImpEmail[i],
-                                        "phone": arrImpPhone[i]]
-                        importArray.append(tempDict as AnyObject)
-                    }
-                    self.btnImportCsvFile.isEnabled = true
-                    self.lblCsvFile.text = " \(url.lastPathComponent)"
-                    self.lblCsvFile.addImageWith(name: "ic_file", behindText: false)
-                    if self.importArray.count > 0 {
-                        self.isImportCsv = true
-                    }else{
-                        OBJCOM.setAlert(_title: "", message: "No records available in CSV file.")
-                        return
-                    }
-                }else{
-                    
-                    OBJCOM.setAlert(_title: "", message: "Selected file format is invalid.")
-                    return
-                }
-            }else{
-                OBJCOM.setAlert(_title: "", message: "Selected file format is invalid.")
-                return
-            }
+        let destination: DownloadRequest.DownloadFileDestination = { _, _ in
+            var fileURL = self.createFolder(folderName: "SuccessEntellus")
+            let fileName = URL(string : urlStr)
+            fileURL = fileURL.appendingPathComponent((fileName?.lastPathComponent)!)
+            return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
         }
+        Alamofire.download(urlStr, to: destination).response(completionHandler: { (DefaultDownloadResponse) in
+            // print("res >> ",DefaultDownloadResponse.destinationURL!);
+            self.docController = UIDocumentInteractionController(url: DefaultDownloadResponse.destinationURL!)
+            self.docController.presentOptionsMenu(from: self.view.frame, in: self.view, animated: true)
+        })
     }
     
-    func documentMenu(_ documentMenu: UIDocumentMenuViewController, didPickDocumentPicker documentPicker: UIDocumentPickerViewController) {
-        
+    func createFolder(folderName:String)->URL
+    {
+        var paths: [Any] = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+        let documentsDirectory: String = paths[0] as? String ?? ""
+        let dataPath: String = URL(fileURLWithPath: documentsDirectory).appendingPathComponent(folderName).absoluteString
+        if !FileManager.default.fileExists(atPath: dataPath) {
+            try? FileManager.default.createDirectory(atPath: dataPath, withIntermediateDirectories: false, attributes: nil)
+        }
+        let fileURL = URL(string: dataPath)
+        return fileURL!
     }
     
-    func importCSVgroup(impArray : [AnyObject], crmFlag : String, grpId: String, grpName:String) {
-        let dictParam = ["userId":userID,
-                         "platform":"3",
-                         "crmFlag":crmFlag,
-                         "csvDetails": impArray,
-                         "groupId":grpId] as [String : Any]
-        
-        let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
-        let jsonString = String(data: jsonData!, encoding: .utf8)
-        let dictParamTemp = ["param":jsonString];
-        
-        typealias JSONDictionary = [String:Any]
-        OBJCOM.modalAPICall(Action: "importCsvCrm", param:dictParamTemp as [String : AnyObject],  vcObject: self) {
-            JsonDict, staus in
-            
-            let success:String = JsonDict!["IsSuccess"] as! String
-            if success == "true"{
-                OBJCOM.hideLoader()
-                let result = JsonDict!["result"] as! String
-                print(result)
-                let alertController = UIAlertController(title: "", message: "'\(grpName)' created successfully. All entries in CSV file will be visible in My Prospects.", preferredStyle: .alert)
-                let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default) {
-                    UIAlertAction in
-                    self.dismiss(animated: true, completion: nil)
-                }
-                alertController.addAction(okAction)
-                self.present(alertController, animated: true, completion: nil)
-                
-            }else{
-                print("result:",JsonDict ?? "")
-                OBJCOM.hideLoader()
-            }
-        };
-    }
+//    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL) {
+//        print(url)
+//
+//        print(url.lastPathComponent)
+//        print(url.pathExtension)
+//
+//        if controller.documentPickerMode == .import {
+//            var arrImpFname = [String]();
+//            // var arrImpMiddle = [String]();
+//            var arrImpLname = [String]();
+//            var arrImpEmail = [String]();
+//            var arrImpPhone = [String]();
+//
+//            let content = try? String(contentsOf: url, encoding: .ascii)
+//            var rows = content?.components(separatedBy: "\n")
+//
+//            var columnsTitle = rows![0].components(separatedBy: ",")
+//            if columnsTitle.count >= 4 {
+//                var fn = columnsTitle[0]
+//                // let mn = columnsTitle[1]
+//                var ln = columnsTitle[1]
+//                var em = columnsTitle[2]
+//                var ph = columnsTitle[3]
+//
+//                fn = fn.replacingOccurrences(of: "\r", with: "")
+//                ln = ln.replacingOccurrences(of: "\r", with: "")
+//                em = em.replacingOccurrences(of: "\r", with: "")
+//                ph = ph.replacingOccurrences(of: "\r", with: "")
+//
+//                if fn == "fname" && ln == "lname" && em == "email" && ph == "phone"{
+//                    for i in 1..<(rows?.count)!-1 {
+//                        var columns = rows![i].components(separatedBy: ",")
+//                        if columns.count > 0{
+//                            arrImpFname.append(columns[0])
+//                            // arrImpMiddle.append(columns[1])
+//                            arrImpLname.append(columns[1])
+//                            arrImpEmail.append(columns[2])
+//                            arrImpPhone.append(columns[3])
+//                        }
+//                    }
+//
+//                    for i in 0..<arrImpFname.count {
+//                        let tempDict = ["fname": arrImpFname[i],
+//                                        "lname": arrImpLname[i],
+//                                        "email": arrImpEmail[i],
+//                                        "phone": arrImpPhone[i]]
+//                        importArray.append(tempDict as AnyObject)
+//                    }
+//                    self.btnImportCsvFile.isEnabled = true
+//                    self.lblCsvFile.text = " \(url.lastPathComponent)"
+//                    self.lblCsvFile.addImageWith(name: "ic_file", behindText: false)
+//                    if self.importArray.count > 0 {
+//                        self.isImportCsv = true
+//                    }else{
+//                        OBJCOM.setAlert(_title: "", message: "No records available in CSV file.")
+//                        return
+//                    }
+//                }else{
+//
+//                    OBJCOM.setAlert(_title: "", message: "Selected file format is invalid.")
+//                    return
+//                }
+//            }else{
+//                OBJCOM.setAlert(_title: "", message: "Selected file format is invalid.")
+//                return
+//            }
+//        }
+//    }
+//
+//    func documentMenu(_ documentMenu: UIDocumentMenuViewController, didPickDocumentPicker documentPicker: UIDocumentPickerViewController) {
+//
+//    }
+//
+//    func importCSVgroup(impArray : [AnyObject], crmFlag : String, grpId: String, grpName:String) {
+//        let dictParam = ["userId":userID,
+//                         "platform":"3",
+//                         "crmFlag":crmFlag,
+//                         "csvDetails": impArray,
+//                         "groupId":grpId] as [String : Any]
+//
+//        let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
+//        let jsonString = String(data: jsonData!, encoding: .utf8)
+//        let dictParamTemp = ["param":jsonString];
+//
+//        typealias JSONDictionary = [String:Any]
+//        OBJCOM.modalAPICall(Action: "importCsvCrm", param:dictParamTemp as [String : AnyObject],  vcObject: self) {
+//            JsonDict, staus in
+//
+//            let success:String = JsonDict!["IsSuccess"] as! String
+//            if success == "true"{
+//                OBJCOM.hideLoader()
+//                let result = JsonDict!["result"] as! String
+//                print(result)
+//                let alertController = UIAlertController(title: "", message: "'\(grpName)' created successfully. All entries in CSV file will be visible in My Prospects.", preferredStyle: .alert)
+//                let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default) {
+//                    UIAlertAction in
+//                    self.dismiss(animated: true, completion: nil)
+//                }
+//                alertController.addAction(okAction)
+//                self.present(alertController, animated: true, completion: nil)
+//
+//            }else{
+//                print("result:",JsonDict ?? "")
+//                OBJCOM.hideLoader()
+//            }
+//        };
+//    }
 }
 
 extension AddGroupVC {
@@ -1045,3 +1105,94 @@ extension AddGroupVC {
     
 }
 
+extension AddGroupVC : UINavigationControllerDelegate, UIDocumentPickerDelegate {
+    
+    func downloadfile(URL: NSURL) {
+        let sessionConfig = URLSessionConfiguration.default
+        let session = URLSession(configuration: sessionConfig, delegate: nil, delegateQueue: nil)
+        var request = URLRequest(url: URL as URL)
+        request.httpMethod = "GET"
+        let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
+            if (error == nil) {
+                // Success
+                OBJCOM.hideLoader()
+                let statusCode = response?.mimeType
+                print("Success: \(String(describing: statusCode))")
+                self.dictCsvData = ["fileData":data!,
+                                    "fileName": URL.lastPathComponent!] as [String : AnyObject]
+                DispatchQueue.main.async(execute: {
+                    self.lblCsvFile.text = "\(URL.lastPathComponent!)"
+                })
+            }else {
+                // Failure
+                OBJCOM.hideLoader()
+                print("Failure: %@", error!.localizedDescription)
+            }
+        });
+        task.resume()
+    }
+
+    
+    
+    func documentMenu(_ documentMenu: UIDocumentPickerViewController, didPickDocumentPicker documentPicker: UIDocumentPickerViewController) {
+        documentPicker.delegate = self
+        self.present(documentPicker, animated: true, completion: nil)
+    }
+    
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL) {
+        print("url = \(url)")
+        
+        let pathExtention = url.pathExtension
+        if pathExtention == "csv" || pathExtention == "CSV" {
+            if OBJCOM.isConnectedToNetwork(){
+                OBJCOM.setLoader()
+                self.downloadfile(URL: url as NSURL)
+            }else{
+                OBJCOM.showNetworkAlert()
+            }
+        } else{
+            OBJCOM.setAlert(_title: "", message: "Supported file format for importing contact is .csv")
+        }
+        
+    }
+    
+    func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+        controller.dismiss(animated: true, completion: nil)
+    }
+    
+    func importCSVfileInGroup(_ file:Data, filename:String, completionHandler: @escaping ([String:Any]?) -> ()) {
+        
+        let parameters = ["userId" : userID,
+                          "platform": "3",
+                          "groupId":"0",
+                          "groupName":self.txtGrpName.text!]
+        let fileData = file
+        let URL2 = try! URLRequest(url: "\(SITEURL)importGroupCSV", method: .post, headers: ["Content-Type":"application/x-www-form-urlencoded"])
+        print(URL2)
+        print(parameters)
+        Alamofire.upload(multipartFormData: { (multipartFormData) in
+            multipartFormData.append(fileData as Data, withName: "upload", fileName: filename, mimeType: "text/plain")
+            for (key, value) in parameters {
+                multipartFormData.append((value as AnyObject).data(using: String.Encoding.utf8.rawValue)!, withName: key)
+            }
+        }, with: URL2 , encodingCompletion: { (result) in
+            switch result {
+            case .success(let upload, _, _):
+                upload.responseJSON {
+                    response in
+                    if let JsonDict = response.result.value as? [String : Any]{
+                        print(JsonDict)
+                        completionHandler(JsonDict)
+                        OBJCOM.hideLoader()
+                    }else {
+                        OBJCOM.setAlert(_title: "", message: "Failed to import file.")
+                        OBJCOM.hideLoader()
+                    }
+                }
+            case .failure(_):
+                OBJCOM.hideLoader()
+                break
+            }
+        })
+    }
+}

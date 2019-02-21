@@ -356,7 +356,7 @@ extension DocumentVC : UIDocumentMenuDelegate, UIDocumentPickerDelegate,UINaviga
     }
     
     func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
-        dismiss(animated: true, completion: nil)
+        controller.dismiss(animated: true, completion: nil)
     }
 }
 

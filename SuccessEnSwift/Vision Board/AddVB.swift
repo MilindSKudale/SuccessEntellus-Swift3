@@ -46,7 +46,7 @@ class AddVB: UIViewController , FSPagerViewDataSource, FSPagerViewDelegate, UINa
         pagerView?.isInfinite = false
         pagerView?.itemSize = CGSize(width: pagerView.frame.width, height: pagerView.frame.height)
         pagerView?.interitemSpacing = 10
-        pagerView?.transformer = FSPagerViewTransformer(type: .cubic)
+        pagerView?.transformer = FSPagerViewTransformer(type: .overlap)
         self.pagerView.reloadData()
         
         if OBJCOM.isConnectedToNetwork(){
@@ -292,10 +292,11 @@ extension AddVB {
         }else if txtVisionCategory.text == "" {
             OBJCOM.setAlert(_title: "", message: "Please set category.")
             return false
-        }else if self.imageArray.count == 0 {
-            OBJCOM.setAlert(_title: "", message: "Please set vision picture.")
-            return false
         }
+        // else if self.imageArray.count == 0 {
+        //   OBJCOM.setAlert(_title: "", message: "Please set vision picture.")
+        //    return false
+        // }
         return true
     }
     

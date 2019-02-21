@@ -37,7 +37,9 @@ class DetailsVB: UIViewController, FSPagerViewDataSource, FSPagerViewDelegate  {
             self.pagerView.layer.borderColor = APPGRAYCOLOR.cgColor
         }
     }
-    var pageControl : UIPageControl = UIPageControl()
+    
+    
+    @IBOutlet var pageControl : UIPageControl!
     var arrVBData = [String:Any]()
     var imageArray = [UIImage]()
     
@@ -56,6 +58,14 @@ class DetailsVB: UIViewController, FSPagerViewDataSource, FSPagerViewDelegate  {
         }else{
             OBJCOM.NoInternetConnectionCall()
         }
+    }
+    
+    func configurePageControl() {
+        self.pageControl.numberOfPages = self.imageArray.count
+        self.pageControl.currentPage = 0
+//        self.pageControl.tintColor = UIColor.red
+//        self.pageControl.pageIndicatorTintColor = UIColor.cyan
+//        self.pageControl.currentPageIndicatorTintColor = UIColor.green
     }
     
     func getVisionBoardById(){
@@ -78,7 +88,7 @@ class DetailsVB: UIViewController, FSPagerViewDataSource, FSPagerViewDelegate  {
             if success == "true"{
                 let result = JsonDict!["result"] as AnyObject
                 self.assignDataToFields(result)
-                
+                self.configurePageControl()
             }else{
                 
                 OBJCOM.setAlert(_title: "", message: "Cannot get response..")
@@ -111,6 +121,12 @@ class DetailsVB: UIViewController, FSPagerViewDataSource, FSPagerViewDelegate  {
         
         btnCancel.layer.cornerRadius = btnCancel.frame.height / 2
         btnCancel.clipsToBounds = true
+        
+        pagerView?.automaticSlidingInterval = 0.0
+        pagerView?.isInfinite = false
+        pagerView?.itemSize = CGSize(width: pagerView.frame.width, height: pagerView.frame.height)
+        pagerView?.interitemSpacing = 0
+        pagerView?.transformer = FSPagerViewTransformer(type: .overlap)
     }
     
     func assignDataToFields(_ data: AnyObject){
@@ -146,8 +162,11 @@ class DetailsVB: UIViewController, FSPagerViewDataSource, FSPagerViewDelegate  {
                     }
                 }
             }
+        }else{
+            self.imageArray = []
         }
         self.pagerView.reloadData()
+        self.configurePageControl()
         OBJCOM.hideLoader()
     }
     
@@ -251,12 +270,13 @@ extension DetailsVB : UITextFieldDelegate {
             cell.btnDelete?.setImage(#imageLiteral(resourceName: "ic_close_orange"), for: .normal)
             cell.btnDelete?.addTarget(self, action: #selector(deleteImage), for: .touchUpInside)
             cell.btnDelete?.tag = index
+            self.pageControl.currentPage = index
         }
         return cell
     }
     
     public func pagerView (_ pagerView: FSPagerView, didSelectItemAt index: Int){
-     
+        self.pageControl.currentPage = index
     }
     
     @objc func deleteImage(sender : UIButton){
@@ -264,13 +284,33 @@ extension DetailsVB : UITextFieldDelegate {
             if self.imageArray.count > 0 {
                 self.imageArray.remove(at: sender.tag)
                 print(self.arrVBImageId[sender.tag])
-                if OBJCOM.isConnectedToNetwork(){
+                
+                let alert = UIAlertController(title: nil, message: "Are you sure to permanantly delete selected image without save?", preferredStyle: .alert)
+                
+                
+                let action = UIAlertAction (title: "Delete", style: .default)
+                {
+                    UIAlertAction in
+                    if OBJCOM.isConnectedToNetwork(){
                     OBJCOM.setLoader()
                     self.deleteVisionAttachment(attachmentId: self.arrVBImageId[sender.tag])
-                }else{
-                    OBJCOM.NoInternetConnectionCall()
+                    }else{
+                        OBJCOM.NoInternetConnectionCall()
+                    }
+                    self.pagerView.reloadData()
                 }
-                self.pagerView.reloadData()
+                action.setValue(UIColor.black, forKey: "titleTextColor")
+                
+                
+                let actionCancel = UIAlertAction(title: "Cancel", style: .cancel)
+                {
+                    UIAlertAction in
+                }
+                actionCancel.setValue(UIColor.red, forKey: "titleTextColor")
+
+                alert.addAction(action)
+                alert.addAction(actionCancel)
+                self.present(alert, animated: true, completion: nil)
             }
         })
     }
@@ -411,10 +451,11 @@ extension DetailsVB {
         }else if txtVisionCategory.text == "" {
             OBJCOM.setAlert(_title: "", message: "Please set category.")
             return false
-        }else if self.imageArray.count == 0 {
-            OBJCOM.setAlert(_title: "", message: "Please set vision picture.")
-            return false
         }
+//        else if self.imageArray.count == 0 {
+//            OBJCOM.setAlert(_title: "", message: "Please set vision picture.")
+//            return false
+//        }
         return true
     }
     

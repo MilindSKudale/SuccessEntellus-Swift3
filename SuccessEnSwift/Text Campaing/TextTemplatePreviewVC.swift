@@ -12,18 +12,23 @@ class TextTemplatePreviewVC: UIViewController, TagListViewDelegate  {
     
     @IBOutlet var lblCampName : UILabel!
     @IBOutlet var lblCampDate : UILabel!
-    @IBOutlet var txtTemplatename : SkyFloatingLabelTextField!
-    @IBOutlet var lblTxtMessage : UILabel!
-    @IBOutlet var lblTxtTimeInterval : UILabel!
+    @IBOutlet var txtTemplatename : UILabel!
+    @IBOutlet var lblTxtMessage : UITextView!
+//    @IBOutlet var lblTxtTimeInterval : UILabel!
     @IBOutlet var lblAttachFiles : UILabel!
     @IBOutlet var vwAttachFiles : TagListView!
+    @IBOutlet var viewAttachFiles : UIView!
     @IBOutlet var btnCancel : UIButton!
-    @IBOutlet var vwAddUrls : TagListView!
+  //  @IBOutlet var vwAddUrls : TagListView!
+    @IBOutlet var bgView : UIView!
+    @IBOutlet var tempFooterView : UIView!
+    @IBOutlet var tempFooterLbl : UILabel!
+    @IBOutlet var heightTempFooterView : NSLayoutConstraint!
     
     var templateData = [String:Any]()
     var arrFileName = [String]()
     var arrFile = [String]()
-    var arrlinks = [String]()
+   // var arrlinks = [String]()
     
     var templateId = ""
     var campaignName = ""
@@ -31,6 +36,7 @@ class TextTemplatePreviewVC: UIViewController, TagListViewDelegate  {
     override func viewDidLoad() {
         super.viewDidLoad()
     
+        self.bgView.backgroundColor = .white
         txtTemplatename.isUserInteractionEnabled = false
 
         lblAttachFiles.text = "Attached files :"
@@ -39,15 +45,33 @@ class TextTemplatePreviewVC: UIViewController, TagListViewDelegate  {
         btnCancel.layer.cornerRadius = 5.0
         btnCancel.clipsToBounds = true
         
+        lblTxtMessage.layer.cornerRadius = 5.0
+        lblTxtMessage.layer.borderColor = APPGRAYCOLOR.cgColor
+        lblTxtMessage.layer.borderWidth = 0.5
+        lblTxtMessage.clipsToBounds = true
+        
         vwAttachFiles.delegate = self
         vwAttachFiles.textFont = UIFont.systemFont(ofSize: 13)
         vwAttachFiles.alignment = .left
         vwAttachFiles.enableRemoveButton = false
         
-        vwAddUrls.delegate = self
-        vwAddUrls.textFont = UIFont.systemFont(ofSize: 13)
-        vwAddUrls.alignment = .left
-        vwAddUrls.enableRemoveButton = false
+        self.tempFooterView.isHidden = true
+        self.heightTempFooterView.constant = 0
+        
+       // vwAddUrls.delegate = self
+       // vwAddUrls.textFont = UIFont.systemFont(ofSize: 13)
+       // vwAddUrls.alignment = .left
+       // vwAddUrls.enableRemoveButton = false
+        let str = "Success Entellus respects your privacy. For more information, please review our privacy policy"
+        let attributedString = NSMutableAttributedString(string: str)
+        var foundRange = attributedString.mutableString.range(of: "Terms of use")
+        foundRange = attributedString.mutableString.range(of: "privacy policy")
+        attributedString.addAttribute(.link, value: "https://successentellus.com/home/privacyPolicy", range: foundRange)
+        
+        tempFooterLbl.attributedText = attributedString
+        let tapAction = UITapGestureRecognizer(target: self, action:#selector(tapLabel(_:)))
+        tempFooterLbl?.isUserInteractionEnabled = true
+        tempFooterLbl?.addGestureRecognizer(tapAction)
        
         if OBJCOM.isConnectedToNetwork(){
             OBJCOM.setLoader()
@@ -83,11 +107,12 @@ class TextTemplatePreviewVC: UIViewController, TagListViewDelegate  {
                 self.txtTemplatename.text = result["txtTemplateTitle"] as? String ?? ""
                // self.lblTxtMessage.text = result["txtTemplateMsg"] as? String ?? ""
                 let isPredefine = result["txtTemplateFeature"] as? String ?? ""
-                let html = result["txtTemplateMsg"] as? String ?? ""
+                var html = result["txtTemplateMsg"] as? String ?? ""
                 
                 let tempDate = result["txtTemplateAddDate"] as? String ?? ""
                 let arrDate = tempDate.components(separatedBy: " ")
                 self.lblCampDate.text = "Campaign created on \(arrDate[0])"
+                let templateType = result["txtTemplateType"] as? String ?? "1"
                 
                 if isPredefine == "1" {
                     let dataHtml = Data(html.utf8)
@@ -95,15 +120,45 @@ class TextTemplatePreviewVC: UIViewController, TagListViewDelegate  {
                         self.lblTxtMessage.attributedText = attributedString
                     }
                 }else{
-                    self.lblTxtMessage.text = html
+                    
+                    if templateType == "2" {
+                        html = html.replacingOccurrences(of: "\n", with: "<br>")
+                        let data = html.data(using: String.Encoding.utf16)!
+                        let attrStr = try? NSMutableAttributedString(
+                            data: data,
+                            options: [.documentType: NSAttributedString.DocumentType.html],
+                            documentAttributes: nil)
+                        attrStr!.beginEditing()
+                        attrStr!.enumerateAttribute(NSAttributedStringKey.font, in: NSMakeRange(0, attrStr!.length), options: .init(rawValue: 0)) {
+                            (value, range, stop) in
+                            if let font = value as? UIFont {
+                                let resizedFont = font.withSize(17.0)
+                                attrStr!.addAttribute(NSAttributedStringKey.font, value: resizedFont, range: range)
+                            }
+                        }
+                        attrStr!.endEditing()
+                        self.lblTxtMessage.attributedText = attrStr
+                        
+                    }else{
+                       // html = html.replacingOccurrences(of: "\n", with: "<br>")
+                        self.lblTxtMessage.text = html
+                    }
                 }
                 
-               
-                self.arrlinks = result["links"] as! [String]
                 
-                for obj in  self.arrlinks {
-                    self.vwAddUrls.addTag(obj)
-                }
+//                var strMessageText = result["txtTemplateMsg"] as? String ?? ""
+//
+//                if self.isPlainText == "1" {
+//                    strMessageText = strMessageText.replacingOccurrences(of: "\n", with: "<br>")
+//                    self.editorView.html = strMessageText
+//                } else{
+//                    self.editorView.html = strMessageText
+//                }
+//
+              //  self.arrlinks = result["links"] as! [String]
+              //  for obj in  self.arrlinks {
+              //      self.vwAddUrls.addTag(obj)
+              //  }
                 
                 self.arrFile = []
                 self.arrFileName = []
@@ -124,24 +179,28 @@ class TextTemplatePreviewVC: UIViewController, TagListViewDelegate  {
                     self.vwAttachFiles.addTag("No attachment added yet.")
                 }
                 
-                let reminderType = result["txtTemplateRepeat"] as? String ?? "0"
-                let repeatWeeks = result["txtempRepeatWeeks"] as? String ?? "1"
-                let repeatOn = result["txtempRepeatDays"] as? String ?? ""
-                let repeatEnd = result["txtempRepeatEndOccurrence"] as? String ?? "0"
-                let timeInterval = result["txtTemplateInterval"] as? String ?? "0"
-                if reminderType == "1" {
-                    self.lblTxtTimeInterval.text = "Repeat : every \(repeatWeeks) week(s)\nRepeat On : \(repeatOn)\nEnds : after \(repeatEnd) occurrence"
-                }else if reminderType == "1" && timeInterval == "0" {
-                    self.lblTxtTimeInterval.text = "0 hours"
+                if templateType == "2" {
+                    self.viewAttachFiles.isHidden = false
                 }else{
-                    let timeIntervalType = result["txtTemplateIntervalType"] as? String ?? "hour"
-                    self.lblTxtTimeInterval.text = "\(timeInterval) \(timeIntervalType)"
+                    self.viewAttachFiles.isHidden = true
                 }
+                
+                let isFooterView = result["txtTemplateFooterFlag"] as? String ?? "0"
+                if isFooterView == "1" {
+                    self.tempFooterView.isHidden = false
+                    UIView.animate(withDuration: 0.3, delay: 0.0, options: UIViewAnimationOptions.curveEaseIn, animations: {
+                        self.heightTempFooterView.constant = 100
+                        self.view.layoutIfNeeded()
+                        
+                    }, completion: nil)
+                }else{
+                    self.tempFooterView.isHidden = true
+                    self.heightTempFooterView.constant = 0
+                }
+           
                 
                 OBJCOM.hideLoader()
             }else{
-//                let result = JsonDict!["result"] as! String
-//                OBJCOM.setAlert(_title: "", message: result)
                 OBJCOM.hideLoader()
             }
         }
@@ -159,9 +218,21 @@ class TextTemplatePreviewVC: UIViewController, TagListViewDelegate  {
         print("Tag Remove pressed: \(title), \(sender)")
     }
     
-    
+    @IBAction func tapLabel(_ gesture: UITapGestureRecognizer) {
+        let text = (tempFooterLbl.text)!
+        
+        let privacyRange = (text as NSString).range(of: "privacy policy")
+        
+        if gesture.didTapAttributedTextInLabel(label: tempFooterLbl, inRange: privacyRange) {
+            print("Tapped privacy")
+            if let url = URL(string: "https://successentellus.com/home/privacyPolicy") {
+                UIApplication.shared.open(url, options: [:])
+            }
+        } else {
+            print("Tapped none")
+        }
+    }
 }
-
 
 
 extension UILabel {
@@ -192,4 +263,5 @@ extension UILabel {
     
     
 }
+
 

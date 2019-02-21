@@ -15,7 +15,7 @@ class CMSDashboard : SliderVC {
         "Step-By-Step Guides",
         "FAQ",
         "Contact Support",
-        "Send Feedback"
+        "Feedback"
     ]
     
     override func viewDidLoad() {
@@ -36,7 +36,7 @@ class CMSDashboard : SliderVC {
         let support = storyboard.instantiateViewController(withIdentifier: "idSupport")
         support.title = "Contact Support"
         let feedback = storyboard.instantiateViewController(withIdentifier: "idFeedback")
-        feedback.title = "Send Feedback"
+        feedback.title = "Feedback"
         
         //
         // Initialize a FixedPagingViewController and pass
@@ -56,4 +56,26 @@ class CMSDashboard : SliderVC {
         
         pagingViewController.didMove(toParentViewController: self)
     }
+    
+    @IBAction func actionPrivacyPolicy(_ sender:AnyObject){
+        
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let actionPP = UIAlertAction(title: "Privacy Policy", style: .default)
+        { UIAlertAction in
+            if let url = URL(string: "https://successentellus.com/home/privacyPolicy") {
+                UIApplication.shared.open(url, options: [:])
+            }
+        }
+        actionPP.setValue(UIColor.black, forKey: "titleTextColor")
+        
+        let actionCancel = UIAlertAction(title: "Cancel", style: .cancel)
+        { UIAlertAction in }
+        actionCancel.setValue(UIColor.red, forKey: "titleTextColor")
+        
+        alert.addAction(actionPP)
+        alert.addAction(actionCancel)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    
 }

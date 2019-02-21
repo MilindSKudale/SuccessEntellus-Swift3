@@ -201,13 +201,13 @@ extension TextCampaignVC : UITableViewDelegate, UITableViewDataSource {
         
         let cell = tblTextCampaign.dequeueReusableCell(withIdentifier: "TextCell") as! TextCampaignCell
         
-        if let imgUrl = self.arrCampaignImage[indexPath.row] as? String {
-            if imgUrl != "" {
-                cell.imgView.imageFromServerURL(urlString: imgUrl)
+//        if let imgUrl = self.arrCampaignImage[indexPath.row] as? String ?? ""{
+            if self.arrCampaignImage[indexPath.row] != "" {
+                cell.imgView.imageFromServerURL(urlString: self.arrCampaignImage[indexPath.row])
             }else{
                 cell.imgView.image = #imageLiteral(resourceName: "txt_camp")
             }
-        }
+//        }
         
         let colorObj = self.arrCampaignColor[indexPath.row]
         if colorObj.count > 0 {

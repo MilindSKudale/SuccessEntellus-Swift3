@@ -27,6 +27,12 @@
                                 <action selector="actShowMenu:" destination="yT9-L1-oN1" id="pEA-5s-hyI"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" image="moreBtn" id="hAY-qw-r3E">
+                            <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <action selector="actionPrivacyPolicy:" destination="yT9-L1-oN1" id="h6N-PG-mDz"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="G5L-ZU-ceM" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -163,8 +169,8 @@
                                         <color key="textColor" red="0.95686274510000002" green="0.36470588240000001" blue="0.14117647059999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1-408-647-6465" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Doa-bu-0nr">
-                                        <rect key="frame" x="55" y="33" width="122.5" height="18"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1-408-641-8294" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Doa-bu-0nr">
+                                        <rect key="frame" x="55" y="33" width="121" height="18"/>
                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -189,55 +195,6 @@
                                     <constraint firstItem="Doa-bu-0nr" firstAttribute="top" secondItem="Qc1-GJ-cFk" secondAttribute="bottom" constant="5" id="Zdx-Jm-LQ1"/>
                                     <constraint firstItem="fCz-kI-9pL" firstAttribute="width" secondItem="65h-1l-6fI" secondAttribute="width" id="ahv-j4-DKj"/>
                                     <constraint firstItem="tbY-h4-4GD" firstAttribute="leading" secondItem="65h-1l-6fI" secondAttribute="leading" constant="5" id="t1k-3G-lOA"/>
-                                </constraints>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="shadowRadius">
-                                        <real key="value" value="5"/>
-                                    </userDefinedRuntimeAttribute>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="shadowOpacity">
-                                        <real key="value" value="0.5"/>
-                                    </userDefinedRuntimeAttribute>
-                                    <userDefinedRuntimeAttribute type="size" keyPath="shadowOffset">
-                                        <size key="value" width="5" height="5"/>
-                                    </userDefinedRuntimeAttribute>
-                                    <userDefinedRuntimeAttribute type="color" keyPath="shadowColor">
-                                        <color key="value" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                            </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cwt-Qd-M5I">
-                                <rect key="frame" x="10" y="182" width="355" height="61"/>
-                                <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Privacy Policy" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vrF-a0-e1Q">
-                                        <rect key="frame" x="55" y="21.5" width="97.5" height="18"/>
-                                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
-                                        <color key="textColor" red="0.95686274510000002" green="0.36470588240000001" blue="0.14117647059999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PQI-Z0-ffS">
-                                        <rect key="frame" x="0.0" y="0.0" width="355" height="61"/>
-                                        <connections>
-                                            <action selector="actionPrivacyPolicy:" destination="nup-s2-kOh" eventType="touchUpInside" id="sIp-ZI-Sd1"/>
-                                        </connections>
-                                    </button>
-                                    <imageView userInteractionEnabled="NO" contentMode="redraw" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="privacyPolicy" translatesAutoresizingMaskIntoConstraints="NO" id="vg1-f1-tZq">
-                                        <rect key="frame" x="10" y="10.5" width="40" height="40"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="40" id="X74-jN-y7n"/>
-                                            <constraint firstAttribute="width" constant="40" id="z2W-bg-OMU"/>
-                                        </constraints>
-                                    </imageView>
-                                </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstItem="vrF-a0-e1Q" firstAttribute="centerY" secondItem="cwt-Qd-M5I" secondAttribute="centerY" id="1LT-ga-FS8"/>
-                                    <constraint firstItem="vg1-f1-tZq" firstAttribute="leading" secondItem="cwt-Qd-M5I" secondAttribute="leading" constant="10" id="CoO-VN-sls"/>
-                                    <constraint firstItem="PQI-Z0-ffS" firstAttribute="width" secondItem="cwt-Qd-M5I" secondAttribute="width" id="ECV-TT-44n"/>
-                                    <constraint firstItem="PQI-Z0-ffS" firstAttribute="height" secondItem="cwt-Qd-M5I" secondAttribute="height" id="J7f-oH-lYp"/>
-                                    <constraint firstItem="PQI-Z0-ffS" firstAttribute="centerX" secondItem="cwt-Qd-M5I" secondAttribute="centerX" id="KyP-Sd-WJk"/>
-                                    <constraint firstItem="PQI-Z0-ffS" firstAttribute="centerY" secondItem="cwt-Qd-M5I" secondAttribute="centerY" id="pfr-ic-u1S"/>
-                                    <constraint firstItem="vrF-a0-e1Q" firstAttribute="leading" secondItem="cwt-Qd-M5I" secondAttribute="leading" constant="55" id="zSa-u1-pvo"/>
-                                    <constraint firstItem="vg1-f1-tZq" firstAttribute="centerY" secondItem="cwt-Qd-M5I" secondAttribute="centerY" id="zrP-JA-r0N"/>
                                 </constraints>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="shadowRadius">
@@ -316,15 +273,11 @@
                         <color key="backgroundColor" red="0.93725490570000003" green="0.93725490570000003" blue="0.95686274770000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="PuW-Gx-806" firstAttribute="leading" secondItem="QEu-Cm-LEO" secondAttribute="leading" constant="10" id="9XS-ec-UvH"/>
-                            <constraint firstItem="QEu-Cm-LEO" firstAttribute="trailing" secondItem="cwt-Qd-M5I" secondAttribute="trailing" constant="10" id="Ff9-Qq-QsP"/>
-                            <constraint firstItem="cwt-Qd-M5I" firstAttribute="height" secondItem="65h-1l-6fI" secondAttribute="height" id="GuO-p0-5AE"/>
                             <constraint firstItem="65h-1l-6fI" firstAttribute="leading" secondItem="QEu-Cm-LEO" secondAttribute="leading" constant="10" id="Llh-Xp-vNF"/>
                             <constraint firstItem="QEu-Cm-LEO" firstAttribute="trailing" secondItem="PuW-Gx-806" secondAttribute="trailing" constant="10" id="NgS-6I-eOT"/>
                             <constraint firstItem="65h-1l-6fI" firstAttribute="top" secondItem="QEu-Cm-LEO" secondAttribute="top" constant="20" id="Q8e-ca-tns"/>
-                            <constraint firstItem="cwt-Qd-M5I" firstAttribute="top" secondItem="PuW-Gx-806" secondAttribute="bottom" constant="10" id="UsS-ZE-dLa"/>
                             <constraint firstItem="QEu-Cm-LEO" firstAttribute="trailing" secondItem="65h-1l-6fI" secondAttribute="trailing" constant="10" id="eYe-Mq-B9p"/>
                             <constraint firstItem="PuW-Gx-806" firstAttribute="top" secondItem="65h-1l-6fI" secondAttribute="bottom" constant="10" id="frY-Q2-z6o"/>
-                            <constraint firstItem="cwt-Qd-M5I" firstAttribute="leading" secondItem="QEu-Cm-LEO" secondAttribute="leading" constant="10" id="juw-Kf-Wbr"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="QEu-Cm-LEO"/>
                     </view>
@@ -780,8 +733,8 @@
         <image name="ic_blk_Close" width="16" height="16"/>
         <image name="mail_xl" width="29" height="29"/>
         <image name="menu" width="32" height="32"/>
+        <image name="moreBtn" width="21" height="21"/>
         <image name="pdf" width="32" height="32"/>
         <image name="phone_ic" width="29" height="29"/>
-        <image name="privacyPolicy" width="32" height="32"/>
     </resources>
 </document>

@@ -12,7 +12,11 @@ import UIKit
 var selectedCellIndex = 1
 protocol DrawerControllerDelegate: class {
     func pushTo(viewController : UIViewController)
+    func popupTo(popupVC : PopupViewController)
 }
+
+var arrIndexOfMyCampCell = [Int]()
+var arrIndexOfMyCrmCell = [Int]()
 
 class DrawerView: UIView, drawerProtocolNew, UITableViewDelegate, UITableViewDataSource {
     
@@ -27,17 +31,20 @@ class DrawerView: UIView, drawerProtocolNew, UITableViewDelegate, UITableViewDat
     var cellTextColor:UIColor?
     var userNameTextColor:UIColor?
     var btnLogOut = UIButton()
+    var btnRefer = UIButton()
     var vwForHeader = UIView()
     var lblunderLine = UILabel()
+    var lblunderLine1 = UILabel()
     var imgBg : UIImage?
     var fontNew : UIFont?
     var moduleIds = [String]()
     var moduleNames = [String]()
     var data = [[String:Any]]()
     
+    
 //    #imageLiteral(resourceName: "ic_visionBoard")
     var userInfo = [String : Any]()
-    var drawerIcon = [#imageLiteral(resourceName: "ic_myTools"), #imageLiteral(resourceName: "dashboard"), #imageLiteral(resourceName: "daily-checklist"), #imageLiteral(resourceName: "weekly-tracking"), #imageLiteral(resourceName: "weekly-graph"), #imageLiteral(resourceName: "add-edit-goals"), #imageLiteral(resourceName: "CFT-dashboard"), #imageLiteral(resourceName: "CFT_Community"), #imageLiteral(resourceName: "icd_myCampaigns"), #imageLiteral(resourceName: "icd_crm"), #imageLiteral(resourceName: "change-profile"), #imageLiteral(resourceName: "help-center")]
+    var drawerIcon = [#imageLiteral(resourceName: "ic_myTools"), #imageLiteral(resourceName: "dashboard"), #imageLiteral(resourceName: "daily-checklist"), #imageLiteral(resourceName: "weekly-tracking"), #imageLiteral(resourceName: "weekly-graph"), #imageLiteral(resourceName: "add-edit-goals"), #imageLiteral(resourceName: "CFT-dashboard"), #imageLiteral(resourceName: "CFT_Community"), #imageLiteral(resourceName: "icd_myCampaigns"), #imageLiteral(resourceName: "icd_crm"), #imageLiteral(resourceName: "change-profile"), #imageLiteral(resourceName: "ic_subscription"), #imageLiteral(resourceName: "help-center")]
     // #imageLiteral(resourceName: "ic_teamCampaign"),
 
     fileprivate var imgProPic = UIImageView()
@@ -76,10 +83,59 @@ class DrawerView: UIView, drawerProtocolNew, UITableViewDelegate, UITableViewDat
             isCollapseCrm = true
             isCollapseTools = true
         }
+        
+//        arrIndexOfMyCampCell = []
+//        if moduleIds.contains("9") {
+//            arrIndexOfMyCampCell.append(0)
+//        }
+//        if moduleIds.contains("10") {
+//            arrIndexOfMyCampCell.append(1)
+//        }
+//        if moduleIds.contains("15") {
+//            arrIndexOfMyCampCell.append(2)
+//        }
+//        print(arrIndexOfMyCampCell)
+//
+//        arrIndexOfMyCrmCell = []
+//        if moduleIds.contains("7"){
+//            arrIndexOfMyCrmCell.append(0)
+//        }else if moduleIds.contains("11"){
+//            arrIndexOfMyCrmCell.append(1)
+//        }else if moduleIds.contains("12"){
+//            arrIndexOfMyCrmCell.append(2)
+//        }else if moduleIds.contains("13"){
+//            arrIndexOfMyCrmCell.append(3)
+//        }else if moduleIds.contains("16"){
+//            arrIndexOfMyCrmCell.append(4)
+//        }
 //["sectionHeader": "Vision Board","isCollapsed":true,"items":[], "icons":[]],
-        data = [["sectionHeader": "My Tools","isCollapsed":true,"items":["Daily Top 10", "Vision Board", "Scratch Pad", "Calendar", "Time Analysis"], "icons":[#imageLiteral(resourceName: "top_10_2x"), #imageLiteral(resourceName: "ic_visionBoard"), #imageLiteral(resourceName: "ic_scratchpad"), #imageLiteral(resourceName: "ic_calendar"), #imageLiteral(resourceName: "time-analysis")]],
-//            ["sectionHeader": "Calendar","isCollapsed":true,"items":[], "icons":[]],
-//            ["sectionHeader": "Time Analysis","isCollapsed":true,"items":[], "icons":[]],
+        
+        let arrTools : [String] = arrMyToolsModuleList
+        var arrToolsIcons = [UIImage]()
+        if arrTools.count > 0 {
+            for i in 0 ..< arrTools.count {
+                if arrMyToolsModuleId[i] == "5" {
+                    arrToolsIcons.append(#imageLiteral(resourceName: "ic_calendar"))
+                }else if arrMyToolsModuleId[i] == "6" {
+                    arrToolsIcons.append(#imageLiteral(resourceName: "time-analysis"))
+                }else if arrMyToolsModuleId[i] == "25" {
+                    arrToolsIcons.append(#imageLiteral(resourceName: "top_10_2x"))
+                }else if arrMyToolsModuleId[i] == "26" {
+                    arrToolsIcons.append(#imageLiteral(resourceName: "ic_visionBoard"))
+                }else if arrMyToolsModuleId[i] == "27" {
+                    arrToolsIcons.append(#imageLiteral(resourceName: "ic_scratchpad"))
+                }
+            }
+        }
+        
+        
+        
+//
+        
+      //  var arrToolsIcons : [UIImage] = [#imageLiteral(resourceName: "top_10_2x"), #imageLiteral(resourceName: "ic_visionBoard"), #imageLiteral(resourceName: "ic_scratchpad"), #imageLiteral(resourceName: "ic_calendar"), #imageLiteral(resourceName: "time-analysis")]
+        
+        data = [["sectionHeader": "My Tools","isCollapsed":isCollapseTools,"items": arrTools, "icons":arrToolsIcons],
+
             ["sectionHeader": "Dashboard","isCollapsed":true,"items":[], "icons":[]],
             ["sectionHeader": "Daily Checklist","isCollapsed":true,"items":[], "icons":[]],
             ["sectionHeader": "Weekly Tracking","isCollapsed":true,"items":[], "icons":[]],
@@ -89,8 +145,10 @@ class DrawerView: UIView, drawerProtocolNew, UITableViewDelegate, UITableViewDat
             ["sectionHeader": "CFT Locator","isCollapsed":true,"items":[], "icons":[]],
             ["sectionHeader": "My Campaigns","isCollapsed":isCollapseCampaign,"items":["Email Campaigns", "Text Campaigns", "Upload Documents"], "icons":[ #imageLiteral(resourceName: "Email-campaign"), #imageLiteral(resourceName: "ic_textCamp"), #imageLiteral(resourceName: "upload-Doc")]],
             
-            ["sectionHeader": "My CRM", "isCollapsed":isCollapseCrm,"items":["My Groups","My Prospects", "My Contacts", "My Customers", "My Recruits"], "icons":[ #imageLiteral(resourceName: "my-group"), #imageLiteral(resourceName: "my-prospects"), #imageLiteral(resourceName: "My-Contacts"), #imageLiteral(resourceName: "my-customers"), #imageLiteral(resourceName: "My-Recruits")]],
+            ["sectionHeader": "My CRM", "isCollapsed":isCollapseCrm,"items":["My Groups", "My Contacts", "My Customers", "My Prospects", "My Recruits"], "icons":[ #imageLiteral(resourceName: "my-group"), #imageLiteral(resourceName: "My-Contacts"), #imageLiteral(resourceName: "my-customers"), #imageLiteral(resourceName: "my-prospects"), #imageLiteral(resourceName: "My-Recruits")]],
+            
             ["sectionHeader": "My Profile","isCollapsed":true,"items":[], "icons":[]],
+            ["sectionHeader": "My Subscription","isCollapsed":true,"items":[], "icons":[]],
             ["sectionHeader": "Help","isCollapsed":true,"items":[], "icons":[]]]
         
         self.tblVw.register(UINib.init(nibName: "DrawerCell", bundle: nil), forCellReuseIdentifier: "DrawerCell")
@@ -132,6 +190,7 @@ class DrawerView: UIView, drawerProtocolNew, UITableViewDelegate, UITableViewDat
         self.cellTextColor = txtColor
         btnLogOut.setTitleColor(txtColor, for: .normal)
         lblunderLine.backgroundColor = txtColor.withAlphaComponent(0.6)
+        lblunderLine1.backgroundColor = txtColor.withAlphaComponent(0.6)
         self.tblVw.reloadData()
     }
     
@@ -197,9 +256,10 @@ class DrawerView: UIView, drawerProtocolNew, UITableViewDelegate, UITableViewDat
             tblVw.frame = CGRect(x:0, y:vwForHeader.frame.origin.y+vwForHeader.frame.size.height, width:screenSize.width/2+75, height:screenSize.height-120)
 
         }else{
-            tblVw.frame = CGRect(x:0, y:20, width:screenSize.width/2+75, height:screenSize.height-110)
+            tblVw.frame = CGRect(x:0, y:20, width:screenSize.width/2+75, height:screenSize.height-160)
             vwForHeader = UIView(frame:CGRect(x:0, y:tblVw.frame.origin.y+tblVw.frame.size.height, width:drawerView.frame.size.width, height:screenSize.height - tblVw.frame.size.height))
             lblunderLine.frame = CGRect(x:10, y:0, width:vwForHeader.frame.size.width-20, height:1)
+            
         }
         
         tblVw.separatorStyle = UITableViewCellSeparatorStyle.none
@@ -213,9 +273,25 @@ class DrawerView: UIView, drawerProtocolNew, UITableViewDelegate, UITableViewDat
         tblVw.reloadData()
 
         lblunderLine.backgroundColor = UIColor.groupTableViewBackground
+        
         vwForHeader.addSubview(lblunderLine)
         
-        btnLogOut = UIButton(frame:CGRect(x:10, y:5, width:vwForHeader.frame.size.width-20, height:50))
+        btnRefer = UIButton(frame:CGRect(x:10, y:5, width:vwForHeader.frame.size.width-20, height:50))
+        btnRefer.setTitle("  Earn Referral Money", for: .normal)
+        btnRefer.setImage(#imageLiteral(resourceName: "money_bag_ic"), for: .normal)
+        btnRefer.contentHorizontalAlignment = .left
+//        btnRefer.contentVerticalAlignment = .top
+        btnRefer.addTarget(self, action: #selector(actReferAndEarn), for: .touchUpInside)
+        btnRefer.titleLabel?.font = fontNew ?? UIFont(name: "Euphemia UCAS", size: 18)
+        btnRefer.setTitleColor(UIColor.white, for: .normal)
+        btnRefer.backgroundColor = .clear
+        vwForHeader.addSubview(btnRefer)
+        
+        lblunderLine1.frame = CGRect(x:10, y:55, width:vwForHeader.frame.size.width-20, height:1)
+        lblunderLine1.backgroundColor = UIColor.groupTableViewBackground
+        vwForHeader.addSubview(lblunderLine1)
+        
+        btnLogOut = UIButton(frame:CGRect(x:10, y:60, width:vwForHeader.frame.size.width-20, height:50))
         btnLogOut.setTitle("Logout", for: .normal)
         btnLogOut.contentHorizontalAlignment = .left
         btnLogOut.contentVerticalAlignment = .top
@@ -282,6 +358,13 @@ class DrawerView: UIView, drawerProtocolNew, UITableViewDelegate, UITableViewDat
         self.delegate?.pushTo(viewController: controllerName)
     }
     
+    @objc func actReferAndEarn() {
+        let storyBoard = UIStoryboard(name:"Refferal", bundle:nil)
+        let vc = (storyBoard.instantiateViewController(withIdentifier: "idRefferalVc"))
+        let popupVC = PopupViewController(contentController: vc, popupWidth: vc.view.frame.width - 20, popupHeight: vc.view.frame.height - 60)
+        self.delegate?.popupTo(popupVC: popupVC)
+    }
+    
     // Action for logout to quit the application.
     @objc func actLogOut() {
        // exit(0)
@@ -329,35 +412,61 @@ extension DrawerView {
         cell.imgController.image = drawerIcon[section]
         cell.btnSelectCell.tag = section
         cell.btnSelectCell.addTarget(self, action: #selector(self.sectionButtonTapped(_:)), for: .touchUpInside)
-        //cell.backgroundColor = .black
         
-        //section == 1 || section == 2 ||
-        if section == 0 || section == 10 || section == 11 {
+        if section == 0 || section == 10 || section == 11 || section == 12 {
             cell.pkgAvailable.image = nil
         }else{
             if moduleNames.contains(data[section]["sectionHeader"] as! String){
                 cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
             }else if section == 8 {
-                if moduleIds.contains("9") || moduleIds.contains("10"){
+
+                arrIndexOfMyCampCell = []
+                if moduleIds.contains("9") {
+                    arrIndexOfMyCampCell.append(0)
+                }
+                if moduleIds.contains("10") {
+                    arrIndexOfMyCampCell.append(1)
+                }
+                if moduleIds.contains("15") {
+                    arrIndexOfMyCampCell.append(2)
+                }
+                print(arrIndexOfMyCampCell)
+                
+               
+                if moduleIds.contains("9") || moduleIds.contains("10") || moduleIds.contains("15") {
                     cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
                 }else{
                     cell.pkgAvailable.image = #imageLiteral(resourceName: "red_avail")
                 }
             }else if section == 9 {
+                
+                
+                arrIndexOfMyCrmCell = []
                 if moduleIds.contains("7"){
-                    cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
-                }else if moduleIds.contains("11"){
-                    cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
-                }else if moduleIds.contains("12"){
-                    cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
-                }else if moduleIds.contains("13"){
-                    cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
-                }else if moduleIds.contains("16"){
-                    cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
+                    arrIndexOfMyCrmCell.append(0)
                 }
-            }else{
-                cell.pkgAvailable.image = #imageLiteral(resourceName: "red_avail")
+                if moduleIds.contains("11"){
+                    arrIndexOfMyCrmCell.append(1)
+                }
+                if moduleIds.contains("12"){
+                    arrIndexOfMyCrmCell.append(2)
+                }
+                if moduleIds.contains("13"){
+                    arrIndexOfMyCrmCell.append(3)
+                }
+                if moduleIds.contains("16"){
+                    arrIndexOfMyCrmCell.append(4)
+                }
+                print(arrIndexOfMyCrmCell)
+                if moduleIds.contains("7") || moduleIds.contains("11") || moduleIds.contains("12") || moduleIds.contains("13") || moduleIds.contains("16") {
+                    cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
+                }else{
+                    cell.pkgAvailable.image = #imageLiteral(resourceName: "red_avail")
+                }
             }
+//            else{
+//                cell.pkgAvailable.image = #imageLiteral(resourceName: "red_avail")
+//            }
         }
 
         
@@ -415,29 +524,45 @@ extension DrawerView {
         cell.lblController.font = fontNew ?? UIFont(name: "Euphemia UCAS", size: 15)
         cell.selectionStyle = UITableViewCellSelectionStyle.none
         cell.backgroundColor = APPGRAYCOLOR
-        
+        cell.pkgAvailable.image = nil
         if indexPath.section == 0 {
             cell.pkgAvailable.image = nil
         }else if indexPath.section == 8 {
-            if moduleIds.contains("9") {
-                cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
-            }else if moduleIds.contains("10") {
-                cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
-            }else if moduleIds.contains("15"){
+            cell.pkgAvailable.image = nil
+            if arrIndexOfMyCampCell.contains(indexPath.row) {
                 cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
             }else{
                 cell.pkgAvailable.image = #imageLiteral(resourceName: "red_avail")
             }
+//            if moduleIds.contains("9") {
+//                arrIndex.append(indexPath.row)
+//            }else if moduleIds.contains("10") {
+//                arrIndex.append(indexPath.row)
+//            }else if moduleIds.contains("15"){
+//                arrIndex.append(indexPath.row)
+//            }
+//
+//            if arrIndex.contains(indexPath.row) {
+//                cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
+//            }else{
+//                cell.pkgAvailable.image = #imageLiteral(resourceName: "red_avail")
+//            }
         }else if indexPath.section == 9 {
-            if moduleIds.contains("7"){
-                cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
-            }else if moduleIds.contains("11"){
-                cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
-            }else if moduleIds.contains("12"){
-                cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
-            }else if moduleIds.contains("13,"){
-                cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
-            }else if moduleIds.contains("16"){
+//            if moduleIds.contains("7"){
+//                cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
+//            }else if moduleIds.contains("11"){
+//                cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
+//            }else if moduleIds.contains("12"){
+//                cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
+//            }else if moduleIds.contains("13"){
+//                cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
+//            }else if moduleIds.contains("16"){
+//                cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
+//            }else{
+//                cell.pkgAvailable.image = #imageLiteral(resourceName: "red_avail")
+//            }
+            cell.pkgAvailable.image = nil
+            if arrIndexOfMyCrmCell.contains(indexPath.row) {
                 cell.pkgAvailable.image = #imageLiteral(resourceName: "green_avail")
             }else{
                 cell.pkgAvailable.image = #imageLiteral(resourceName: "red_avail")
@@ -592,13 +717,20 @@ extension DrawerView {
         case 11:
             repeatCall = false
             actDissmiss()
+            let storyBoard = UIStoryboard(name:"Subscription", bundle:nil)
+            let vc = (storyBoard.instantiateViewController(withIdentifier: "idMySubscriptionVC"))
+            let popupVC = PopupViewController(contentController: vc, popupWidth: vc.view.frame.width - 20, popupHeight: vc.view.frame.width - 40)
+            self.delegate?.popupTo(popupVC: popupVC)
+            break
+        case 12:
+            repeatCall = false
+            actDissmiss()
             selectedCellIndex = section
             let storyBoard = UIStoryboard(name:"CMS", bundle:nil)
             let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idCMSDashboard"))
             controllerName.hidesBottomBarWhenPushed = true
             self.delegate?.pushTo(viewController: controllerName)
             break
-
             
         default:
             repeatCall = false
@@ -668,19 +800,8 @@ extension DrawerView {
                     self.delegate?.pushTo(viewController: controllerName)
                 }
                 break
+            
             case 1:
-                repeatCall = false
-                actDissmiss()
-                if !moduleIds.contains("13") {
-                    goTOSubscription()
-                }else{
-                    let storyBoard = UIStoryboard(name:"CRM", bundle:nil)
-                    let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idMyProspectVC"))
-                    controllerName.hidesBottomBarWhenPushed = true
-                    self.delegate?.pushTo(viewController: controllerName)
-                }
-                break
-            case 2:
                 repeatCall = false
                 actDissmiss()
                 if !moduleIds.contains("11") {
@@ -692,7 +813,7 @@ extension DrawerView {
                     self.delegate?.pushTo(viewController: controllerName)
                 }
                 break
-            case 3:
+            case 2:
                 repeatCall = false
                 actDissmiss()
                 if !moduleIds.contains("12") {
@@ -700,6 +821,18 @@ extension DrawerView {
                 }else{
                     let storyBoard = UIStoryboard(name:"CRM", bundle:nil)
                     let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idMyCustomerVC"))
+                    controllerName.hidesBottomBarWhenPushed = true
+                    self.delegate?.pushTo(viewController: controllerName)
+                }
+                break
+            case 3:
+                repeatCall = false
+                actDissmiss()
+                if !moduleIds.contains("13") {
+                    goTOSubscription()
+                }else{
+                    let storyBoard = UIStoryboard(name:"CRM", bundle:nil)
+                    let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idMyProspectVC"))
                     controllerName.hidesBottomBarWhenPushed = true
                     self.delegate?.pushTo(viewController: controllerName)
                 }
@@ -721,51 +854,94 @@ extension DrawerView {
                 break
             }
         }else if selectedCellIndex == 0 {
-            switch index {
-            case 0:
-                repeatCall = false
-                actDissmiss()
-                let storyBoard = UIStoryboard(name:"DailyTopTen", bundle:nil)
-                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idDailyTopTenVC"))
-                controllerName.hidesBottomBarWhenPushed = true
-                self.delegate?.pushTo(viewController: controllerName)
-                break
-            case 1:
-                repeatCall = false
-                actDissmiss()
-                let storyBoard = UIStoryboard(name:"VisionBoard", bundle:nil)
-                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idDashboardVB"))
-                controllerName.hidesBottomBarWhenPushed = true
-                self.delegate?.pushTo(viewController: controllerName)
-                break
-            case 2:
-                repeatCall = false
-                actDissmiss()
-                let storyBoard = UIStoryboard(name:"Scrachpad", bundle:nil)
-                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idScrachPadDashboardVC"))
-                controllerName.hidesBottomBarWhenPushed = true
-                self.delegate?.pushTo(viewController: controllerName)
-                break
-            case 3:
-                repeatCall = false
-                actDissmiss()
-                let storyBoard = UIStoryboard(name:"Calender", bundle:nil)
-                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idCalenderVC"))
-                controllerName.hidesBottomBarWhenPushed = true
-                self.delegate?.pushTo(viewController: controllerName)
-                break
-            case 4:
-                repeatCall = false
-                actDissmiss()
-                let storyBoard = UIStoryboard(name:"TimeAnalysis", bundle:nil)
-                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idTimeAnalysisVC"))
-                controllerName.hidesBottomBarWhenPushed = true
-                self.delegate?.pushTo(viewController: controllerName)
-                break
-            default:
-                repeatCall = false
-                break
+            
+            let arrTools : [String] = arrMyToolsModuleList
+            if arrTools.count > 0 {
+               
+                if arrMyToolsModuleId[index] == "5" {
+                    repeatCall = false
+                    actDissmiss()
+                    let storyBoard = UIStoryboard(name:"Calender", bundle:nil)
+                    let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idCalenderVC"))
+                    controllerName.hidesBottomBarWhenPushed = true
+                    self.delegate?.pushTo(viewController: controllerName)
+                }else if arrMyToolsModuleId[index] == "6" {
+                    actDissmiss()
+                    let storyBoard = UIStoryboard(name:"TimeAnalysis", bundle:nil)
+                    let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idTimeAnalysisVC"))
+                    controllerName.hidesBottomBarWhenPushed = true
+                    self.delegate?.pushTo(viewController: controllerName)
+                }else if arrMyToolsModuleId[index] == "25" {
+                    repeatCall = false
+                    actDissmiss()
+                    let storyBoard = UIStoryboard(name:"DailyTopTen", bundle:nil)
+                    let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idDailyTopTenVC"))
+                    controllerName.hidesBottomBarWhenPushed = true
+                    self.delegate?.pushTo(viewController: controllerName)
+
+                }else if arrMyToolsModuleId[index] == "26" {
+                    actDissmiss()
+                    let storyBoard = UIStoryboard(name:"VisionBoard", bundle:nil)
+                    let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idDashboardVB"))
+                    controllerName.hidesBottomBarWhenPushed = true
+                    self.delegate?.pushTo(viewController: controllerName)
+
+                }else if arrMyToolsModuleId[index] == "27" {
+                    repeatCall = false
+                    actDissmiss()
+                    let storyBoard = UIStoryboard(name:"Scrachpad", bundle:nil)
+                    let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idScrachPadDashboardVC"))
+                    controllerName.hidesBottomBarWhenPushed = true
+                    self.delegate?.pushTo(viewController: controllerName)
+
+                }
+                
             }
+//            switch index {
+//            case 0:
+//                repeatCall = false
+//                actDissmiss()
+//                let storyBoard = UIStoryboard(name:"DailyTopTen", bundle:nil)
+//                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idDailyTopTenVC"))
+//                controllerName.hidesBottomBarWhenPushed = true
+//                self.delegate?.pushTo(viewController: controllerName)
+//                break
+//            case 1:
+//                repeatCall = false
+//                actDissmiss()
+//                let storyBoard = UIStoryboard(name:"VisionBoard", bundle:nil)
+//                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idDashboardVB"))
+//                controllerName.hidesBottomBarWhenPushed = true
+//                self.delegate?.pushTo(viewController: controllerName)
+//                break
+//            case 2:
+//                repeatCall = false
+//                actDissmiss()
+//                let storyBoard = UIStoryboard(name:"Scrachpad", bundle:nil)
+//                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idScrachPadDashboardVC"))
+//                controllerName.hidesBottomBarWhenPushed = true
+//                self.delegate?.pushTo(viewController: controllerName)
+//                break
+//            case 3:
+//                repeatCall = false
+//                actDissmiss()
+//                let storyBoard = UIStoryboard(name:"Calender", bundle:nil)
+//                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idCalenderVC"))
+//                controllerName.hidesBottomBarWhenPushed = true
+//                self.delegate?.pushTo(viewController: controllerName)
+//                break
+//            case 4:
+//                repeatCall = false
+//                actDissmiss()
+//                let storyBoard = UIStoryboard(name:"TimeAnalysis", bundle:nil)
+//                let controllerName = (storyBoard.instantiateViewController(withIdentifier: "idTimeAnalysisVC"))
+//                controllerName.hidesBottomBarWhenPushed = true
+//                self.delegate?.pushTo(viewController: controllerName)
+//                break
+//            default:
+//                repeatCall = false
+//                break
+//            }
         }
         
     }

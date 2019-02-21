@@ -49,7 +49,7 @@ class TimeAnalysisVC: SliderVC {
                              "90 days":"3"]
 
         
-        self.lblSelectedWeeks.text = "Time analysis for current week";
+        self.lblSelectedWeeks.text = "Time analysis";
         expandableTableView.register(TimeAnalysisCell.self, forCellReuseIdentifier: cellReuseIdentifier)
         expandableTableView.register(UINib(nibName: "MyExpandableTableViewSectionHeader", bundle: Bundle.main), forHeaderFooterViewReuseIdentifier: sectionHeaderReuseIdentifier)
         
@@ -69,6 +69,7 @@ class TimeAnalysisVC: SliderVC {
         self.dropDown.options = ddOptions
         self.dropDown.optionsTextAlignment = NSTextAlignment.left
         self.dropDown.textAlignment = NSTextAlignment.left
+        self.dropDown.uiView.backgroundColor = .white
         self.dropDown.didSelect { (item, index) in
             let selectedOpt = self.ddOptions[index]
             if let strDur = self.dictDDDataWithIds[selectedOpt] {

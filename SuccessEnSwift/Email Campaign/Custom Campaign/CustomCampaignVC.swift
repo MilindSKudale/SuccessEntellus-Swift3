@@ -11,7 +11,7 @@ import UIKit
 class CustomCampaignVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     @IBOutlet var tblCustomCampaign : UITableView!
-    var bgColor = UIColor()
+ //   var bgColor = UIColor()
     var arrCampaignTitle = [String]()
     var arrCampaignId = [String]()
     var arrCampaignDays = [String]()
@@ -83,20 +83,20 @@ class CustomCampaignVC: UIViewController, UITableViewDelegate, UITableViewDataSo
     }
   
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let colorObj = self.arrCampaignColor[indexPath.row]
-        if colorObj.count > 0 {
-            let redColor = colorObj.object(at: 0)
-            let blueColor = colorObj.object(at: 2)
-            let greenColor = colorObj.object(at: 1)
-            
-            bgColor = UIColor.init(red: redColor as! Int, green: greenColor as! Int, blue: blueColor as! Int)
-        }
-        
+//        let colorObj = self.arrCampaignColor[indexPath.row]
+//        if colorObj.count > 0 {
+//            let redColor = colorObj.object(at: 0)
+//            let blueColor = colorObj.object(at: 2)
+//            let greenColor = colorObj.object(at: 1)
+//
+//            bgColor = UIColor.init(red: redColor as! Int, green: greenColor as! Int, blue: blueColor as! Int)
+//        }
+//
         let storyboard = UIStoryboard(name: "EmailCampaign", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "idCustomCampDetailVC") as! CustomCampDetailVC
         vc.companyCampaign = self.arrCampaignId[indexPath.row]
         vc.CampaignTitle = self.arrCampaignTitle[indexPath.row]
-        vc.bgColor = bgColor
+//        vc.bgColor = bgColor
         vc.modalPresentationStyle = .custom
         vc.modalTransitionStyle = .crossDissolve
         vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
@@ -256,17 +256,17 @@ extension CustomCampaignVC {
         actionImportTemplates.setValue(UIColor.black, forKey: "titleTextColor")
         //actionImportTemplates.setValue(#imageLiteral(resourceName: "popup_import") , forKey: "image")
         
-        let actionStartCampaign = UIAlertAction(title: "Start Campaign", style: .default)
-        {
-            UIAlertAction in
-            
-            if self.arrTemplateCount[index] != "" && self.arrTemplateCount[index] != "0" {
-                self.startCampaigns(index:index)
-            }else{
-                OBJCOM.setAlert(_title: "", message: "You cannot start campaign, because template or emails is not added in this campaign.")
-            }
-        }
-        actionStartCampaign.setValue(UIColor.black, forKey: "titleTextColor")
+//        let actionStartCampaign = UIAlertAction(title: "Start Campaign", style: .default)
+//        {
+//            UIAlertAction in
+//
+//            if self.arrTemplateCount[index] != "" && self.arrTemplateCount[index] != "0" {
+//                self.startCampaigns(index:index)
+//            }else{
+//                OBJCOM.setAlert(_title: "", message: "You cannot start campaign, because template or emails is not added in this campaign.")
+//            }
+//        }
+//        actionStartCampaign.setValue(UIColor.black, forKey: "titleTextColor")
         
         let actionSetaSelfReminder = UIAlertAction(title: "Set a Self Reminder", style: .default)
         {
@@ -297,7 +297,7 @@ extension CustomCampaignVC {
         actionDeleteCampaign.setValue(UIColor.black, forKey: "titleTextColor")
        // actionDeleteCampaign.setValue(#imageLiteral(resourceName: "popup_delete") , forKey: "image")
         
-        let actionRemoveMembers = UIAlertAction(title: "Unassigned Email", style: .default)
+        let actionRemoveMembers = UIAlertAction(title: "Unassign Email", style: .default)
         {
             UIAlertAction in
             let storyboard = UIStoryboard(name: "EmailCampaign", bundle: nil)
@@ -319,7 +319,7 @@ extension CustomCampaignVC {
         
         alert.addAction(actionCreateTemplate)
         alert.addAction(actionImportTemplates)
-        alert.addAction(actionStartCampaign)
+//        alert.addAction(actionStartCampaign)
         alert.addAction(actionSetaSelfReminder)
         alert.addAction(actionEditCampaign)
         alert.addAction(actionDeleteCampaign)

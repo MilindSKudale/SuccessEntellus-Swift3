@@ -95,33 +95,31 @@ class LocationTracker: NSObject, CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
-        
-        self.latitude = manager.location!.coordinate.latitude
-        self.longitude = manager.location!.coordinate.longitude
-        
-        let userLocation :CLLocation = locations[0] as CLLocation
-        let geocoder = CLGeocoder()
-        geocoder.reverseGeocodeLocation(userLocation) { (placemarks, error) in
-            if (error != nil){
-                print("error in reverseGeocode")
-            }
-        
-            if placemarks != nil {
-                print(placemarks as Any)
-                let placeMark = placemarks?.last
-               
-                let dict = ["lat":"\(self.latitude)",
-                            "long":"\(self.longitude)",
-                            "address":placeMark!.subLocality ?? "",
-                            "city":placeMark!.locality ?? "",
-                            "state":placeMark!.administrativeArea ?? "",
-                            "country":placeMark!.country ?? "",
-                            "zipCode":placeMark!.postalCode ?? ""]
-                print(dict)
-//                OBJCOM.setAlert(_title: "", message: "\(self.f)")
-//                self.f = self.f + 1
-                OBJCOM.sendCurrentLocationToServer(dict)
-                self.locman.stopUpdatingLocation()
+        if let _ = manager.location {
+            self.latitude = manager.location!.coordinate.latitude
+            self.longitude = manager.location!.coordinate.longitude
+            let userLocation :CLLocation = locations[0] as CLLocation
+            let geocoder = CLGeocoder()
+            geocoder.reverseGeocodeLocation(userLocation) { (placemarks, error) in
+                if (error != nil){
+                    print("error in reverseGeocode")
+                }
+                
+                if placemarks != nil {
+                    print(placemarks as Any)
+                    let placeMark = placemarks?.last
+                    
+                    let dict = ["lat":"\(self.latitude)",
+                        "long":"\(self.longitude)",
+                        "address":placeMark!.subLocality ?? "",
+                        "city":placeMark!.locality ?? "",
+                        "state":placeMark!.administrativeArea ?? "",
+                        "country":placeMark!.country ?? "",
+                        "zipCode":placeMark!.postalCode ?? ""]
+                    print(dict)
+                    OBJCOM.sendCurrentLocationToServer(dict)
+                    self.locman.stopUpdatingLocation()
+                }
             }
         }
     }

@@ -62,6 +62,7 @@ class AddEditGoalsVC: SliderVC, UITextFieldDelegate {
     var BLAGoalId = [String]()
     var BLAToolTip = [String]()
     var flag1 = true
+    var updateStrDate = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -90,6 +91,7 @@ class AddEditGoalsVC: SliderVC, UITextFieldDelegate {
                 formatter.dateFormat = "yyyy-MM-dd"
                 lblBusinessDate.text = formatter.string(from: Date())
             }
+            updateStrDate = ""
         }
         
         
@@ -143,6 +145,7 @@ extension AddEditGoalsVC {
                     let formatter = DateFormatter()
                     formatter.dateFormat = "yyyy-MM-dd"
                     textField.text = formatter.string(from: dt)
+                    self.updateStrDate = formatter.string(from: dt)
                 }
             }
         }
@@ -422,19 +425,29 @@ extension AddEditGoalsVC {
         strCA = dictToJSONString(dictCA)
         strBLA = dictToJSONString(dictBLA)
         
-        let dictParam = ["user_id": userID,
-                         "start_date": strDate,
-                         "firstGoalDetails": strCSA,
-                         "secondGoalDetails": strCA,
-                         "thirdGoalDetails": strBLA]
         
-        let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
-        let jsonString = String(data: jsonData!, encoding: .utf8)
-        let dictParamTemp = ["param":jsonString];
         
         if isOnboarding == false {
+            let dictParam = ["user_id": userID,
+                             "start_date": strDate,
+                             "firstGoalDetails": strCSA,
+                             "secondGoalDetails": strCA,
+                             "thirdGoalDetails": strBLA]
+            
+            let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
+            let jsonString = String(data: jsonData!, encoding: .utf8)
+            let dictParamTemp = ["param":jsonString];
             self.setBuinessDateAndGoals(dictParamTemp: dictParamTemp as! [String:String])
         }else{
+            let dictParam = ["user_id": userID,
+                             "start_date": updateStrDate,
+                             "firstGoalDetails": strCSA,
+                             "secondGoalDetails": strCA,
+                             "thirdGoalDetails": strBLA]
+            
+            let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
+            let jsonString = String(data: jsonData!, encoding: .utf8)
+            let dictParamTemp = ["param":jsonString];
             self.updateBuinessDateAndGoals(dictParamTemp: dictParamTemp as! [String:String])
         }
         
@@ -474,7 +487,10 @@ extension AddEditGoalsVC {
             if success == "true"{
                 let result = JsonDict!["result"] as? String ?? ""
                 OBJCOM.setAlert(_title: "", message: result)
-            
+                if self.updateStrDate != "" {
+                    UserDefaults.standard.set(self.updateStrDate, forKey: "BUSY_START_DATE")
+                }
+                
                 if OBJCOM.isConnectedToNetwork(){
                     OBJCOM.setLoader()
                     self.apiCallForCriticalSuccess()
@@ -486,7 +502,6 @@ extension AddEditGoalsVC {
                 
                 let result = JsonDict!["result"] as? String ?? ""
                 OBJCOM.setAlert(_title: "", message: result)
-                
                 OBJCOM.hideLoader()
             }
         };
@@ -518,7 +533,6 @@ extension AddEditGoalsVC {
     }
     
     func dictCSAIsEmpty(dict:[String:String]) -> Bool{
-        
         if dict.values.contains(""){
             return false
         }else if dict.values.contains("0"){

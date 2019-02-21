@@ -224,6 +224,7 @@ extension ApproveAccessSettingVC {
     @IBAction func actionRemoveAccess (_ sender:UIButton){
         
         if selectedUser == "" {
+            OBJCOM.setAlert(_title: "", message: "Please select user")
             OBJCOM.hideLoader()
             return
         }

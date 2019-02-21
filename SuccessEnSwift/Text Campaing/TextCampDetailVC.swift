@@ -20,6 +20,7 @@ class TextCampDetailVC: UIViewController, UICollectionViewDelegate, UICollection
     
     var arrTemplateDats = [AnyObject]()
     var arrTemplateTitle = [String]()
+    var arrTemplateImage = [String]()
     var arrTemplateId = [String]()
     var arrCampaignId = [String]()
     var arrInterval = [String]()
@@ -27,6 +28,8 @@ class TextCampDetailVC: UIViewController, UICollectionViewDelegate, UICollection
     var arrTxtTemplateMsg = [String]()
     var arrTemplates = [AnyObject]()
     var arrIsPredefine = [String]()
+    var arrTemplateColor = [String]()
+    var arrTemplateReplyCount = [String]()
     
     var textCampaignId = ""
     var textCampaignTitle = ""
@@ -76,31 +79,64 @@ class TextCampDetailVC: UIViewController, UICollectionViewDelegate, UICollection
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = textCollectView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! TextCampDetailCell
         
+        let imgUrl = self.arrTemplateImage[indexPath.row]
+        if imgUrl != "" {
+            cell.imgTemplate.imageFromServerURL(urlString: imgUrl)
+        }
+        
+//        let colorObj = self.arrTemplateColor[indexPath.row]
+//        if colorObj != "" {
+//            let colorObjArr = colorObj.components(separatedBy: ", ")
+//            if colorObjArr.count > 0 {
+//                let redColor = colorObjArr[0]
+//                let blueColor = colorObjArr[1]
+//                let greenColor = colorObjArr[2]
+//                
+//                cell.view.backgroundColor = UIColor.init(red: Int(redColor) ?? 0, green: Int(greenColor) ?? 0, blue: Int(blueColor) ?? 0)
+//                cell.view.layer.cornerRadius = 5.0;
+//            }
+//        }
+        
         cell.labelCampaignName.text = arrTemplateTitle[indexPath.row]
         let strInterval = "\(self.arrInterval[indexPath.row]) \(self.arrIntervalType[indexPath.row])"
         cell.btnInterval.setTitle(strInterval, for: .normal)
+        
+        cell.labelReplyCount.text = " \(self.arrTemplateReplyCount[indexPath.row]) "
+        cell.labelReplyCount.layer.cornerRadius = cell.labelReplyCount.frame.height/2
+        cell.labelReplyCount.clipsToBounds = true
+        
+        if self.arrTemplateReplyCount[indexPath.row] == "0" || self.arrTemplateReplyCount[indexPath.row] == "" {
+            cell.labelReplyCount.isHidden = true
+        }else{
+            cell.labelReplyCount.isHidden = false
+        }
+        
         
         cell.btnMemberDetails.tag = indexPath.row
         cell.btnInterval.tag = indexPath.row
         cell.btnCampPreview.tag = indexPath.row
         cell.btnEdit.tag = indexPath.row
         cell.btnDelete.tag = indexPath.row
+        cell.btnReply.tag = indexPath.row
 
         cell.btnMemberDetails.addTarget(self, action: #selector(actionMemberDetails(_:)), for: .touchUpInside)
         cell.btnInterval.addTarget(self, action: #selector(actionUpdateTimeInterval(_:)), for: .touchUpInside)
         cell.btnCampPreview.addTarget(self, action: #selector(actionTextTemplatePreview(_:)), for: .touchUpInside)
         cell.btnEdit.addTarget(self, action: #selector(actionEditTextTemplate(_:)), for: .touchUpInside)
         cell.btnDelete.addTarget(self, action: #selector(actionDeleteCampaign(_:)), for: .touchUpInside)
+        cell.btnReply.addTarget(self, action: #selector(actionCheckReply(_:)), for: .touchUpInside)
         
         let isPredefine = arrIsPredefine[indexPath.row]
         if isPredefine == "1" {
             cell.btnInterval.isUserInteractionEnabled = false
             cell.btnEdit.isHidden = true
             cell.btnDelete.isHidden = true
+           // cell.btnReply.isHidden = true
         }else{
             cell.btnInterval.isUserInteractionEnabled = true
             cell.btnEdit.isHidden = false
             cell.btnDelete.isHidden = false
+          //  cell.btnReply.isHidden = false
         }
         
         return cell
@@ -127,6 +163,9 @@ class TextCampDetailVC: UIViewController, UICollectionViewDelegate, UICollection
             self.arrTxtTemplateMsg = []
             self.arrTemplates = []
             self.arrIsPredefine = []
+            self.arrTemplateColor = []
+            self.arrTemplateImage = []
+            self.arrTemplateReplyCount = []
             
             let success:String = JsonDict!["IsSuccess"] as! String
             if success == "true"{
@@ -143,6 +182,9 @@ class TextCampDetailVC: UIViewController, UICollectionViewDelegate, UICollection
                         self.arrIntervalType.append(obj.value(forKey: "txtTemplateIntervalType") as! String)
                         self.arrTxtTemplateMsg.append(obj.value(forKey: "txtTemplateMsg") as! String)
                         self.arrIsPredefine.append(obj.value(forKey: "txtTemplateFeature") as! String)
+                        self.arrTemplateColor.append(obj.value(forKey: "txtTemplateColor") as! String)
+                        self.arrTemplateImage.append(obj.value(forKey: "txtTemplateImage") as! String)
+                        self.arrTemplateReplyCount.append("\(obj.value(forKey: "replyCount") ?? "0")")
                         self.arrTemplates.append(obj)
                     }
                     self.noDataView.isHidden = true
@@ -177,15 +219,30 @@ extension TextCampDetailVC {
     }
     
     @IBAction func actionTextTemplatePreview(_ sender : UIButton){
-        let storyboard = UIStoryboard(name: "TextCampaign", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "idTextTemplatePreviewVC") as! TextTemplatePreviewVC
-        vc.templateData = self.arrTemplateDats[sender.tag] as! [String : Any]
-        vc.templateId = self.arrTemplateId[sender.tag]
-        vc.campaignName = textCampaignTitle
-        vc.modalPresentationStyle = .custom
-        vc.modalTransitionStyle = .crossDissolve
-//        vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
-        self.present(vc, animated: false, completion: nil)
+        
+        let isPredefine = arrIsPredefine[sender.tag]
+        if isPredefine == "1" {
+            
+            let storyboard = UIStoryboard(name: "TextCampaign", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "idPredefineCampPreview") as! PredefineCampPreview
+         //   vc.templateData = self.arrTemplateDats[sender.tag] as! [String : Any]
+            vc.templateId = self.arrTemplateId[sender.tag]
+         //   vc.campaignName = textCampaignTitle
+            vc.modalPresentationStyle = .custom
+            vc.modalTransitionStyle = .crossDissolve
+            vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
+            self.present(vc, animated: false, completion: nil)
+        }else{
+            let storyboard = UIStoryboard(name: "TextCampaign", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "idTextTemplatePreviewVC") as! TextTemplatePreviewVC
+            vc.templateData = self.arrTemplateDats[sender.tag] as! [String : Any]
+            vc.templateId = self.arrTemplateId[sender.tag]
+            vc.campaignName = textCampaignTitle
+            vc.modalPresentationStyle = .custom
+            vc.modalTransitionStyle = .crossDissolve
+            self.present(vc, animated: false, completion: nil)
+        }
+       
     }
     
     @IBAction func actionUpdateTimeInterval(_ sender : UIButton){
@@ -224,6 +281,25 @@ extension TextCampDetailVC {
         vc.modalTransitionStyle = .crossDissolve
         vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
         self.present(vc, animated: false, completion: nil)
+    }
+    
+    @IBAction func actionCheckReply (_ sender : UIButton) {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(self.UpdateTextTemplateVC),
+            name: NSNotification.Name(rawValue: "UpdateTextTemplateVC"),
+            object: nil)
+        if self.arrTemplateReplyCount[sender.tag] != "0" && self.arrTemplateReplyCount[sender.tag] != "" {
+            let storyboard = UIStoryboard(name: "TextCampaign", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "idTextMessageReplyVC") as! TextMessageReplyVC
+            vc.templateId = self.arrTemplateId[sender.tag]
+            vc.modalPresentationStyle = .custom
+            vc.modalTransitionStyle = .crossDissolve
+            vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
+            self.present(vc, animated: false, completion: nil)
+        }else{
+            OBJCOM.popUp(context: self, msg: "No reply available.")
+        }
     }
     
     @IBAction func actionDeleteCampaign (_ sender : UIButton) {

@@ -56,6 +56,7 @@ class WeeklyTrackingVC: SliderVC {
         self.dropDown.placeholder = " Current Week"
         self.dropDown.optionsTextAlignment = NSTextAlignment.left
         self.dropDown.textAlignment = NSTextAlignment.left
+        self.dropDown.uiView = self.view
     }
     
     override func viewWillAppear(_ animated: Bool) {

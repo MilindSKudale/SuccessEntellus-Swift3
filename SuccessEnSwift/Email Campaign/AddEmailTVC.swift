@@ -67,9 +67,9 @@ class AddEmailTVC: UIViewController {
         }
     }
     @IBAction func actionBtnAddAndStartCampaign(_ sender: Any) {
-        if isValidation() == true {
-            checkEmailIsExists(isAdd:"1")
-        }
+//        if isValidation() == true {
+//            checkEmailIsExists(isAdd:"1")
+//        }
     }
 }
 
@@ -144,12 +144,12 @@ extension AddEmailTVC {
             if success == "true"{
                 let result = JsonDict!["result"] as! String
                 print(result)
-                if isAdd == "1" {
-                    self.addEmailAPI(addAndAssinged: "1")
-                }else{
-                    self.addEmailAPI(addAndAssinged: "0")
-                }
-                
+//                if isAdd == "1" {
+//                    self.addEmailAPI(addAndAssinged: "1")
+//                }else{
+//                    self.addEmailAPI(addAndAssinged: "0")
+//                }
+                self.getEmailScheduleMessage()
             }else{
                 let result = JsonDict!["result"] as! String
                 OBJCOM.setAlert(_title: "", message: result)
@@ -159,6 +159,7 @@ extension AddEmailTVC {
     }
     
     func addEmailAPI(addAndAssinged:String) {
+        //getEmailScheduleMessage
         if callFirst == true {
             let dictParam = ["userId": userID,
                              "platform":"3",
@@ -199,6 +200,41 @@ extension AddEmailTVC {
             };
             callFirst = false
         }
+    }
+    
+    func getEmailScheduleMessage() {
+        let dictParam = ["userId": userID,
+                         "platform":"3",
+                         "campaignId":campaignId]
+        
+        let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
+        let jsonString = String(data: jsonData!, encoding: .utf8)
+        let dictParamTemp = ["param":jsonString];
+        
+        typealias JSONDictionary = [String:Any]
+        OBJCOM.modalAPICall(Action: "getEmailScheduleMessage", param:dictParamTemp as [String : AnyObject],  vcObject: self) {
+            JsonDict, staus in
+            
+            let success:String = JsonDict!["IsSuccess"] as! String
+            if success == "true"{
+                let result = JsonDict!["result"] as! String
+                let alertController = UIAlertController(title: "", message: result, preferredStyle: .alert)
+                let okAction = UIAlertAction(title: "Proceed", style: UIAlertActionStyle.default) {
+                    UIAlertAction in
+                   self.addEmailAPI(addAndAssinged: "0")
+                }
+                let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) {
+                    UIAlertAction in
+                }
+                alertController.addAction(okAction)
+                alertController.addAction(cancelAction)
+                self.present(alertController, animated: true, completion: nil)
+            }else{
+                let result = JsonDict!["result"] as! String
+                OBJCOM.setAlert(_title: "", message: result)
+                OBJCOM.hideLoader()
+            }
+        };
     }
     
     func isValidation() -> Bool{

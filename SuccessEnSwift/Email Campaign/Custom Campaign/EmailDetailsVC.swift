@@ -34,6 +34,8 @@ class EmailDetailsVC: UIViewController {
     var arrSelectedRecords = [String]()
     var templateId = ""
     var campaignId = ""
+    var templateName = ""
+    var templateDate = ""
     var isRepeate = false
     
     override func viewDidLoad() {
@@ -52,6 +54,8 @@ class EmailDetailsVC: UIViewController {
         btnDelete.clipsToBounds = true
         btnDeleteAllFollw.clipsToBounds = true
         
+        self.lblTemplateName.text = self.templateName
+        self.lblTemplateCreatedDate.text = "Email template created on : \(self.templateDate)"
         
     }
 
@@ -219,25 +223,27 @@ extension EmailDetailsVC {
         typealias JSONDictionary = [String:Any]
         OBJCOM.modalAPICall(Action: "getStepEmaildetails", param:dictParamTemp as [String : AnyObject],  vcObject: self){
             JsonDict, staus in
+            
+            self.arrContactId = []
+            self.arrContactEmail = []
+            self.arrContactName = []
+            self.arrContactPhone = []
+            self.arrReadImg = []
+            self.arrScheduleDate = []
+            self.arrStatus = []
+            
             let success:String = JsonDict!["IsSuccess"] as! String
             if success == "true"{
                 let result = JsonDict!["result"] as! [String : AnyObject]
                 print(result)
-                self.setView(view: self.noDataView, hidden: true)
+                
                 self.lblTemplateName.text = result["campaignStepTitle"] as? String ?? ""
                 self.lblTemplateCreatedDate.text = "Email template created on : \(result["campaignStepAddDate"] as? String ?? "")"
                 
                 let emailDetails = result["emailDetails"] as! [AnyObject]
                 
-                self.arrContactId = []
-                self.arrContactEmail = []
-                self.arrContactName = []
-                self.arrContactPhone = []
-                self.arrReadImg = []
-                self.arrScheduleDate = []
-                self.arrStatus = []
-                
                 if emailDetails.count > 0 {
+                    self.setView(view: self.noDataView, hidden: true)
                     for obj in emailDetails {
                         self.arrContactId.append(obj.value(forKey: "contactCampaignId") as! String)
                         self.arrContactEmail.append(obj.value(forKey: "contactEmail") as! String)
@@ -247,16 +253,12 @@ extension EmailDetailsVC {
                         self.arrScheduleDate.append(obj.value(forKey: "scheduleDate") as! String)
                         self.arrStatus.append(obj.value(forKey: "sent") as! String)
                     }
+                }else{
+                    self.setView(view: self.noDataView, hidden: false)
                 }
+                
                 OBJCOM.hideLoader()
             }else{
-                self.arrContactId = []
-                self.arrContactEmail = []
-                self.arrContactName = []
-                self.arrContactPhone = []
-                self.arrReadImg = []
-                self.arrScheduleDate = []
-                self.arrStatus = []
                 self.setView(view: self.noDataView, hidden: false)
                 print("result:",JsonDict ?? "")
                 OBJCOM.hideLoader()

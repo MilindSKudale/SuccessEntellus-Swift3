@@ -64,7 +64,7 @@ class NewContactListVC: UIViewController, UITextFieldDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        tblHeight.constant = 200
+        tblHeight.constant = 100
         noRecView.isHidden = true
         tblContactList.tableFooterView = UIView()
         btnImport.layer.cornerRadius = 5.0
@@ -73,20 +73,21 @@ class NewContactListVC: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func actionClose(_ sender:UIButton){
-        
-        let alertController = UIAlertController(title: "", message: "Clicking on 'Cancel' will discard this contacts. You can import this contact(s) by selecting 'Import Device Contact(s)'.", preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default) {
-            UIAlertAction in
-           self.dismiss(animated: true, completion: nil)
+        if arrContact.count > 0 {
+            let alertController = UIAlertController(title: "", message: "Clicking on 'Cancel' will discard this contacts. You can import this contact(s) by selecting 'Import Device Contact(s)'.", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default) {
+                UIAlertAction in
+                self.dismiss(animated: true, completion: nil)
+            }
+            let Cancel = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) {
+                UIAlertAction in
+            }
+            alertController.addAction(Cancel)
+            alertController.addAction(okAction)
+            self.present(alertController, animated: true, completion: nil)
+        }else{
+            self.dismiss(animated: true, completion: nil)
         }
-        let Cancel = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) {
-            UIAlertAction in
-            
-        }
-        alertController.addAction(Cancel)
-        alertController.addAction(okAction)
-        self.present(alertController, animated: true, completion: nil)
-
     }
     
     
@@ -107,19 +108,25 @@ class NewContactListVC: UIViewController, UITextFieldDelegate {
         let dictParamTemp = ["param":jsonString];
         
         typealias JSONDictionary = [String:Any]
-        OBJCOM.modalAPICall(Action: "newContactImportAndCreateGroup", param:dictParamTemp as [String : AnyObject],  vcObject: self){
+        OBJCOM.modalAPICall(Action: "newContactImportToProspect", param:dictParamTemp as [String : AnyObject],  vcObject: self){
             JsonDict, staus in
             let success:String = JsonDict!["IsSuccess"] as! String
             if success == "true"{
                 let result = JsonDict!["result"] as AnyObject
                 OBJCOM.hideLoader()
                 OBJCOM.setAlert(_title: "", message: result as! String)
+                if self.contact_flag == "3"{
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "UpdateProspectList"), object: nil)
+                }else if self.contact_flag == "1"{
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "UpdateContactList"), object: nil)
+                }
+                self.dismiss(animated: true, completion: nil)
             }else{
                 print("result:",JsonDict ?? "")
                 OBJCOM.hideLoader()
             }
         };
-        self.dismiss(animated: true, completion: nil)
+        
     }
     
    
@@ -175,17 +182,20 @@ class NewContactListVC: UIViewController, UITextFieldDelegate {
                         arrPh.append(obj.value.stringValue as String)
                     }
                     
-                    let contactArray = ["firstName":fname,
-                                        "middleName":"",
-                                        "lastName":lname,
-                                    "organisationName":cont.organizationName,
-                                        "email":arrEmail,
-                                        "phone":arrPh,
-                                        "birthDay":"",
-                                        "address":"",
-                                        "SocialMediaProfiles":"",
-                                        "SkypeLink":"",
-                                        "Description":""] as [String : Any]
+                    let contactArray = ["contact_fname":fname,
+                                        "contact_lname":lname,
+                                    "contact_company_name":cont.organizationName,
+                                        "contact_email":arrEmail,
+                                        "contact_phone":arrPh,
+                                        "contact_date_of_birth":"",
+//                                        "contact_address":"",
+//                                        "contact_city":"",
+//                                        "contact_state":"",
+//                                        "contact_country":"",
+//                                        "contact_zip":"",
+                                        "contact_description":""] as [String : Any]
+                    
+
                     arrContact.append(contactArray as AnyObject)
                 }
             }
@@ -202,7 +212,7 @@ class NewContactListVC: UIViewController, UITextFieldDelegate {
         }else if arrContact.count > 6 {
             tblHeight.constant = 6*70
         }else{
-            tblHeight.constant = 200.0
+            tblHeight.constant = 100.0
         }
         self.tblContactList.reloadData()
     }
@@ -261,13 +271,13 @@ extension NewContactListVC : UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tblContactList.dequeueReusableCell(withIdentifier: "ContactCell") as! NewContactListCell
         
-        let fname = arrContact[indexPath.row]["firstName"] ?? ""
-        let lname = arrContact[indexPath.row]["lastName"] ?? ""
+        let fname = arrContact[indexPath.row]["contact_fname"] ?? ""
+        let lname = arrContact[indexPath.row]["contact_lname"] ?? ""
         
         firstName = fname as! String
         lastName = lname as! String
         
-        let ph = arrContact[indexPath.row]["phone"] as? [String]
+        let ph = arrContact[indexPath.row]["contact_phone"] as? [String]
         
         cell.lblInitials.text = contactInitials()
         cell.lblName.text = "\(fname!) \(lname!)"

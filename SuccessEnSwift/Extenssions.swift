@@ -12,7 +12,6 @@ class Extenssions: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
     }
 }
 
@@ -27,8 +26,6 @@ extension UIView {
 }
 
 extension UIView {
-    
-   
     @IBInspectable
     var shadowRadius: CGFloat {
         get {
@@ -176,25 +173,21 @@ extension String {
     }
 }
 
-
 extension UIImageView {
     public func imageFromServerURL(urlString: String) {
-        
         URLSession.shared.dataTask(with: NSURL(string: urlString)! as URL, completionHandler: { (data, response, error) -> Void in
-            
+
             if error != nil {
                 print(error ?? "")
                 DispatchQueue.main.async {
-                    self.image = #imageLiteral(resourceName: "libraryButton")
+                    self.image = #imageLiteral(resourceName: "noImg")
                 }
-                
                 return
             }
             DispatchQueue.main.async(execute: { () -> Void in
                 let image = UIImage(data: data!)
                 self.image = image
             })
-            
         }).resume()
     }
 }

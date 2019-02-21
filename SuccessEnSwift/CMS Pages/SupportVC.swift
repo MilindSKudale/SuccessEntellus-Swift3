@@ -15,7 +15,7 @@ class SupportVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        lblPhone.text = "1-408-647-6465"
+        lblPhone.text = "1-408-641-8294"
         lblMail.text = "support@successentellus.com"
     }
     

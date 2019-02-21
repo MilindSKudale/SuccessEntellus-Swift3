@@ -56,6 +56,11 @@ class EditEventTVC: UITableViewController, GIDSignInDelegate, GIDSignInUIDelegat
         btnUpdateEvent.layer.cornerRadius = 5.0
         btnUpdateEvent.clipsToBounds = true
         self.tableView.tableFooterView = UIView()
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(true)
         assignEventData()
         print(eventData)
     }
@@ -110,15 +115,17 @@ class EditEventTVC: UITableViewController, GIDSignInDelegate, GIDSignInUIDelegat
             txtReminder.text = ""
         }
         startDate = self.stringToDate(strDate: eventData["task_fromdt"] as? String ?? "")
+        
         startDateValue = eventData["task_fromdt"] as? String ?? ""
         endDate = self.stringToDate(strDate: eventData["task_todt"] as? String ?? "")
+    
         startTime = self.stringToDate(strDate: eventData["task_fromdt"] as? String ?? "")
         endTime = self.stringToDate(strDate: eventData["task_todt"] as? String ?? "")
         
         let sd = self.dateToString(dt: startDate)
         let ed = self.dateToString(dt: endDate)
-        let st = self.dateToStringTime(dt: startDate)
-        let et = self.dateToStringTime(dt: endDate)
+        let st = self.dateToStringTime(dt: startTime)
+        let et = self.dateToStringTime(dt: endTime)
         
         txtStartDate.text = sd
         txtEndDate.text = ed
@@ -287,20 +294,24 @@ extension EditEventTVC {
             datePicker.show("Set date",
                             doneButtonTitle: "Done",
                             cancelButtonTitle: "Cancel",
-                            minimumDate: startDate,
+                            minimumDate: nil,
                             datePickerMode: .date) { (date) in
                                 if let dt = date {
                                     let formatter = DateFormatter()
                                     formatter.dateFormat = "MM-dd-yyyy"
-                                    
-                                    self.txtEndDate.text = formatter.string(from: dt)
-                                    self.endDate = dt
-                                    if self.txtStartTime.text != self.startDateValue {
-                                        self.lblAllEvent.isHidden = true
-                                        self.btnAllEvents.isHidden = true
-                                        self.btnOnlyThisEvent.isSelected = true
-                                        self.applyAll = "1"
+                                    if dt < self.startDate {
+                                        OBJCOM.setAlert(_title: "", message: "'To date' should be greater than 'From date'.")
+                                    }else{
+                                        self.txtEndDate.text = formatter.string(from: dt)
+                                        self.endDate = dt
+                                        if self.txtStartTime.text != self.startDateValue {
+                                            self.lblAllEvent.isHidden = true
+                                            self.btnAllEvents.isHidden = true
+                                            self.btnOnlyThisEvent.isSelected = true
+                                            self.applyAll = "1"
+                                        }
                                     }
+                                   
                                 }
             }
         }
@@ -314,33 +325,61 @@ extension EditEventTVC {
                                           font: UIFont.boldSystemFont(ofSize: 17),
                                           showCancelButton: true)
         if textfield == self.txtStartTime {
-            datePicker.show("Set Start Time",
-                            doneButtonTitle: "Done",
-                            cancelButtonTitle: "Cancel",
-                            minimumDate: nil,
-                            datePickerMode: .time) { (date) in
+            datePicker.show("Set Start Time", doneButtonTitle: "Done", cancelButtonTitle: "Cancel", defaultDate: self.startDate, minimumDate: nil, maximumDate: nil, datePickerMode: .time) { (date) in
                                 if let dt = date {
                                     let formatter = DateFormatter()
                                     formatter.dateFormat = "hh:mm a"
                                     self.txtStartTime.text = formatter.string(from: dt)
-                                    self.txtEndTime.text = formatter.string(from: dt)
-                                    self.startTime = dt
-                                    
-                                    
+                                    self.txtEndTime.text = formatter.string(from: dt.addingTimeInterval(3600))
+                                    self.startTime = dt.addingTimeInterval(60)
                                 }
             }
-        }else{
-            datePicker.show("Set End Time",
-                            doneButtonTitle: "Done",
-                            cancelButtonTitle: "Cancel",
-                            minimumDate: self.startTime,
-                            datePickerMode: .time) { (date) in
-                                if let dt = date {
-                                    let formatter = DateFormatter()
-                                    formatter.dateFormat = "hh:mm a"
-                                    self.txtEndTime.text = formatter.string(from: dt)
-                                    self.endDate = dt
-                                }
+        }else if textfield == self.txtEndTime {
+//            let dateFormatter = DateFormatter()
+//            dateFormatter.dateFormat = "MM-dd-yyyy hh:mm a"
+//            let sT : Date = dateFormatter.date(from: "\(self.txtStartDate.text ?? "") \(self.txtStartTime.text ?? "")")!
+//            self.startTime = sT
+            datePicker.show("Set End Time", doneButtonTitle: "Done", cancelButtonTitle: "Cancel", defaultDate: self.startDate, minimumDate: self.startTime.addingTimeInterval(60), maximumDate: nil, datePickerMode: .time) { (date) in
+                if let dt = date {
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "hh:mm a"
+                    self.txtEndTime.text = formatter.string(from: dt)
+                    self.endTime = dt
+                }
+                
+//            }
+//            datePicker.show("Set End Time",
+//                            doneButtonTitle: "Done",
+//                            cancelButtonTitle: "Cancel",
+//                            minimumDate: self.startTime,
+//                            datePickerMode: .time) { (self.startDate) in
+//                                if let dt = date {
+//
+//                                    if dt < self.startTime {
+//                                        OBJCOM.setAlert(_title: "", message: "Please set greater date")
+//                                    }
+//
+//                                    let formatter = DateFormatter()
+//                                    formatter.dateFormat = "hh:mm a"
+//                                    self.txtEndTime.text = formatter.string(from: dt)
+//                                    self.endTime = dt
+//                                }
+        
+//            datePicker.show("Set End Time",
+//                            doneButtonTitle: "Done",
+//                            cancelButtonTitle: "Cancel",
+//                            minimumDate: self.startTime.addingTimeInterval(3600),
+//                            datePickerMode: .time) { (date) in
+//                                if let dt = date {
+//                                    let formatter = DateFormatter()
+//                                    formatter.dateFormat = "hh:mm a"
+//                                    print(formatter.string(from: dt))
+//                                    print(formatter.string(from: self.startTime))
+//                                    print(formatter.string(from: Date()))
+//
+//                                        self.txtEndTime.text = formatter.string(from: dt)
+//                                        self.endDate = dt
+//                                }
             }
         }
     }
@@ -405,10 +444,10 @@ extension EditEventTVC: UITextFieldDelegate {
             datePickerTapped(textfield: textField)
             return false
         } else if textField == txtStartTime {
-            timePickerTapped(textfield: textField)
+            timePickerTapped(textfield: txtStartTime)
             return false
         } else if textField == txtEndTime {
-            timePickerTapped(textfield: textField)
+            timePickerTapped(textfield: txtEndTime)
             return false
         }else if textField == txtReminder {
             setReminder()
@@ -443,6 +482,8 @@ extension EditEventTVC: UITextFieldDelegate {
                 }
             }else{
                 print("result:",JsonDict ?? "")
+                let result = JsonDict!["result"] as! String
+                OBJCOM.setAlert(_title: "", message: result)
                 OBJCOM.hideLoader()
             }
         };

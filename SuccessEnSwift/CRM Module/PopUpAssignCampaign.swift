@@ -11,15 +11,17 @@ import UIKit
 class PopUpAssignCampaign: UIViewController {
     
     @IBOutlet var lblTitle : UILabel!
-    @IBOutlet var DDSelectCampaign : UIDropDown!
+  //  @IBOutlet var DDSelectCampaign : UIDropDown!
+    @IBOutlet var btnSelectCampaign : UIButton!
     @IBOutlet var btnCancel : UIButton!
     @IBOutlet var btnAssign : UIButton!
     @IBOutlet var lblContactName : UILabel!
     @IBOutlet var tblAssignedCamp : UITableView!
+    @IBOutlet var bgView : UIView!
 
     var arrCampaignTitle = [String]()
     var arrCampaignId = [AnyObject]()
-    var arrAvailCampaign = [AnyObject]()
+    var arrAvailCampaign = [String]()
     var arrUnAssignCampaignTitle = [String]()
     var arrUnAssignCampaignId = [AnyObject]()
     var arrAddedCampaignTitle = [String]()
@@ -37,6 +39,13 @@ class PopUpAssignCampaign: UIViewController {
         btnCancel.layer.cornerRadius = 5.0
         btnAssign.clipsToBounds = true
         btnCancel.clipsToBounds = true
+        
+        btnSelectCampaign.layer.cornerRadius = 5.0
+        btnSelectCampaign.layer.borderColor = APPGRAYCOLOR.cgColor
+        btnSelectCampaign.layer.borderWidth = 0.5
+        btnSelectCampaign.clipsToBounds = true
+        campaignTitle = ""
+        btnSelectCampaign.setTitle("Select Email Campaign", for: .normal)
         
         tblAssignedCamp.tableFooterView = UIView()
       
@@ -56,40 +65,46 @@ class PopUpAssignCampaign: UIViewController {
         }
     }
     
-    func loadDropDown() {
-        self.DDSelectCampaign.textColor = .black
-        self.DDSelectCampaign.tint = .black
-        self.DDSelectCampaign.optionsSize = 15.0
-        self.DDSelectCampaign.placeholder = " Select email campaign"
-        self.DDSelectCampaign.optionsTextAlignment = NSTextAlignment.left
-        self.DDSelectCampaign.textAlignment = NSTextAlignment.left
-        self.DDSelectCampaign.options = self.arrCampaignTitle
-        self.DDSelectCampaign.availCamp = self.arrAvailCampaign
-        
-        for i in 0..<arrAvailCampaign.count{
-            if "\(arrAvailCampaign[i])"  == "0" {
-                self.DDSelectCampaign.campaigns = "\(arrAvailCampaign[i])"
-            }
-        }
-        
-        campaignTitle = " Select email campaign"
-        self.DDSelectCampaign.didSelect { (item, index) in
-            self.campaignTitle = self.arrCampaignTitle[index]
-            self.campaignId = self.arrCampaignId[index] as! String
-        }
-    }
+//    func loadDropDown() {
+//        self.DDSelectCampaign.textColor = .black
+//        self.DDSelectCampaign.tint = .black
+//        self.DDSelectCampaign.optionsSize = 15.0
+//        self.DDSelectCampaign.placeholder = " Select email campaign"
+//        self.DDSelectCampaign.optionsTextAlignment = NSTextAlignment.left
+//        self.DDSelectCampaign.textAlignment = NSTextAlignment.left
+//        self.DDSelectCampaign.options = self.arrCampaignTitle
+//        self.DDSelectCampaign.availCamp = self.arrAvailCampaign
+//        self.DDSelectCampaign.uiView.backgroundColor = self.bgView.backgroundColor
+////        for i in 0..<arrAvailCampaign.count{
+////            if "\(arrAvailCampaign[i])"  == "0" {
+////                self.DDSelectCampaign.campaigns = "0"
+////            }else{
+////                self.DDSelectCampaign.campaigns = "1"
+////            }
+////        }
+//
+//        campaignTitle = " Select email campaign"
+//        self.DDSelectCampaign.didSelect { (item, index) in
+//            self.campaignTitle = self.arrCampaignTitle[index]
+//            self.campaignId = self.arrCampaignId[index] as! String
+//        }
+//    }
     
     @IBAction func actionCancel(_ sender : UIButton){
         self.dismiss(animated: true, completion: nil)
     }
     
     @IBAction func actionAssignCampaign(_ sender : UIButton){
-        
-        if OBJCOM.isConnectedToNetwork(){
-            OBJCOM.setLoader()
-            AssignCampaign()
+        if campaignTitle != "" {
+            if OBJCOM.isConnectedToNetwork(){
+                OBJCOM.setLoader()
+                self.getEmailScheduleMessage()
+            }else{
+                OBJCOM.NoInternetConnectionCall()
+            }
         }else{
-            OBJCOM.NoInternetConnectionCall()
+            OBJCOM.hideLoader()
+            OBJCOM.setAlert(_title: "", message: "Please select email campaign to assign.")
         }
     }
     
@@ -130,55 +145,46 @@ class PopUpAssignCampaign: UIViewController {
         alertController.addAction(cancelAction)
         self.present(alertController, animated: true, completion: nil)
     }
+    
+    @IBAction func actionSelectCampaign(_ sender : UIButton){
+        if self.arrCampaignTitle.count > 0 {
+            let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            
+            for i in 0..<self.arrCampaignTitle.count{
+                alert.addAction(UIAlertAction(title: self.arrCampaignTitle[i], style: .default , handler:{ (UIAlertAction)in
+                    self.campaignTitle = self.arrCampaignTitle[i]
+                    self.campaignId = "\(self.arrCampaignId[i])"
+                    self.btnSelectCampaign.setTitle(self.campaignTitle, for: .normal)
+                }))
+            }
+            
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler:nil))
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
 
 }
 
 extension PopUpAssignCampaign : UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch (section) {
-        case 0:
-            if arrAddedCampaignTitle.count == 0 {
-                return 1
-            }else{
-                return arrAddedCampaignTitle.count
-            }
-        default:
+
             if arrUnAssignCampaignTitle.count == 0 {
                 return 1
             }else{
                 return arrUnAssignCampaignTitle.count
             }
-        }
+//        }
         
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tblAssignedCamp.dequeueReusableCell(withIdentifier: "Cell") as! AssignCampaignCell
-        
-        switch (indexPath.section) {
-        case 0:
-            if arrAddedCampaignTitle.count == 0 {
-                cell.lblCampaignName.text = "No email campaign(s) added yet!"
-                cell.lblCampaignName.textColor = .red
-                cell.btnUnAssignCampaign.isHidden = true
-            }else{
-                if isGroup == true {
-                    cell.btnUnAssignCampaign.isHidden = true
-                }else{
-                    cell.btnUnAssignCampaign.isHidden = false
-                }
-                cell.lblCampaignName.textColor = .black
-                cell.lblCampaignName.text = self.arrAddedCampaignTitle[indexPath.row]
-                cell.btnUnAssignCampaign.setImage(UIImage(named: "ic_btnDelete"), for: .normal)
-                cell.btnUnAssignCampaign.tag = indexPath.row
-                cell.btnUnAssignCampaign.addTarget(self, action: #selector(actionDeleteCampaign(_:)), for: .touchUpInside)
-            }
-        default:
+    
             if arrUnAssignCampaignTitle.count == 0 {
                 cell.lblCampaignName.text = "No email campaign(s) assigned yet!"
                 cell.lblCampaignName.textColor = .red
@@ -191,7 +197,7 @@ extension PopUpAssignCampaign : UITableViewDelegate, UITableViewDataSource {
                 cell.btnUnAssignCampaign.tag = indexPath.row
                 cell.btnUnAssignCampaign.addTarget(self, action: #selector(actionUnAssignCampaign(_:)), for: .touchUpInside)
             }
-        }
+//        }
         return cell
     }
     
@@ -206,11 +212,11 @@ extension PopUpAssignCampaign : UITableViewDelegate, UITableViewDataSource {
         label.textAlignment = .center
         label.numberOfLines = 0
         label.lineBreakMode = .byWordWrapping
-        if section == 0 {
-            label.text = "List of Added Email Campaign(s)"
-        }else{
+//        if section == 0 {
+//            label.text = "List of Added Email Campaign(s)"
+//        }else{
             label.text = "List of Assigned Email Campaign(s)"
-        }
+//        }
         
         headerView.addSubview(label)
         
@@ -250,7 +256,7 @@ extension PopUpAssignCampaign {
                 let result = JsonDict!["result"] as AnyObject
                 let campData = result["assingCamp"] as! [AnyObject]
                 let unAssignCampData = result["unAssingCamp"] as! [AnyObject]
-                let addedCampData = result["addedCamp"] as! [AnyObject]
+                //let addedCampData = result["addedCamp"] as! [AnyObject]
                 
                 self.arrCampaignTitle = []
                 self.arrCampaignId = []
@@ -259,7 +265,7 @@ extension PopUpAssignCampaign {
                 for obj in campData {
                     self.arrCampaignTitle.append(obj.value(forKey: "campaignTitle") as! String)
                     self.arrCampaignId.append(obj.value(forKey: "campaignId") as AnyObject)
-                    self.arrAvailCampaign.append(obj.value(forKey: "campaignTemplateExits") as AnyObject)
+                    self.arrAvailCampaign.append("\(obj.value(forKey: "campaignTemplateExits") ?? "1")")
                 }
                 self.arrUnAssignCampaignId = []
                 self.arrUnAssignCampaignTitle = []
@@ -268,15 +274,15 @@ extension PopUpAssignCampaign {
                     self.arrUnAssignCampaignId.append(obj.value(forKey: "contactCampaignId") as AnyObject)
                 }
                 
-                self.arrAddedCampaignId = []
-                self.arrAddedCampaignTitle = []
-                for obj in addedCampData {
-                    self.arrAddedCampaignTitle.append(obj.value(forKey: "campaignTitle") as! String)
-                    self.arrAddedCampaignId.append(obj.value(forKey: "contactCampaignId") as AnyObject)
-                }
+//                self.arrAddedCampaignId = []
+//                self.arrAddedCampaignTitle = []
+//                for obj in addedCampData {
+//                    self.arrAddedCampaignTitle.append(obj.value(forKey: "campaignTitle") as! String)
+//                    self.arrAddedCampaignId.append(obj.value(forKey: "contactCampaignId") as AnyObject)
+//                }
                 
                 OBJCOM.hideLoader()
-                self.loadDropDown()
+               // self.loadDropDown()
                 self.tblAssignedCamp.reloadData()
             }else{
                 print("result:",JsonDict ?? "")
@@ -365,7 +371,7 @@ extension PopUpAssignCampaign {
     
     func AssignCampaign() {
 
-        if campaignTitle != " Select email campaign" {
+        if campaignTitle != "" {
             var dictParam = [String:String]()
             if isGroup == true {
                 dictParam = ["userId": userID,
@@ -403,10 +409,52 @@ extension PopUpAssignCampaign {
                     OBJCOM.hideLoader()
                 }
             };
+            
         }else{
             OBJCOM.hideLoader()
             OBJCOM.setAlert(_title: "", message: "Please select email campaign to assign.")
         }
         
+    }
+    
+    func getEmailScheduleMessage() {
+        let dictParam = ["userId": userID,
+                         "platform":"3",
+                         "campaignId":campaignId]
+        
+        let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
+        let jsonString = String(data: jsonData!, encoding: .utf8)
+        let dictParamTemp = ["param":jsonString];
+        
+        typealias JSONDictionary = [String:Any]
+        OBJCOM.modalAPICall(Action: "getEmailScheduleMessage", param:dictParamTemp as [String : AnyObject],  vcObject: self) {
+            JsonDict, staus in
+            
+            let success:String = JsonDict!["IsSuccess"] as! String
+            if success == "true"{
+                let result = JsonDict!["result"] as! String
+                OBJCOM.hideLoader()
+                let alertController = UIAlertController(title: "", message: result, preferredStyle: .alert)
+                let okAction = UIAlertAction(title: "Proceed", style: UIAlertActionStyle.default) {
+                    UIAlertAction in
+                    if OBJCOM.isConnectedToNetwork(){
+                        OBJCOM.setLoader()
+                        self.AssignCampaign()
+                    }else{
+                        OBJCOM.NoInternetConnectionCall()
+                    }
+                }
+                let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) {
+                    UIAlertAction in
+                }
+                alertController.addAction(okAction)
+                alertController.addAction(cancelAction)
+                self.present(alertController, animated: true, completion: nil)
+            }else{
+                let result = JsonDict!["result"] as! String
+                OBJCOM.setAlert(_title: "", message: result)
+                OBJCOM.hideLoader()
+            }
+        };
     }
 }

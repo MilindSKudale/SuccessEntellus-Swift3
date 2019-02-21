@@ -819,7 +819,6 @@ extension CFTCommunityVC : UITextFieldDelegate {
             placemarks, error in
             let placemark = placemarks?.first
             location = (placemark?.location)!
-            
         }
          return location        
     }

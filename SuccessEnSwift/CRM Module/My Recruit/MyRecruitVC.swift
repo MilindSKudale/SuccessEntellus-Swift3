@@ -16,12 +16,13 @@ class MyRecruitVC: SliderVC, UIDocumentPickerDelegate, UIDocumentMenuDelegate {
     @IBOutlet var btnMove : UIButton!
     @IBOutlet var btnDelete : UIButton!
     @IBOutlet var btnAssignCampaign : UIButton!
+    @IBOutlet var btnAddToGroup : UIButton!
     @IBOutlet weak var actionViewHeight: NSLayoutConstraint!
     @IBOutlet var noRecView : UIView!
     
     var isFilter = false;
     var selectAllRecords = false
-    let cellReuseIdentifier = "RecruitCell"
+    let cellReuseIdentifier = "CrmCell"
     let sectionHeaderReuseIdentifier = "MyCrmHeader"
     
     var arrRecruitData = [AnyObject]()
@@ -30,8 +31,10 @@ class MyRecruitVC: SliderVC, UIDocumentPickerDelegate, UIDocumentMenuDelegate {
     var arrEmail = [String]()
     var arrRecruitId = [String]()
     var arrNLGAgentID = [String]()
-    var arrPFAAgentID = [String]()
+//    var arrPFAAgentID = [String]()
     var arrCategory = [String]()
+    var arrDesc = [String]()
+    var arrDate = [String]()
     
     var arrFirstNameSearch = [String]()
     var arrLastNameSearch = [String]()
@@ -40,15 +43,23 @@ class MyRecruitVC: SliderVC, UIDocumentPickerDelegate, UIDocumentMenuDelegate {
     var arrNLGAgentIDSearch = [String]()
     var arrPFAAgentIDSearch = [String]()
     var arrCategorySearch = [String]()
+    var arrDescSearch = [String]()
+    var arrDateSearch = [String]()
     
     var arrImpFname = [String]()
     var arrImpMiddle = [String]();
     var arrImpLname = [String]();
     var arrImpEmail = [String]();
     var arrImpPhone = [String]();
+    var strSortBy = ""
     
     var arrSelectedRecords = [String]()
     var recruitsCsvArray:[Dictionary<String, AnyObject>] =  Array()
+    
+    var arrTagTitle = [String]()
+    var arrTagId = [String]()
+    var selectedTagTitle = ""
+    var selectedTagId = "0"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,7 +67,7 @@ class MyRecruitVC: SliderVC, UIDocumentPickerDelegate, UIDocumentMenuDelegate {
         self.title = "My Recruits"
         noRecView.isHidden = true
         
-        tblRecruitList.register(MyRecruitCell.self, forCellReuseIdentifier: cellReuseIdentifier)
+        tblRecruitList.register(MyCrmCell.self, forCellReuseIdentifier: cellReuseIdentifier)
         tblRecruitList.register(UINib(nibName: "CrmHeader", bundle: Bundle.main), forHeaderFooterViewReuseIdentifier: sectionHeaderReuseIdentifier)
         tblRecruitList.tableFooterView = UIView()
         
@@ -65,10 +76,12 @@ class MyRecruitVC: SliderVC, UIDocumentPickerDelegate, UIDocumentMenuDelegate {
         actionViewHeight.constant = 0.0
         btnMove.layer.cornerRadius = 5.0
         btnAssignCampaign.layer.cornerRadius = 5.0
+        btnAddToGroup.layer.cornerRadius = 5.0
         btnDelete.layer.cornerRadius = 5.0
         btnMove.clipsToBounds = true
         btnDelete.clipsToBounds = true
         btnAssignCampaign.clipsToBounds = true
+        btnAddToGroup.clipsToBounds = true
         
         txtSearch.leftViewMode = UITextFieldViewMode.always
         txtSearch.layer.cornerRadius = txtSearch.frame.size.height/2
@@ -102,17 +115,19 @@ class MyRecruitVC: SliderVC, UIDocumentPickerDelegate, UIDocumentMenuDelegate {
         arrSelectedRecords = []
         if OBJCOM.isConnectedToNetwork(){
             OBJCOM.setLoader()
-            getRecruitData()
+            self.getRecruitData(sortBy: self.strSortBy)
+            self.getCategoryList()
         }else{
             OBJCOM.NoInternetConnectionCall()
         }
     }
     
-    func getRecruitData(){
+    func getRecruitData(sortBy:String){
         let dictParam = ["userId": userID,
                          "platform":"3",
                          "crmFlag":"4",
-                         "pageNumber":"0"]
+                         "pageNumber":"0",
+                         "sortBy":sortBy]
         
         let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
         let jsonString = String(data: jsonData!, encoding: .utf8)
@@ -130,8 +145,14 @@ class MyRecruitVC: SliderVC, UIDocumentPickerDelegate, UIDocumentMenuDelegate {
                     self.arrEmail = self.arrRecruitData.compactMap { $0["contact_email"] as? String ?? "" }
                     self.arrRecruitId = self.arrRecruitData.compactMap { $0["contact_id"] as? String ?? "" }
                     self.arrNLGAgentID = self.arrRecruitData.compactMap { $0["contact_phone"] as? String ?? "" }
-                    self.arrPFAAgentID = self.arrRecruitData.compactMap { $0["contact_recruitsPFAAgentID"] as? String ?? "" }
+//                    self.arrPFAAgentID = self.arrRecruitData.compactMap { $0["contact_recruitsPFAAgentID"] as? String ?? "" }
                     self.arrCategory = self.arrRecruitData.compactMap { $0["contact_category"] as? String ?? "" }
+                    self.arrDesc = self.arrRecruitData.compactMap { $0["contact_description"] as? String }
+                    let aDate = self.arrRecruitData.compactMap { $0["contact_created"] as? String }
+                    for obj in aDate {
+                        let dt = obj.components(separatedBy: " ")
+                        self.arrDate.append(dt[0])
+                    }
                     
                 }
                 if self.arrRecruitData.count > 0 {
@@ -217,12 +238,49 @@ class MyRecruitVC: SliderVC, UIDocumentPickerDelegate, UIDocumentMenuDelegate {
         self.selectOptionsForMoveRecruits(recruitId: selected)
     }
     
+    @IBAction func actionAddToGroupMultiple(_ sender: UIButton) {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(self.UpdateRecruitList),
+            name: NSNotification.Name(rawValue: "UpdateRecruitList"),
+            object: nil)
+        if self.arrSelectedRecords.count > 0 {
+            let storyBoard = UIStoryboard(name:"CRMM", bundle:nil)
+            let vc = (storyBoard.instantiateViewController(withIdentifier: "idAddToGroupMultipleVC")) as! AddToGroupMultipleVC
+            let selectedIDs = self.arrSelectedRecords.joined(separator: ",")
+            vc.selectedIDs = selectedIDs
+            vc.className = "Recruit"
+            let popupVC = PopupViewController(contentController: vc, popupWidth: vc.view.frame.width - 20, popupHeight: 300)
+            self.present(popupVC, animated: true, completion: nil)
+        }else{
+            OBJCOM.setAlert(_title: "", message: "Please select atleast one recruit.")
+            return
+        }
+    }
+    
+    @objc func UpdateRecruitList(notification: NSNotification){
+        
+        arrSelectedRecords = []
+        self.showHideMoveDeleteButtons()
+        if OBJCOM.isConnectedToNetwork(){
+            OBJCOM.setLoader()
+            self.getRecruitData(sortBy: self.strSortBy)
+        }else{
+            OBJCOM.NoInternetConnectionCall()
+        }
+    }
+    
     @IBAction func actionAssignCampaignsToAllRecords(_ sender: UIButton) {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(self.UpdateRecruitList),
+            name: NSNotification.Name(rawValue: "UpdateRecruitList"),
+            object: nil)
         if arrSelectedRecords.count > 0 && arrSelectedRecords.count <= 50 {
             let strContactId = arrSelectedRecords.joined(separator: ",")
             let storyboard = UIStoryboard(name: "Profile", bundle: nil)
             let vc = storyboard.instantiateViewController(withIdentifier: "idAssignECforMultipleCrm") as! AssignECforMultipleCrm
-            
+            vc.className = "Recruit"
             vc.contactsId = strContactId
             vc.modalPresentationStyle = .custom
             vc.modalTransitionStyle = .crossDissolve
@@ -318,7 +376,7 @@ class MyRecruitVC: SliderVC, UIDocumentPickerDelegate, UIDocumentMenuDelegate {
             }
             if OBJCOM.isConnectedToNetwork(){
                 OBJCOM.setLoader()
-                self.getRecruitData()
+                self.getRecruitData(sortBy: self.strSortBy)
             }else{
                 OBJCOM.NoInternetConnectionCall()
             }
@@ -377,7 +435,7 @@ extension MyRecruitVC: LUExpandableTableViewDataSource {
     func expandableTableView(_ expandableTableView: LUExpandableTableView, numberOfRowsInSection section: Int) -> Int { return 1 }
     
     func expandableTableView(_ expandableTableView: LUExpandableTableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tblRecruitList.dequeueReusableCell(withIdentifier: "RecruitCell") as? MyRecruitCell else {
+        guard let cell = tblRecruitList.dequeueReusableCell(withIdentifier: "CrmCell") as? MyCrmCell else {
             assertionFailure("Cell shouldn't be nil")
             return UITableViewCell()
         }
@@ -387,8 +445,8 @@ extension MyRecruitVC: LUExpandableTableViewDataSource {
         if isFilter {
             cell.selectionStyle = .none
             cell.lblEmail.text = "Email : \(self.arrEmailSearch[indexPath.section])";
-            cell.lblNLGAgent.text = "Phone : \(self.arrNLGAgentIDSearch[indexPath.section])";
-            cell.lblPFAAgent.text = ""
+            cell.lblPhone.text = "Phone : \(self.arrNLGAgentIDSearch[indexPath.section])";
+          //  cell.lblPFAAgent.text = ""
            // cell.lblPFAAgent.text = "PFA Agent ID : \(self.arrPFAAgentIDSearch[indexPath.section])";
             category = self.arrCategorySearch[indexPath.section]
             
@@ -402,8 +460,8 @@ extension MyRecruitVC: LUExpandableTableViewDataSource {
         }else{
             cell.selectionStyle = .none
             cell.lblEmail.text = "Email : \(self.arrEmail[indexPath.section])";
-            cell.lblNLGAgent.text = "Phone : \(self.arrNLGAgentID[indexPath.section] )";
-            cell.lblPFAAgent.text = ""
+            cell.lblPhone.text = "Phone : \(self.arrNLGAgentID[indexPath.section] )";
+           // cell.lblPFAAgent.text = ""
             //cell.lblPFAAgent.text = "PFA Agent ID : \(self.arrPFAAgentID[indexPath.section])";
             category = self.arrCategory[indexPath.section]
             
@@ -432,6 +490,10 @@ extension MyRecruitVC: LUExpandableTableViewDataSource {
                 cell.btnTag.setImage(#imageLiteral(resourceName: "rottenApple"), for: .normal)
                 cell.btnTag.setTitleColor(colorRottenApple, for: .normal)
                 cell.btnTag.layer.borderColor = colorRottenApple.cgColor
+            }else{
+                cell.btnTag.setImage(#imageLiteral(resourceName: "customTag"), for: .normal)
+                cell.btnTag.setTitleColor(.black, for: .normal)
+                cell.btnTag.layer.borderColor = UIColor.black.cgColor
             }
         }else{
             cell.btnTag.setTitle(" Add Tag ", for: .normal)
@@ -473,6 +535,7 @@ extension MyRecruitVC: LUExpandableTableViewDataSource {
             }else{
                 sectionHeader.selectRecordButton.isSelected = false
             }
+            sectionHeader.labelDate.text = self.arrDateSearch[section]
         }else{
             fname = self.arrFirstName[section]
             lname = self.arrLastName[section]
@@ -481,6 +544,7 @@ extension MyRecruitVC: LUExpandableTableViewDataSource {
             }else{
                 sectionHeader.selectRecordButton.isSelected = false
             }
+            sectionHeader.labelDate.text = self.arrDate[section]
         }
         sectionHeader.label.text = "\(fname) \(lname)"
         
@@ -495,9 +559,9 @@ extension MyRecruitVC: LUExpandableTableViewDataSource {
 // MARK: - LUExpandableTableViewDelegate
 
 extension MyRecruitVC: LUExpandableTableViewDelegate {
-    func expandableTableView(_ expandableTableView: LUExpandableTableView, heightForRowAt indexPath: IndexPath) -> CGFloat { return 150 }
+    func expandableTableView(_ expandableTableView: LUExpandableTableView, heightForRowAt indexPath: IndexPath) -> CGFloat { return 130 }
     
-    func expandableTableView(_ expandableTableView: LUExpandableTableView, heightForHeaderInSection section: Int) -> CGFloat { return 44.0 }
+    func expandableTableView(_ expandableTableView: LUExpandableTableView, heightForHeaderInSection section: Int) -> CGFloat { return 47.0 }
     
     // MARK: - Optional
     
@@ -588,7 +652,7 @@ extension MyRecruitVC {
             }
             if OBJCOM.isConnectedToNetwork(){
                 OBJCOM.setLoader()
-                self.getRecruitData()
+                self.self.getRecruitData(sortBy: self.strSortBy)
             }else{
                 OBJCOM.NoInternetConnectionCall()
             }
@@ -660,8 +724,10 @@ extension MyRecruitVC : UITextFieldDelegate{
         arrEmailSearch.removeAll()
         arrRecruitIdSearch.removeAll()
         arrNLGAgentIDSearch.removeAll()
-        arrPFAAgentIDSearch.removeAll()
+       // arrPFAAgentIDSearch.removeAll()
         arrCategorySearch.removeAll()
+        arrDateSearch.removeAll()
+        arrDescSearch.removeAll()
         
         if textfield.text?.count != 0 {
             for i in 0 ..< arrRecruitData.count {
@@ -669,16 +735,20 @@ extension MyRecruitVC : UITextFieldDelegate{
                 let strlName = arrLastName[i].lowercased().range(of: textfield.text!, options: .caseInsensitive, range: nil,   locale: nil)
                 let strEmail = arrEmail[i].lowercased().range(of: textfield.text!, options: .caseInsensitive, range: nil,   locale: nil)
                 let strNLG = arrNLGAgentID[i].lowercased().range(of: textfield.text!, options: .caseInsensitive, range: nil,   locale: nil)
-                 let strPFA = arrPFAAgentID[i].lowercased().range(of: textfield.text!, options: .caseInsensitive, range: nil,   locale: nil)
+                // let strPFA = arrPFAAgentID[i].lowercased().range(of: textfield.text!, options: .caseInsensitive, range: nil,   locale: nil)
+                let strDesc = arrDesc[i].lowercased().range(of: textfield.text!, options: .caseInsensitive, range: nil,   locale: nil)
+                let strDate = arrDate[i].lowercased().range(of: textfield.text!, options: .caseInsensitive, range: nil,   locale: nil)
                 
-                if strfName != nil || strlName != nil || strEmail != nil || strNLG != nil || strPFA != nil{
+                if strfName != nil || strlName != nil || strNLG  != nil || strEmail != nil || strDesc != nil || strDate != nil{
                     arrFirstNameSearch.append(arrFirstName[i])
                     arrLastNameSearch.append(arrLastName[i])
                     arrEmailSearch.append(arrEmail[i])
                     arrRecruitIdSearch.append(arrRecruitId[i])
                     arrNLGAgentIDSearch.append(arrNLGAgentID[i])
-                    arrPFAAgentIDSearch.append(arrPFAAgentID[i])
+//                    arrPFAAgentIDSearch.append(arrPFAAgentID[i])
                     arrCategorySearch.append(arrCategory[i])
+                    arrDateSearch.append(arrDate[i])
+                    arrDescSearch.append(arrDesc[i])
                 }
             }
         } else {
@@ -713,7 +783,7 @@ extension MyRecruitVC : UITextFieldDelegate{
             }
             if OBJCOM.isConnectedToNetwork(){
                 OBJCOM.setLoader()
-                self.getRecruitData()
+                self.self.getRecruitData(sortBy: self.strSortBy)
             }else{
                 OBJCOM.NoInternetConnectionCall()
             }
@@ -733,57 +803,91 @@ extension MyRecruitVC : UITextFieldDelegate{
     }
     
     func setTagCrm(contact_id:String) {
-        
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let actionGreenApple = UIAlertAction(title: "Green Apple", style: .default)
-        {
-            UIAlertAction in
-            self.apiCallForUpdateTag(tag: "Green Apple", contact_id: contact_id)
-        }
-        actionGreenApple.setValue(colorGreenApple, forKey: "titleTextColor")
-        actionGreenApple.setValue(arrAppleImages[2], forKey: "image")
         
-        let actionRedApple = UIAlertAction(title: "Red Apple", style: .default)
-        {
-            UIAlertAction in
-            self.apiCallForUpdateTag(tag: "Red Apple", contact_id: contact_id)
+        for i in 0..<self.arrTagTitle.count{
+            alert.addAction(UIAlertAction(title: self.arrTagTitle[i], style: .default , handler:{ (UIAlertAction)in
+                self.apiCallForUpdateTag(tag: self.arrTagTitle[i], tagId: self.arrTagId[i], contact_id: contact_id)
+                
+            }))
         }
-        actionRedApple.setValue(colorRedApple, forKey: "titleTextColor")
-        actionRedApple.setValue(arrAppleImages[1], forKey: "image")
+        alert.addAction(UIAlertAction(title: "Add Custom Tag", style: .default , handler:{ (UIAlertAction)in
+            
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(self.setCustomTagCRM),
+                name: NSNotification.Name(rawValue: "ADDCUSTOMTAG"),
+                object: nil)
+            
+            let storyboard = UIStoryboard(name: "CRMM", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "idAddCustomTagPopup") as! AddCustomTagPopup
+            vc.contact_id = contact_id
+            vc.modalTransitionStyle = .crossDissolve
+            vc.modalPresentationStyle = .overCurrentContext
+            vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
+            self.present(vc, animated: false, completion: nil)
+        }))
         
-        let actionBrownApple = UIAlertAction(title: "Brown Apple", style: .default)
-        {
-            UIAlertAction in
-            self.apiCallForUpdateTag(tag: "Brown Apple", contact_id: contact_id)
-        }
-        actionBrownApple.setValue(colorBrownApple, forKey: "titleTextColor")
-        actionBrownApple.setValue(arrAppleImages[3], forKey: "image")
+        alert.addAction(UIAlertAction(title: "No Tag", style: .default , handler:{ (UIAlertAction)in
+            self.apiCallForUpdateTag(tag: "", tagId: "", contact_id: contact_id)
+        }))
         
-        let actionRottenApple = UIAlertAction(title: "Rotten Apple", style: .default)
-        {
-            UIAlertAction in
-            self.apiCallForUpdateTag(tag: "Rotten Apple", contact_id: contact_id)
-        }
-        actionRottenApple.setValue(colorRottenApple, forKey: "titleTextColor")
-        actionRottenApple.setValue(arrAppleImages[4], forKey: "image")
-        
-        let actionCancel = UIAlertAction(title: "Cancel", style: .cancel)
-        {
-            UIAlertAction in
-        }
-        actionCancel.setValue(UIColor.black, forKey: "titleTextColor")
-        
-        alert.addAction(actionGreenApple)
-        alert.addAction(actionRedApple)
-        alert.addAction(actionBrownApple)
-        alert.addAction(actionRottenApple)
-        alert.addAction(actionCancel)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler:{ (UIAlertAction)in
+            
+        }))
         self.present(alert, animated: true, completion: nil)
     }
     
-    func apiCallForUpdateTag(tag:String, contact_id:String){
+    @objc func setCustomTagCRM(notification: NSNotification){
+        print(notification.userInfo as Any)
+        if let info = notification.userInfo {
+            let tagName = info["tagName"] as? String ?? ""
+            let contact_id = info["contact_id"] as? String ?? ""
+            self.apiCallForUpdateTag(tag: tagName, tagId: "", contact_id: contact_id)
+        }
+    }
+    
+    func getCategoryList(){
+        let dictParam = ["userId": userID,
+                         "platform":"3",
+                         "crmFlag":"4"]
+        
+        let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
+        let jsonString = String(data: jsonData!, encoding: .utf8)
+        let dictParamTemp = ["param":jsonString];
+        
+        typealias JSONDictionary = [String:Any]
+        OBJCOM.modalAPICall(Action: "fillDropDownCrm", param:dictParamTemp as [String : AnyObject],  vcObject: self){
+            JsonDict, staus in
+            
+            let success:String = JsonDict!["IsSuccess"] as! String
+            if success == "true"{
+                let dictJsonData = (JsonDict!["result"] as AnyObject)
+                if dictJsonData.count > 0 {
+                    self.arrTagTitle = []
+                    self.arrTagId = []
+                    let arrTag = dictJsonData.value(forKey: "contact_category") as! [AnyObject]
+                    for tag in arrTag {
+                        self.arrTagTitle.append("\(tag["userTagName"] as? String ?? "")")
+                        self.arrTagId.append("\(tag["userTagId"] as? String ?? "")")
+                    }
+                }
+                OBJCOM.hideLoader()
+            }else{
+                print("result:",JsonDict ?? "")
+                OBJCOM.hideLoader()
+                
+            }
+        };
+        
+    }
+    
+    func apiCallForUpdateTag(tag:String, tagId: String, contact_id:String){
         let dictParam = ["contact_id": contact_id,
-                         "contact_category":tag]
+                         "contact_category_title":tag,
+                         "contact_platform": "3",
+                         "contact_category":tagId,
+                         "contact_users_id":userID]
         
         typealias JSONDictionary = [String:Any]
         OBJCOM.modalAPICall(Action: "updateTag", param:dictParam as [String : AnyObject],  vcObject: self){
@@ -795,7 +899,8 @@ extension MyRecruitVC : UITextFieldDelegate{
                 OBJCOM.setAlert(_title: "", message: result as! String)
                 if OBJCOM.isConnectedToNetwork(){
                     OBJCOM.setLoader()
-                    self.getRecruitData()
+                    self.getRecruitData(sortBy:self.strSortBy)
+                    self.getCategoryList()
                 }else{
                     OBJCOM.NoInternetConnectionCall()
                 }
@@ -804,6 +909,44 @@ extension MyRecruitVC : UITextFieldDelegate{
                 OBJCOM.hideLoader()
             }
         };
+    }
+    
+    @IBAction func actionSortBy(_ sender:UIButton) {
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let actionAlpha = UIAlertAction(title: "Sort by alphabetically", style: .default)
+        {
+            UIAlertAction in
+            self.strSortBy = ""
+            if OBJCOM.isConnectedToNetwork(){
+                OBJCOM.setLoader()
+                self.getRecruitData(sortBy:self.strSortBy)
+            }else{
+                OBJCOM.NoInternetConnectionCall()
+            }
+        }
+        
+        let actionDate = UIAlertAction(title: "Sort by date", style: .default)
+        {
+            UIAlertAction in
+            self.strSortBy = "contact_created"
+            if OBJCOM.isConnectedToNetwork(){
+                OBJCOM.setLoader()
+                self.getRecruitData(sortBy:self.strSortBy)
+            }else{
+                OBJCOM.NoInternetConnectionCall()
+            }
+        }
+        
+        let actionCancel = UIAlertAction(title: "Cancel", style: .cancel)
+        {
+            UIAlertAction in
+        }
+        actionCancel.setValue(UIColor.black, forKey: "titleTextColor")
+        
+        alert.addAction(actionAlpha)
+        alert.addAction(actionDate)
+        alert.addAction(actionCancel)
+        self.present(alert, animated: true, completion: nil)
     }
 }
 extension MyRecruitVC {
@@ -878,11 +1021,22 @@ extension MyRecruitVC {
         let actionImport = UIAlertAction(title: "Import recruit(s) CSV", style: .default)
         {
             UIAlertAction in
-            let documentPicker = UIDocumentPickerViewController(documentTypes: ["com.apple.iwork.pages.pages", "com.apple.iwork.numbers.numbers", "com.apple.iwork.keynote.key","public.image", "com.apple.application", "public.item","public.data", "public.content", "public.audiovisual-content", "public.movie", "public.audiovisual-content", "public.video", "public.audio", "public.text", "public.data", "public.zip-archive", "com.pkware.zip-archive", "public.composite-content", "public.text"], in: .import)
-            
-            documentPicker.delegate = self
-            self.present(documentPicker, animated: true, completion: nil)
-            
+//            let documentPicker = UIDocumentPickerViewController(documentTypes: ["com.apple.iwork.pages.pages", "com.apple.iwork.numbers.numbers", "com.apple.iwork.keynote.key","public.image", "com.apple.application", "public.item","public.data", "public.content", "public.audiovisual-content", "public.movie", "public.audiovisual-content", "public.video", "public.audio", "public.text", "public.data", "public.zip-archive", "com.pkware.zip-archive", "public.composite-content", "public.text"], in: .import)
+//
+//            documentPicker.delegate = self
+//            self.present(documentPicker, animated: true, completion: nil)
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(self.UpdateRecruitList),
+                name: NSNotification.Name(rawValue: "UpdateRecruitList"),
+                object: nil)
+            let storyboard = UIStoryboard(name: "CRMM", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "idImportCsvFileVC") as! ImportCsvFileVC
+            vc.crmFlag = "4"
+            vc.modalTransitionStyle = .crossDissolve
+            vc.modalPresentationStyle = .overCurrentContext
+            vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
+            self.present(vc, animated: false, completion: nil)
         }
         actionImport.setValue(UIColor.black, forKey: "titleTextColor")
         
@@ -936,7 +1090,7 @@ extension MyRecruitVC {
                     // DispatchQueue.main.sync {
                     if OBJCOM.isConnectedToNetwork(){
                         OBJCOM.setLoader()
-                        self.getRecruitData()
+                        self.self.getRecruitData(sortBy: self.strSortBy)
                     }else{
                         OBJCOM.NoInternetConnectionCall()
                     }

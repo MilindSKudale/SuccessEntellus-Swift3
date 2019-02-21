@@ -22,7 +22,7 @@ class TemplatePreviewVC: UIViewController, UITextViewDelegate, UIDocumentInterac
     @IBOutlet var tempFooterLbl : UILabel!
     @IBOutlet var heightTempFooterView : NSLayoutConstraint!
     
-    var bgColor = UIColor()
+    var bgColor = ""
     var isCustomCampaign : Bool!
     var dictData = [String : Any]()
     
@@ -37,7 +37,7 @@ class TemplatePreviewVC: UIViewController, UITextViewDelegate, UIDocumentInterac
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        print(dictData)
+        print(bgColor)
         
         txtViewTempPrev.layer.cornerRadius = 5.0
         txtViewTempPrev.clipsToBounds = true
@@ -52,8 +52,6 @@ class TemplatePreviewVC: UIViewController, UITextViewDelegate, UIDocumentInterac
         vwAttachFiles.alignment = .left
         vwAttachFiles.tagBackgroundColor = .groupTableViewBackground
         vwAttachFiles.textColor = .black
-        
-        
         
         let str = "Success Entellus respects your privacy. For more information, please review our privacy policy"
         let attributedString = NSMutableAttributedString(string: str)
@@ -116,14 +114,27 @@ class TemplatePreviewVC: UIViewController, UITextViewDelegate, UIDocumentInterac
         
         lblEmailSubject.text = self.dictData["emailHeading"] as? String ?? "Follow up."
         lblTemplateName.text = self.dictData["emailSubject"] as? String ?? ""
-        let data = htmlString.data(using: String.Encoding.unicode)!
+        let data = htmlString.data(using: String.Encoding.utf8)!
         let attrStr = try? NSAttributedString(
             data: data,
-            options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html],
+            options: [.documentType: NSAttributedString.DocumentType.html],
             documentAttributes: nil)
         txtViewTempPrev.attributedText = attrStr
         
         
+//         if bgColor != "" {
+//             let colorObjArr = bgColor.components(separatedBy: ",")
+//             if colorObjArr.count > 0 {
+//                 let redColor = colorObjArr[0]
+//                 let blueColor = colorObjArr[1]
+//                 let greenColor = colorObjArr[2]
+//
+//                 self.viewTempPrev.backgroundColor = UIColor.init(red: Int(redColor) ?? 0, green: Int(greenColor) ?? 0, blue: Int(blueColor) ?? 0)
+//                    self.viewTempPrev.layer.cornerRadius = 5.0;
+//             }
+//         }else{
+//            self.viewTempPrev.backgroundColor = .white
+//         }
     }
     
     @IBAction func actionBtnClose(sender: UIButton) {
@@ -181,7 +192,7 @@ class TemplatePreviewVC: UIViewController, UITextViewDelegate, UIDocumentInterac
 
 extension String {
     var htmlToAttributedString: NSAttributedString? {
-        guard let data = data(using: .utf8) else { return NSAttributedString() }
+        guard let data = data(using: .utf16) else { return NSAttributedString() }
         do {
             return try NSAttributedString(data: data, options: [NSAttributedString.DocumentReadingOptionKey.documentType:  NSAttributedString.DocumentType.html], documentAttributes: nil)
         } catch {
@@ -190,7 +201,8 @@ extension String {
     }
     var htmlToString: String {
         return htmlToAttributedString?.string ?? ""
-    }}
+    }
+}
 
 extension UITapGestureRecognizer {
     
@@ -222,5 +234,4 @@ extension UITapGestureRecognizer {
         
         return NSLocationInRange(indexOfCharacter, targetRange)
     }
-    
 }

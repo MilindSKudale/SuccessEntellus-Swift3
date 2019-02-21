@@ -12,11 +12,15 @@ class GroupDetailsVC: UIViewController, TagListViewDelegate {
     
     @IBOutlet var txtGroupName : UITextField!
     @IBOutlet var txtGroupDesc : UITextView!
-    @IBOutlet var grMembersContact : TagListView!
-    @IBOutlet var grMembersProspect : TagListView!
-    @IBOutlet var grMembersCustomert : TagListView!
-    @IBOutlet var grMembersRecruit : TagListView!
+//    @IBOutlet var grMembersContact : TagListView!
+//    @IBOutlet var grMembersProspect : TagListView!
+//    @IBOutlet var grMembersCustomert : TagListView!
+//    @IBOutlet var grMembersRecruit : TagListView!
     @IBOutlet var tagAssignedCamp : TagListView!
+    @IBOutlet var lblContactList : UILabel!
+    @IBOutlet var lblProspectList : UILabel!
+    @IBOutlet var lblCustomerList : UILabel!
+    @IBOutlet var lblRecruitList : UILabel!
     
     @IBOutlet var viewContact : UIView!
     @IBOutlet var viewProspect : UIView!
@@ -38,29 +42,29 @@ class GroupDetailsVC: UIViewController, TagListViewDelegate {
         
         txtGroupName.isUserInteractionEnabled = false
 
-        grMembersContact.delegate = self
-        grMembersContact.textFont = UIFont.systemFont(ofSize: 15)
-        grMembersContact.alignment = .left
-        grMembersContact.tagBackgroundColor = .white
-        grMembersContact.textColor = .black
-        
-        grMembersProspect.delegate = self
-        grMembersProspect.textFont = UIFont.systemFont(ofSize: 15)
-        grMembersProspect.alignment = .left
-        grMembersProspect.tagBackgroundColor = .white
-        grMembersProspect.textColor = .black
-        
-        grMembersCustomert.delegate = self
-        grMembersCustomert.textFont = UIFont.systemFont(ofSize: 15)
-        grMembersCustomert.alignment = .left
-        grMembersCustomert.tagBackgroundColor = .white
-        grMembersCustomert.textColor = .black
-        
-        grMembersRecruit.delegate = self
-        grMembersRecruit.textFont = UIFont.systemFont(ofSize: 15)
-        grMembersRecruit.alignment = .left
-        grMembersRecruit.tagBackgroundColor = .white
-        grMembersRecruit.textColor = .black
+//        grMembersContact.delegate = self
+//        grMembersContact.textFont = UIFont.systemFont(ofSize: 15)
+//        grMembersContact.alignment = .left
+//        grMembersContact.tagBackgroundColor = .white
+//        grMembersContact.textColor = .black
+//
+//        grMembersProspect.delegate = self
+//        grMembersProspect.textFont = UIFont.systemFont(ofSize: 15)
+//        grMembersProspect.alignment = .left
+//        grMembersProspect.tagBackgroundColor = .white
+//        grMembersProspect.textColor = .black
+//
+//        grMembersCustomert.delegate = self
+//        grMembersCustomert.textFont = UIFont.systemFont(ofSize: 15)
+//        grMembersCustomert.alignment = .left
+//        grMembersCustomert.tagBackgroundColor = .white
+//        grMembersCustomert.textColor = .black
+//
+//        grMembersRecruit.delegate = self
+//        grMembersRecruit.textFont = UIFont.systemFont(ofSize: 15)
+//        grMembersRecruit.alignment = .left
+//        grMembersRecruit.tagBackgroundColor = .white
+//        grMembersRecruit.textColor = .black
         
         tagAssignedCamp.delegate = self
         tagAssignedCamp.textFont = UIFont.systemFont(ofSize: 15)
@@ -163,54 +167,61 @@ class GroupDetailsVC: UIViewController, TagListViewDelegate {
 //                self.grMembersRecruit.addTag(RecruitsStr.string)
                 if self.arrGroupContact.count > 0 {
 //                    self.grMembersContact.addTags(self.arrGroupContact)
-                    for obj in self.arrGroupContact {
-                        if obj != self.arrGroupContact.last {
-                            self.grMembersContact.addTag("\(obj),")
-                        }else{
-                            self.grMembersContact.addTag("\(obj)")
-                        }
-                    }
-                   
+//                    for obj in self.arrGroupContact {
+//                        if obj != self.arrGroupContact.last {
+//                            self.grMembersContact.addTag("\(obj),")
+//                        }else{
+//                            self.grMembersContact.addTag("\(obj)")
+//                        }
+//                    }
+                   self.lblContactList.text = self.arrGroupContact.joined(separator: ", ")
                 }else{
-                    self.grMembersContact.addTag("No contacts.")
+                    self.lblContactList.text = "No contacts."
+                    //self.grMembersContact.addTag("No contacts.")
                 }
                 
                 if self.arrGroupCustomer.count > 0 {
-                    for obj in self.arrGroupCustomer {
-                        if obj != self.arrGroupCustomer.last {
-                            self.grMembersCustomert.addTag("\(obj),")
-                        }else{
-                            self.grMembersCustomert.addTag("\(obj)")
-                        }
-                    }
+//                    for obj in self.arrGroupCustomer {
+//                        if obj != self.arrGroupCustomer.last {
+//                            self.grMembersCustomert.addTag("\(obj),")
+//                        }else{
+//                            self.grMembersCustomert.addTag("\(obj)")
+//                        }
+//                    }
 //                    self.grMembersCustomert.addTags(self.arrGroupCustomer)
+                    self.lblCustomerList.text = self.arrGroupCustomer.joined(separator: ", ")
                 }else{
-                    self.grMembersCustomert.addTag("No customers.")
+                    self.lblCustomerList.text = "No Customers."
+//                    self.grMembersCustomert.addTag("No customers.")
                 }
                 
                 if self.arrGroupProspect.count > 0 {
-                    for obj in self.arrGroupProspect {
-                        if obj != self.arrGroupProspect.last {
-                            self.grMembersProspect.addTag("\(obj),")
-                        }else{
-                            self.grMembersProspect.addTag("\(obj)")
-                        }
-                    }
+//                    for obj in self.arrGroupProspect {
+//                        if obj != self.arrGroupProspect.last {
+//                            self.grMembersProspect.addTag("\(obj),")
+//                        }else{
+//                            self.grMembersProspect.addTag("\(obj)")
+//                        }
+//                    }
 //                    self.grMembersProspect.addTags(self.arrGroupProspect)
+                    self.lblProspectList.text = self.arrGroupProspect.joined(separator: ", ")
                 }else{
-                    self.grMembersProspect.addTag("No prospects.")
+                    self.lblProspectList.text = "No prospects."
+//                    self.grMembersProspect.addTag("No prospects.")
                 }
                 
                 if self.arrGroupRecruit.count > 0 {
-                    for obj in self.arrGroupRecruit {
-                        if obj != self.arrGroupRecruit.last {
-                            self.grMembersRecruit.addTag("\(obj),")
-                        }else{
-                            self.grMembersRecruit.addTag("\(obj)")
-                        }
-                    }
+//                    for obj in self.arrGroupRecruit {
+//                        if obj != self.arrGroupRecruit.last {
+//                            self.grMembersRecruit.addTag("\(obj),")
+//                        }else{
+//                            self.grMembersRecruit.addTag("\(obj)")
+//                        }
+//                    }
+                    self.lblRecruitList.text = self.arrGroupRecruit.joined(separator: ", ")
                 }else{
-                    self.grMembersRecruit.addTag("No recruits.")
+                    self.lblRecruitList.text = "No recruits."
+//                    self.grMembersRecruit.addTag("No recruits.")
                 }
                 
                 if self.arrAssignedCamp.count > 0 {
@@ -264,4 +275,3 @@ class GroupDetailsVC: UIViewController, TagListViewDelegate {
        // sender.removeTagView(tagView)
     }
 }
-

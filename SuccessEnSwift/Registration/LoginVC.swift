@@ -7,10 +7,13 @@
 //
 
 import UIKit
+import Contacts
 
 var motivationalFlag = ""
 var arrModuleList =  [String]()
 var arrModuleId =  [String]()
+var arrMyToolsModuleList =  [String]()
+var arrMyToolsModuleId =  [String]()
 
 class LoginVC: SliderVC {
     
@@ -119,13 +122,11 @@ extension LoginVC {
                 UITextField().resignFirstResponder()
                 DispatchQueue.main.async(execute: {
                     OBJCOM.getPackagesInfo()
+                    self.fetchAllContacts()
                     let appDelegate = AppDelegate.shared
                     appDelegate.setRootVC()
                     OBJCOM.hideLoader()
                 })
-                
-                
-                
             // OBJLOC.StartupdateLocation()
             }else{
                 let result = JsonDict!["result"] as? String ?? ""
@@ -133,6 +134,53 @@ extension LoginVC {
                 OBJCOM.hideLoader()
             }
         };
+    }
+    
+    func fetchAllContacts(){
+        var arrContacts = [String]()
+        for item in getContacts() {
+            if item.isKeyAvailable(CNContactPhoneNumbersKey){
+                let phoneNOs=item.phoneNumbers
+                let _:String
+                for item in phoneNOs{
+                    arrContacts.append(item.value.stringValue)
+                }
+            }
+        }
+        UserDefaults.standard.set(arrContacts, forKey: "ALL_CONTACTS")
+        UserDefaults.standard.synchronize()
+    }
+    
+    func getContacts() -> [CNContact] {
+        
+        let contactStore = CNContactStore()
+        let keysToFetch = [
+            CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
+            CNContactEmailAddressesKey,
+            CNContactPhoneNumbersKey,
+            CNContactImageDataAvailableKey,
+            CNContactThumbnailImageDataKey] as [Any]
+        
+        var allContainers: [CNContainer] = []
+        do {
+            allContainers = try contactStore.containers(matching: nil)
+        } catch {
+            print("Error fetching containers")
+        }
+        
+        var results: [CNContact] = []
+        
+        for container in allContainers {
+            let fetchPredicate = CNContact.predicateForContactsInContainer(withIdentifier: container.identifier)
+            
+            do {
+                let containerResults = try contactStore.unifiedContacts(matching: fetchPredicate, keysToFetch: keysToFetch as! [CNKeyDescriptor])
+                results.append(contentsOf: containerResults)
+            } catch {
+                print("Error fetching containers")
+            }
+        }
+        return results
     }
 }
 

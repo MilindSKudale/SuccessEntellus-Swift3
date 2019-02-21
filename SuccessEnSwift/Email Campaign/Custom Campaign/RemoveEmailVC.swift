@@ -11,6 +11,7 @@ import UIKit
 class RemoveEmailVC: UIViewController {
 
     @IBOutlet var lblCampaignName : UILabel!
+    @IBOutlet var lblCampaignDate : UILabel!
     @IBOutlet var tblMemberList : UITableView!
     @IBOutlet var btnCancel : UIButton!
     @IBOutlet var btnRemove : UIButton!
@@ -42,6 +43,7 @@ class RemoveEmailVC: UIViewController {
         btnRemove.clipsToBounds = true
         
         lblCampaignName.text = textCampaignName
+        lblCampaignDate.text = "Email campaign created on "
         noMemberView.isHidden = true
         tblMemberList.tableFooterView = UIView()
         
@@ -109,6 +111,7 @@ extension RemoveEmailVC {
                 self.btnRemove.isEnabled = true
                 
                 self.lblCampaignName.text = result["campaignTitle"] as? String ?? ""
+                self.lblCampaignDate.text = "Email campaign created on \(result["campaignDateTime"] as? String ?? "")"
                 let memberDetails = result["memberDetails"] as! [AnyObject]
                 
                 for obj in memberDetails {
@@ -120,6 +123,9 @@ extension RemoveEmailVC {
                 self.tblMemberList.reloadData()
                 OBJCOM.hideLoader()
             }else{
+                let campDetails = JsonDict!["responseCampDetails"] as! [String : AnyObject]
+                self.lblCampaignName.text = campDetails["campaignTitle"] as? String ?? ""
+                self.lblCampaignDate.text = "Email campaign created on \(campDetails["campaignDateTime"] as? String ?? "")"
                 self.btnRemove.isEnabled = false
                 self.setView(view: self.noMemberView, hidden: false)
                 self.tblMemberList.reloadData()

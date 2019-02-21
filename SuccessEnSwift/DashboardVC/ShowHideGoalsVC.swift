@@ -50,8 +50,8 @@ class ShowHideGoalsVC: UIViewController, UITableViewDelegate, UITableViewDataSou
                 self.btnShowGoals.isEnabled = true
                 self.btnShowGoals.setTitleColor(.black, for: .normal)
                 let dict = JsonDict!["result"] as! [AnyObject];
-                self.arrHiddenGoalsTitle = dict.flatMap { $0["goal_name"] as? String }
-                self.arrHiddenGoalsID = dict.flatMap { $0["zo_goal_id"] as? String }
+                self.arrHiddenGoalsTitle = dict.compactMap { $0["goal_name"] as? String }
+                self.arrHiddenGoalsID = dict.compactMap { $0["zo_goal_id"] as? String }
                 
                 if dict.count > 0 && dict.count < 10 {
                     self.tblHeight.constant = CGFloat(self.arrHiddenGoalsTitle.count*40)

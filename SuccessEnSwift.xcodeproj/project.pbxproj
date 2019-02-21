@@ -43,11 +43,18 @@
 		FC2523CF20B7457E005321FB /* TaskListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC2523CE20B7457E005321FB /* TaskListVC.swift */; };
 		FC2523D120B74596005321FB /* TaskListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC2523D020B74596005321FB /* TaskListCell.swift */; };
 		FC2523D320B8BBF1005321FB /* EditEventTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC2523D220B8BBF1005321FB /* EditEventTVC.swift */; };
+		FC30D6F12216E8BA00C832C2 /* ReplyDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC30D6F02216E8BA00C832C2 /* ReplyDetailsView.swift */; };
+		FC34AD1721E074EF008E9C96 /* AddToGroupMultipleVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC34AD1621E074EF008E9C96 /* AddToGroupMultipleVC.swift */; };
 		FC3707BE21889189007E7510 /* AssignCampaignCrmCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3707BD21889189007E7510 /* AssignCampaignCrmCell.swift */; };
 		FC3707C7218D8F08007E7510 /* DrawerSubmenuCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FC3707C6218D8F08007E7510 /* DrawerSubmenuCell.xib */; };
 		FC3707CA219008AB007E7510 /* VisionBoard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC3707C9219008AB007E7510 /* VisionBoard.storyboard */; };
 		FC3707CC219008D2007E7510 /* DashboardVB.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3707CB219008D2007E7510 /* DashboardVB.swift */; };
 		FC3707CE2190131B007E7510 /* DetailsVB.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3707CD2190131B007E7510 /* DetailsVB.swift */; };
+		FC37633921C8C9140062BB9B /* ReferView.xib in Resources */ = {isa = PBXBuildFile; fileRef = FC37633821C8C9140062BB9B /* ReferView.xib */; };
+		FC37633B21C8E4800062BB9B /* PopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC37633A21C8E4800062BB9B /* PopupViewController.swift */; };
+		FC37633D21C8E7ED0062BB9B /* ReferralPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC37633C21C8E7ED0062BB9B /* ReferralPopup.swift */; };
+		FC37633F21C906230062BB9B /* EmailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC37633E21C906230062BB9B /* EmailCell.swift */; };
+		FC37634121C906480062BB9B /* PhoneCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC37634021C906480062BB9B /* PhoneCell.swift */; };
 		FC3C87FC208D1EF500F0DD6A /* CustomCampDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3C87FB208D1EF500F0DD6A /* CustomCampDetailVC.swift */; };
 		FC3C87FE208D1F2F00F0DD6A /* CustomCampCollectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3C87FD208D1F2F00F0DD6A /* CustomCampCollectCell.swift */; };
 		FC3C8800208E108B00F0DD6A /* SetTimeIntervalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3C87FF208E108B00F0DD6A /* SetTimeIntervalVC.swift */; };
@@ -114,6 +121,9 @@
 		FC65B27721A2BEA500DC9999 /* AssignECforMultipleCrm.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC65B27621A2BEA500DC9999 /* AssignECforMultipleCrm.swift */; };
 		FC65B27921A3D44600DC9999 /* StartCampaignVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC65B27821A3D44600DC9999 /* StartCampaignVC.swift */; };
 		FC65B27B21A3D46D00DC9999 /* StartCampaignCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC65B27A21A3D46D00DC9999 /* StartCampaignCell.swift */; };
+		FC6A15DC2216A9B40012FEFA /* TextMessageReplyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6A15DB2216A9B40012FEFA /* TextMessageReplyVC.swift */; };
+		FC6A15DE2216B7310012FEFA /* UIImageView+Letters.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6A15DD2216B7310012FEFA /* UIImageView+Letters.swift */; };
+		FC6A15E02216BF7D0012FEFA /* TextMessageReplyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6A15DF2216BF7D0012FEFA /* TextMessageReplyCell.swift */; };
 		FC6A331720656820007CE88C /* MyCustomerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6A331620656820007CE88C /* MyCustomerVC.swift */; };
 		FC6A331A20657048007CE88C /* AddCustomerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6A331920657048007CE88C /* AddCustomerVC.swift */; };
 		FC6A331C2065855F007CE88C /* ViewAndEditCustomerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6A331B2065855F007CE88C /* ViewAndEditCustomerVC.swift */; };
@@ -141,6 +151,7 @@
 		FC794D8520AE138B002A7984 /* SirenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC794D7920AE138B002A7984 /* SirenViewController.swift */; };
 		FC794D8620AE138B002A7984 /* SirenTestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC794D7A20AE138B002A7984 /* SirenTestHelper.swift */; };
 		FC794D8720AE138B002A7984 /* SirenDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC794D7B20AE138B002A7984 /* SirenDelegate.swift */; };
+		FC79790C2205D9230067A062 /* ImportCsvFileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC79790B2205D9230067A062 /* ImportCsvFileVC.swift */; };
 		FC7F3B6B20CF374B005C0660 /* DeleteRecurringEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC7F3B6A20CF374B005C0660 /* DeleteRecurringEvent.swift */; };
 		FC7F3B7A20D1421E005C0660 /* NewContactListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC7F3B7920D1421D005C0660 /* NewContactListVC.swift */; };
 		FC7F3B7C20D15197005C0660 /* NewContactListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC7F3B7B20D15197005C0660 /* NewContactListCell.swift */; };
@@ -182,6 +193,10 @@
 		FCA2DA8720A5B62900EA3A0D /* AddEditGoalsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA2DA8620A5B62900EA3A0D /* AddEditGoalsCell.swift */; };
 		FCA2DA8A20A6153000EA3A0D /* ChangeProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA2DA8920A6153000EA3A0D /* ChangeProfileVC.swift */; };
 		FCA2DA8D20A6155500EA3A0D /* Profile.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FCA2DA8C20A6155500EA3A0D /* Profile.storyboard */; };
+		FCA37FC221C9F5EA00C3562E /* CTBottomSlideController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA37FBF21C9F5E800C3562E /* CTBottomSlideController.swift */; };
+		FCA37FC321C9F5EA00C3562E /* CTPanGestureRecognizerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA37FC021C9F5E900C3562E /* CTPanGestureRecognizerExtension.swift */; };
+		FCA37FC421C9F5EA00C3562E /* CTBottomSlideTableDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA37FC121C9F5E900C3562E /* CTBottomSlideTableDelegate.swift */; };
+		FCA37FC621CA192800C3562E /* CreditListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA37FC521CA192800C3562E /* CreditListVC.swift */; };
 		FCA61D5521132CF500369A07 /* LocationTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA61D5421132CF500369A07 /* LocationTracker.swift */; };
 		FCA6751E212A845300A389DF /* PackagesFilterVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA6751D212A845300A389DF /* PackagesFilterVC.swift */; };
 		FCA67521212A941200A389DF /* Packages.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FCA67520212A941200A389DF /* Packages.storyboard */; };
@@ -227,6 +242,9 @@
 		FCBE0A9E20C2D594008483C4 /* CFTCommunityVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCBE0A9D20C2D594008483C4 /* CFTCommunityVC.swift */; };
 		FCBE0AA120C2D5B9008483C4 /* CFTCommunity.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FCBE0AA020C2D5B9008483C4 /* CFTCommunity.storyboard */; };
 		FCBE0AA320C315B5008483C4 /* AJAutocompletePlaceTextfield.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCBE0AA220C315B5008483C4 /* AJAutocompletePlaceTextfield.swift */; };
+		FCBEE40221DF38B1003AD20F /* MySubscriptionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCBEE40121DF38B1003AD20F /* MySubscriptionVC.swift */; };
+		FCBEE40421DF38DF003AD20F /* Subscription.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FCBEE40321DF38DF003AD20F /* Subscription.storyboard */; };
+		FCBEE40621E069B1003AD20F /* CRMM.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FCBEE40521E069B1003AD20F /* CRMM.storyboard */; };
 		FCBF1A442164C32A0009918C /* VPAutoCompleteViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FCBF1A412164C3280009918C /* VPAutoCompleteViewCell.xib */; };
 		FCBF1A452164C32A0009918C /* VPAutoComplete.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCBF1A422164C3290009918C /* VPAutoComplete.swift */; };
 		FCBF1A462164C32A0009918C /* VPAutoCompleteViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCBF1A432164C3290009918C /* VPAutoCompleteViewCell.swift */; };
@@ -268,6 +286,11 @@
 		FCC181C72150D3140012197A /* CreateCamp1.xib in Resources */ = {isa = PBXBuildFile; fileRef = FCC181C62150D3140012197A /* CreateCamp1.xib */; };
 		FCC181C92150D3570012197A /* CreateCamp2.xib in Resources */ = {isa = PBXBuildFile; fileRef = FCC181C82150D3570012197A /* CreateCamp2.xib */; };
 		FCC181CB2150D36A0012197A /* CreateCamp3.xib in Resources */ = {isa = PBXBuildFile; fileRef = FCC181CA2150D36A0012197A /* CreateCamp3.xib */; };
+		FCC5C95A21C8C09A00525440 /* RefferalVc.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCC5C95921C8C09A00525440 /* RefferalVc.swift */; };
+		FCC5C95C21C8C0C900525440 /* Refferal.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FCC5C95B21C8C0C900525440 /* Refferal.storyboard */; };
+		FCC7870E220949FE00A2D8D4 /* AddCustomTagPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCC7870D220949FE00A2D8D4 /* AddCustomTagPopup.swift */; };
+		FCC787102209583F00A2D8D4 /* CustomTagCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCC7870F2209583F00A2D8D4 /* CustomTagCell.swift */; };
+		FCCEF9BD21B6931F00206BEA /* PredefineCampPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCCEF9BC21B6931F00206BEA /* PredefineCampPreview.swift */; };
 		FCCF9EB72064034D00075F73 /* ViewAndEditProspectVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCCF9EB62064034D00075F73 /* ViewAndEditProspectVC.swift */; };
 		FCD0A19120EB6806006649EC /* AddMembersSystemVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCD0A19020EB6806006649EC /* AddMembersSystemVC.swift */; };
 		FCD0A19320EB9876006649EC /* MemberDetailsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCD0A19220EB9876006649EC /* MemberDetailsVC.swift */; };
@@ -397,11 +420,18 @@
 		FC2523CE20B7457E005321FB /* TaskListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListVC.swift; sourceTree = "<group>"; };
 		FC2523D020B74596005321FB /* TaskListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListCell.swift; sourceTree = "<group>"; };
 		FC2523D220B8BBF1005321FB /* EditEventTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditEventTVC.swift; sourceTree = "<group>"; };
+		FC30D6F02216E8BA00C832C2 /* ReplyDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyDetailsView.swift; sourceTree = "<group>"; };
+		FC34AD1621E074EF008E9C96 /* AddToGroupMultipleVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddToGroupMultipleVC.swift; sourceTree = "<group>"; };
 		FC3707BD21889189007E7510 /* AssignCampaignCrmCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssignCampaignCrmCell.swift; sourceTree = "<group>"; };
 		FC3707C6218D8F08007E7510 /* DrawerSubmenuCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DrawerSubmenuCell.xib; sourceTree = "<group>"; };
 		FC3707C9219008AB007E7510 /* VisionBoard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = VisionBoard.storyboard; sourceTree = "<group>"; };
 		FC3707CB219008D2007E7510 /* DashboardVB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardVB.swift; sourceTree = "<group>"; };
 		FC3707CD2190131B007E7510 /* DetailsVB.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsVB.swift; sourceTree = "<group>"; };
+		FC37633821C8C9140062BB9B /* ReferView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ReferView.xib; sourceTree = "<group>"; };
+		FC37633A21C8E4800062BB9B /* PopupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopupViewController.swift; sourceTree = "<group>"; };
+		FC37633C21C8E7ED0062BB9B /* ReferralPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferralPopup.swift; sourceTree = "<group>"; };
+		FC37633E21C906230062BB9B /* EmailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailCell.swift; sourceTree = "<group>"; };
+		FC37634021C906480062BB9B /* PhoneCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneCell.swift; sourceTree = "<group>"; };
 		FC3C87FB208D1EF500F0DD6A /* CustomCampDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCampDetailVC.swift; sourceTree = "<group>"; };
 		FC3C87FD208D1F2F00F0DD6A /* CustomCampCollectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCampCollectCell.swift; sourceTree = "<group>"; };
 		FC3C87FF208E108B00F0DD6A /* SetTimeIntervalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetTimeIntervalVC.swift; sourceTree = "<group>"; };
@@ -469,6 +499,9 @@
 		FC65B27621A2BEA500DC9999 /* AssignECforMultipleCrm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssignECforMultipleCrm.swift; sourceTree = "<group>"; };
 		FC65B27821A3D44600DC9999 /* StartCampaignVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartCampaignVC.swift; sourceTree = "<group>"; };
 		FC65B27A21A3D46D00DC9999 /* StartCampaignCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartCampaignCell.swift; sourceTree = "<group>"; };
+		FC6A15DB2216A9B40012FEFA /* TextMessageReplyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMessageReplyVC.swift; sourceTree = "<group>"; };
+		FC6A15DD2216B7310012FEFA /* UIImageView+Letters.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+Letters.swift"; sourceTree = "<group>"; };
+		FC6A15DF2216BF7D0012FEFA /* TextMessageReplyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMessageReplyCell.swift; sourceTree = "<group>"; };
 		FC6A331620656820007CE88C /* MyCustomerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCustomerVC.swift; sourceTree = "<group>"; };
 		FC6A331920657048007CE88C /* AddCustomerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCustomerVC.swift; sourceTree = "<group>"; };
 		FC6A331B2065855F007CE88C /* ViewAndEditCustomerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewAndEditCustomerVC.swift; sourceTree = "<group>"; };
@@ -496,6 +529,7 @@
 		FC794D7920AE138B002A7984 /* SirenViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SirenViewController.swift; sourceTree = "<group>"; };
 		FC794D7A20AE138B002A7984 /* SirenTestHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SirenTestHelper.swift; sourceTree = "<group>"; };
 		FC794D7B20AE138B002A7984 /* SirenDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SirenDelegate.swift; sourceTree = "<group>"; };
+		FC79790B2205D9230067A062 /* ImportCsvFileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportCsvFileVC.swift; sourceTree = "<group>"; };
 		FC7F3B6A20CF374B005C0660 /* DeleteRecurringEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteRecurringEvent.swift; sourceTree = "<group>"; };
 		FC7F3B7920D1421D005C0660 /* NewContactListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewContactListVC.swift; sourceTree = "<group>"; };
 		FC7F3B7B20D15197005C0660 /* NewContactListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewContactListCell.swift; sourceTree = "<group>"; };
@@ -537,6 +571,10 @@
 		FCA2DA8620A5B62900EA3A0D /* AddEditGoalsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEditGoalsCell.swift; sourceTree = "<group>"; };
 		FCA2DA8920A6153000EA3A0D /* ChangeProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeProfileVC.swift; sourceTree = "<group>"; };
 		FCA2DA8C20A6155500EA3A0D /* Profile.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Profile.storyboard; sourceTree = "<group>"; };
+		FCA37FBF21C9F5E800C3562E /* CTBottomSlideController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CTBottomSlideController.swift; sourceTree = "<group>"; };
+		FCA37FC021C9F5E900C3562E /* CTPanGestureRecognizerExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CTPanGestureRecognizerExtension.swift; sourceTree = "<group>"; };
+		FCA37FC121C9F5E900C3562E /* CTBottomSlideTableDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CTBottomSlideTableDelegate.swift; sourceTree = "<group>"; };
+		FCA37FC521CA192800C3562E /* CreditListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreditListVC.swift; sourceTree = "<group>"; };
 		FCA61D5421132CF500369A07 /* LocationTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationTracker.swift; sourceTree = "<group>"; };
 		FCA6751D212A845300A389DF /* PackagesFilterVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackagesFilterVC.swift; sourceTree = "<group>"; };
 		FCA67520212A941200A389DF /* Packages.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Packages.storyboard; sourceTree = "<group>"; };
@@ -591,6 +629,9 @@
 		FCBE0A9D20C2D594008483C4 /* CFTCommunityVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CFTCommunityVC.swift; sourceTree = "<group>"; };
 		FCBE0AA020C2D5B9008483C4 /* CFTCommunity.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = CFTCommunity.storyboard; sourceTree = "<group>"; };
 		FCBE0AA220C315B5008483C4 /* AJAutocompletePlaceTextfield.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AJAutocompletePlaceTextfield.swift; sourceTree = "<group>"; };
+		FCBEE40121DF38B1003AD20F /* MySubscriptionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySubscriptionVC.swift; sourceTree = "<group>"; };
+		FCBEE40321DF38DF003AD20F /* Subscription.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Subscription.storyboard; sourceTree = "<group>"; };
+		FCBEE40521E069B1003AD20F /* CRMM.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = CRMM.storyboard; sourceTree = "<group>"; };
 		FCBF1A412164C3280009918C /* VPAutoCompleteViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VPAutoCompleteViewCell.xib; sourceTree = "<group>"; };
 		FCBF1A422164C3290009918C /* VPAutoComplete.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VPAutoComplete.swift; sourceTree = "<group>"; };
 		FCBF1A432164C3290009918C /* VPAutoCompleteViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VPAutoCompleteViewCell.swift; sourceTree = "<group>"; };
@@ -632,6 +673,11 @@
 		FCC181C62150D3140012197A /* CreateCamp1.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CreateCamp1.xib; sourceTree = "<group>"; };
 		FCC181C82150D3570012197A /* CreateCamp2.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CreateCamp2.xib; sourceTree = "<group>"; };
 		FCC181CA2150D36A0012197A /* CreateCamp3.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CreateCamp3.xib; sourceTree = "<group>"; };
+		FCC5C95921C8C09A00525440 /* RefferalVc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefferalVc.swift; sourceTree = "<group>"; };
+		FCC5C95B21C8C0C900525440 /* Refferal.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Refferal.storyboard; sourceTree = "<group>"; };
+		FCC7870D220949FE00A2D8D4 /* AddCustomTagPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCustomTagPopup.swift; sourceTree = "<group>"; };
+		FCC7870F2209583F00A2D8D4 /* CustomTagCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTagCell.swift; sourceTree = "<group>"; };
+		FCCEF9BC21B6931F00206BEA /* PredefineCampPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredefineCampPreview.swift; sourceTree = "<group>"; };
 		FCCF9EB62064034D00075F73 /* ViewAndEditProspectVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewAndEditProspectVC.swift; sourceTree = "<group>"; };
 		FCD0A19020EB6806006649EC /* AddMembersSystemVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddMembersSystemVC.swift; sourceTree = "<group>"; };
 		FCD0A19220EB9876006649EC /* MemberDetailsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberDetailsVC.swift; sourceTree = "<group>"; };
@@ -782,6 +828,7 @@
 				FC0B3B1E20E908B10040D4D9 /* TextCampDetailVC.swift */,
 				FC0B3B2020E908D10040D4D9 /* TextCampDetailCell.swift */,
 				FC0B3B1C20E6E2A80040D4D9 /* AddTextCampaignVC.swift */,
+				FCD0A19220EB9876006649EC /* MemberDetailsVC.swift */,
 				FCF9669220EA538500DE94A4 /* EditTextCampaignVC.swift */,
 				FC0B3B1820E6C1290040D4D9 /* TextCampaign.storyboard */,
 				FCF9668E20E9EC8500DE94A4 /* TextTemplatePreviewVC.swift */,
@@ -789,12 +836,16 @@
 				FCF9669420EB2F8200DE94A4 /* CreateTextMessageVC.swift */,
 				FCF9669720EB5B8700DE94A4 /* AddMembersManualVC.swift */,
 				FCD0A19020EB6806006649EC /* AddMembersSystemVC.swift */,
-				FCD0A19220EB9876006649EC /* MemberDetailsVC.swift */,
 				FC90144D213CFD1300B4E2BB /* NewSetTimeIntervalVC.swift */,
 				FCBF1A75216F356F0009918C /* RemoveMemberVC.swift */,
 				FCBF1A77216F35B50009918C /* RemoveMemberCell.swift */,
 				FCF0846621AD1F50004C6DBA /* StartTextCampaignVC.swift */,
 				FCF0846821AD533D004C6DBA /* StartTextCampCell.swift */,
+				FCCEF9BC21B6931F00206BEA /* PredefineCampPreview.swift */,
+				FC6A15DB2216A9B40012FEFA /* TextMessageReplyVC.swift */,
+				FC6A15DD2216B7310012FEFA /* UIImageView+Letters.swift */,
+				FC6A15DF2216BF7D0012FEFA /* TextMessageReplyCell.swift */,
+				FC30D6F02216E8BA00C832C2 /* ReplyDetailsView.swift */,
 			);
 			path = "Text Campaing";
 			sourceTree = "<group>";
@@ -1001,6 +1052,10 @@
 			isa = PBXGroup;
 			children = (
 				FCD78166206020B800F8800B /* CRM.storyboard */,
+				FCBEE40521E069B1003AD20F /* CRMM.storyboard */,
+				FC79790B2205D9230067A062 /* ImportCsvFileVC.swift */,
+				FCC7870D220949FE00A2D8D4 /* AddCustomTagPopup.swift */,
+				FCC7870F2209583F00A2D8D4 /* CustomTagCell.swift */,
 				FC6A332A206AF6FA007CE88C /* My Contact */,
 				FCD781652060208800F8800B /* My Prospect */,
 				FC6A33182065686D007CE88C /* My Customer */,
@@ -1009,6 +1064,7 @@
 				FCA2DA7120A3309300EA3A0D /* PopUpAssignCampaign.swift */,
 				FCA2DA7320A330C800EA3A0D /* AssignCampaignCell.swift */,
 				FC65B27621A2BEA500DC9999 /* AssignECforMultipleCrm.swift */,
+				FC34AD1621E074EF008E9C96 /* AddToGroupMultipleVC.swift */,
 			);
 			path = "CRM Module";
 			sourceTree = "<group>";
@@ -1198,6 +1254,8 @@
 		FCAFD6CC2025F3DE00233292 /* SuccessEnSwift */ = {
 			isa = PBXGroup;
 			children = (
+				FCBEE40021DF3885003AD20F /* My Subscription */,
+				FCC5C95821C8C06C00525440 /* Refer And Earn */,
 				FC3707C82190087C007E7510 /* Vision Board */,
 				FCF9669620EB4EBB00DE94A4 /* SuccessEnSwift.entitlements */,
 				FCAFD6CD2025F3DE00233292 /* AppDelegate.swift */,
@@ -1335,6 +1393,15 @@
 			path = "CFT Community";
 			sourceTree = "<group>";
 		};
+		FCBEE40021DF3885003AD20F /* My Subscription */ = {
+			isa = PBXGroup;
+			children = (
+				FCBEE40121DF38B1003AD20F /* MySubscriptionVC.swift */,
+				FCBEE40321DF38DF003AD20F /* Subscription.storyboard */,
+			);
+			path = "My Subscription";
+			sourceTree = "<group>";
+		};
 		FCBF1A7D2174364A0009918C /* Team Campaigns */ = {
 			isa = PBXGroup;
 			children = (
@@ -1406,6 +1473,24 @@
 				FCC181C4214FB9EC0012197A /* page5.xib */,
 			);
 			path = ChkListOnboarding;
+			sourceTree = "<group>";
+		};
+		FCC5C95821C8C06C00525440 /* Refer And Earn */ = {
+			isa = PBXGroup;
+			children = (
+				FCC5C95921C8C09A00525440 /* RefferalVc.swift */,
+				FCC5C95B21C8C0C900525440 /* Refferal.storyboard */,
+				FC37633821C8C9140062BB9B /* ReferView.xib */,
+				FC37633A21C8E4800062BB9B /* PopupViewController.swift */,
+				FC37633C21C8E7ED0062BB9B /* ReferralPopup.swift */,
+				FC37633E21C906230062BB9B /* EmailCell.swift */,
+				FC37634021C906480062BB9B /* PhoneCell.swift */,
+				FCA37FBF21C9F5E800C3562E /* CTBottomSlideController.swift */,
+				FCA37FC121C9F5E900C3562E /* CTBottomSlideTableDelegate.swift */,
+				FCA37FC021C9F5E900C3562E /* CTPanGestureRecognizerExtension.swift */,
+				FCA37FC521CA192800C3562E /* CreditListVC.swift */,
+			);
+			name = "Refer And Earn";
 			sourceTree = "<group>";
 		};
 		FCD35AC0215115C10068C4FD /* CreateTemplate */ = {
@@ -1659,6 +1744,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FCBEE40421DF38DF003AD20F /* Subscription.storyboard in Resources */,
 				FC3C88512090EA5D00F0DD6A /* EmailDetailsHeader.xib in Resources */,
 				FCD35B00215243140068C4FD /* CreateTextCamp1.xib in Resources */,
 				FCD35AC2215115D80068C4FD /* Temp1.xib in Resources */,
@@ -1705,6 +1791,7 @@
 				FCD35ACF2151195F0068C4FD /* AddEmail2.xib in Resources */,
 				FCD35AED215241090068C4FD /* AddMember2.xib in Resources */,
 				FCC181C3214FB4BA0012197A /* AddressInfoWindow.xib in Resources */,
+				FCBEE40621E069B1003AD20F /* CRMM.storyboard in Resources */,
 				FC129461210634B2006CB874 /* CustomInfoWindow.xib in Resources */,
 				FCBF1A7F2174367B0009918C /* TeamCampaigns.storyboard in Resources */,
 				FCC181C92150D3570012197A /* CreateCamp2.xib in Resources */,
@@ -1719,6 +1806,7 @@
 				FCA67521212A941200A389DF /* Packages.storyboard in Resources */,
 				FCBE0A8620C1B7E4008483C4 /* k-popup-dismiss-button@3x.png in Resources */,
 				FC0077A220F35CAB004DF81E /* Document.storyboard in Resources */,
+				FCC5C95C21C8C0C900525440 /* Refferal.storyboard in Resources */,
 				FCBF1A442164C32A0009918C /* VPAutoCompleteViewCell.xib in Resources */,
 				FCD35AD12151196D0068C4FD /* AddEmail3.xib in Resources */,
 				FCF48FBE2053268200DCD76B /* EmailCampaign.storyboard in Resources */,
@@ -1735,6 +1823,7 @@
 				FCD35AC6215115F60068C4FD /* Temp3.xib in Resources */,
 				FCD9028E206EA8C200A981C7 /* GoogleService-Info.plist in Resources */,
 				FCD35AE2215219600068C4FD /* CftLoc2.xib in Resources */,
+				FC37633921C8C9140062BB9B /* ReferView.xib in Resources */,
 				FCD35AE4215219820068C4FD /* CftLoc3.xib in Resources */,
 				FC618DAC2119A2A000AF2A3E /* CustomOverlay.xib in Resources */,
 			);
@@ -1863,11 +1952,13 @@
 				FC5CFEF120518388004A7EC1 /* JJFloatingActionButton+Placement.swift in Sources */,
 				FCBE0A9320C1B97D008483C4 /* TPKeyboardAvoidingTableView.m in Sources */,
 				FCD9028A206EA61900A981C7 /* SWXMLHash.swift in Sources */,
+				FC6A15DC2216A9B40012FEFA /* TextMessageReplyVC.swift in Sources */,
 				FC5CFEB4204EE7CB004A7EC1 /* DrawerView.swift in Sources */,
 				FC1427DB202B42760055BADC /* UIDropDown.swift in Sources */,
 				FCDBAD8F2137CD9F0015BCE9 /* SetIntervalCell.swift in Sources */,
 				FC1427E6202B5FCD0055BADC /* ReorderController+GestureRecognizer.swift in Sources */,
 				FCE3C04B20A8AFE000E539D7 /* SupportVC.swift in Sources */,
+				FCA37FC421C9F5EA00C3562E /* CTBottomSlideTableDelegate.swift in Sources */,
 				FCBE0A7D20C1962F008483C4 /* AccessSettingCell.swift in Sources */,
 				FCBF1A81217436AA0009918C /* TeamCampaignsVC.swift in Sources */,
 				FCBBF4FC2052C1AC008A430F /* PopUpWeeklyRepeatTVC.swift in Sources */,
@@ -1918,6 +2009,7 @@
 				FC5CFED420506DF2004A7EC1 /* WeeklyScoreGraphVC.swift in Sources */,
 				FCAFD6D02025F3DE00233292 /* ViewController.swift in Sources */,
 				FCA879D421A574A800BCDC22 /* NewCftLocVC.swift in Sources */,
+				FCCEF9BD21B6931F00206BEA /* PredefineCampPreview.swift in Sources */,
 				FC8C39922054394A00C97602 /* FSPagerViewLayoutAttributes.swift in Sources */,
 				FC5CFED720517939004A7EC1 /* CalenderVC.swift in Sources */,
 				FCBBF4FA2052C0B1008A430F /* PKYStepper.m in Sources */,
@@ -1930,7 +2022,9 @@
 				FCBAB8B120C06C6200650622 /* ApproveRequestCell.swift in Sources */,
 				FC794D7E20AE138B002A7984 /* SirenDateExtension.swift in Sources */,
 				FCD78160205C316C00F8800B /* TLTagsControl.m in Sources */,
+				FCC5C95A21C8C09A00525440 /* RefferalVc.swift in Sources */,
 				FCBF1A78216F35B50009918C /* RemoveMemberCell.swift in Sources */,
+				FCA37FC621CA192800C3562E /* CreditListVC.swift in Sources */,
 				FC1427E5202B5FCD0055BADC /* ReorderController.swift in Sources */,
 				FC1B08E52101DDE500F39FE4 /* DailyTopTenCell.swift in Sources */,
 				FC572123219A78D00091F292 /* VBCell.swift in Sources */,
@@ -1957,6 +2051,7 @@
 				FCBE0A9220C1B97D008483C4 /* TPKeyboardAvoidingScrollView.m in Sources */,
 				FC794D8220AE138B002A7984 /* SirenAlertMessaging.swift in Sources */,
 				FC6B092020BC88750023A1A8 /* GoogleCalenderVC.swift in Sources */,
+				FC37633D21C8E7ED0062BB9B /* ReferralPopup.swift in Sources */,
 				FC1CE127217EE7D800C49299 /* GoogleContactCell.swift in Sources */,
 				FCA2DA632098B5E600EA3A0D /* TagListView.swift in Sources */,
 				FCAFD6E72025F5B600233292 /* DailyChecklistView.swift in Sources */,
@@ -1965,8 +2060,10 @@
 				FC2523D120B74596005321FB /* TaskListCell.swift in Sources */,
 				FC6A332C206AF718007CE88C /* MyContactVC.swift in Sources */,
 				FC2523A720B34E0A005321FB /* FeedbackMentorVC.swift in Sources */,
+				FC79790C2205D9230067A062 /* ImportCsvFileVC.swift in Sources */,
 				FC5CFEE820518388004A7EC1 /* LayerProperties.swift in Sources */,
 				FCA2DA5B2097637400EA3A0D /* MyGroupCell.swift in Sources */,
+				FC37634121C906480062BB9B /* PhoneCell.swift in Sources */,
 				FCBF1A7C216F4D6D0009918C /* RemoveEmailVC.swift in Sources */,
 				FC6A332E206BDDB1007CE88C /* AddContactVC.swift in Sources */,
 				FCF9159420B33B59008518F7 /* Calender.swift in Sources */,
@@ -1981,6 +2078,7 @@
 				FC65B27921A3D44600DC9999 /* StartCampaignVC.swift in Sources */,
 				FCD90281206E9C5300A981C7 /* GmailContactVC.swift in Sources */,
 				FC99EA75208BF7B3005BD8F8 /* CompanyCampDetailCell.swift in Sources */,
+				FC34AD1721E074EF008E9C96 /* AddToGroupMultipleVC.swift in Sources */,
 				FCD7816B2060307500F8800B /* CrmHeaderCell.swift in Sources */,
 				FC0B3B1D20E6E2A80040D4D9 /* AddTextCampaignVC.swift in Sources */,
 				FC5CFEF320518388004A7EC1 /* UIColor+JJFloatingActionButton.swift in Sources */,
@@ -1993,18 +2091,21 @@
 				FC2523CF20B7457E005321FB /* TaskListVC.swift in Sources */,
 				FCF0846921AD533D004C6DBA /* StartTextCampCell.swift in Sources */,
 				FCBF1A6C216CE91A0009918C /* ViewNoteDetails.swift in Sources */,
+				FCBEE40221DF38B1003AD20F /* MySubscriptionVC.swift in Sources */,
 				FCBF1A70216DE3B10009918C /* ScratchNotificationVC.swift in Sources */,
 				FCC18141213E6CF10012197A /* NewEmailSetTimeIntervalVC.swift in Sources */,
 				FC6A331720656820007CE88C /* MyCustomerVC.swift in Sources */,
 				FCF9669120EA1DEC00DE94A4 /* EditTextCampTemplate.swift in Sources */,
 				FCA2DA7E20A4718100EA3A0D /* LoginVC.swift in Sources */,
 				FC5CFEBD204F084C004A7EC1 /* TabTitleView.swift in Sources */,
+				FCA37FC221C9F5EA00C3562E /* CTBottomSlideController.swift in Sources */,
 				FCBF1A852174819B0009918C /* AddTeamCampaignVC.swift in Sources */,
 				FCBF1A83217479270009918C /* TeamCampaignCell.swift in Sources */,
 				FC5CFECA204F47F9004A7EC1 /* WeeklyTrackingVC.swift in Sources */,
 				FC8FCE6821B1308400213670 /* HelpGuideVC.swift in Sources */,
 				FC794D8720AE138B002A7984 /* SirenDelegate.swift in Sources */,
 				FCA2DA8520A4C71600EA3A0D /* AddEditGoalsVC.swift in Sources */,
+				FCC787102209583F00A2D8D4 /* CustomTagCell.swift in Sources */,
 				FCF113AF211815410074EB46 /* CFTUserListCell.swift in Sources */,
 				FCBAB8AD20C06A3E00650622 /* ApproveAccessSettingVC.swift in Sources */,
 				FCD0A1A020ECEC8A006649EC /* CloseButton.swift in Sources */,
@@ -2025,6 +2126,7 @@
 				FC5CFEAF204EE788004A7EC1 /* SliderVC.swift in Sources */,
 				FC6A33212066807A007CE88C /* MyRecruitCell.swift in Sources */,
 				FC5CFEFC20519465004A7EC1 /* SkyFloatingLabelTextFieldWithIcon.swift in Sources */,
+				FC37633F21C906230062BB9B /* EmailCell.swift in Sources */,
 				FC99EA71208BF2D4005BD8F8 /* CollectionViewCell.swift in Sources */,
 				FC5CFEFB20519465004A7EC1 /* SkyFloatingLabelTextField.swift in Sources */,
 				FCD781642060207500F8800B /* MyProspectVC.swift in Sources */,
@@ -2076,6 +2178,7 @@
 				FCD781912062E20400F8800B /* AddProspectVC.swift in Sources */,
 				FCC1816B214CB6E70012197A /* UploadContactsVC.swift in Sources */,
 				FC00779F20F35C23004DF81E /* DocumentVC.swift in Sources */,
+				FC6A15E02216BF7D0012FEFA /* TextMessageReplyCell.swift in Sources */,
 				FC3707BE21889189007E7510 /* AssignCampaignCrmCell.swift in Sources */,
 				FCA2DA6E209B50A800EA3A0D /* EditGroupCell.swift in Sources */,
 				FC6A3329206A98DA007CE88C /* ViewAndEditRecruitVC.swift in Sources */,
@@ -2089,8 +2192,10 @@
 				FC618DA021199F6400AF2A3E /* SwiftyOnboard.swift in Sources */,
 				FC5CFEBB204F04C2004A7EC1 /* UIView+constraints.swift in Sources */,
 				FCBE0AA320C315B5008483C4 /* AJAutocompletePlaceTextfield.swift in Sources */,
+				FC6A15DE2216B7310012FEFA /* UIImageView+Letters.swift in Sources */,
 				FCBE0A9E20C2D594008483C4 /* CFTCommunityVC.swift in Sources */,
 				FCBF1A6A216C93CC0009918C /* NoteCell.swift in Sources */,
+				FCC7870E220949FE00A2D8D4 /* AddCustomTagPopup.swift in Sources */,
 				FC5CFF0020519529004A7EC1 /* AddDailyEventTVC.swift in Sources */,
 				FC6A33232066BB4F007CE88C /* TimeAnalysisCell.swift in Sources */,
 				FC794D8620AE138B002A7984 /* SirenTestHelper.swift in Sources */,
@@ -2109,12 +2214,15 @@
 				FCAFD6E22025F41900233292 /* Extenssions.swift in Sources */,
 				FC5CFED220506DD6004A7EC1 /* WeeklyGoalsVC.swift in Sources */,
 				FC3C8802208E296D00F0DD6A /* EditTemplateVC.swift in Sources */,
+				FCA37FC321C9F5EA00C3562E /* CTPanGestureRecognizerExtension.swift in Sources */,
 				FCF9669520EB2F8200DE94A4 /* CreateTextMessageVC.swift in Sources */,
 				FCBE0A9420C1B97D008483C4 /* TPKeyboardAvoidingCollectionView.m in Sources */,
+				FC30D6F12216E8BA00C832C2 /* ReplyDetailsView.swift in Sources */,
 				FC1427E2202B5FCD0055BADC /* ReorderController+DestinationRow.swift in Sources */,
 				FCBF1A6E216D9BF00009918C /* EditNoteDetailsVC.swift in Sources */,
 				FC618DA121199F6400AF2A3E /* SwiftyOnboardOverlay.swift in Sources */,
 				FC0B3B2120E908D10040D4D9 /* TextCampDetailCell.swift in Sources */,
+				FC37633B21C8E4800062BB9B /* PopupViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2169,7 +2277,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = DQNFZKB5Y2;
@@ -2230,7 +2338,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = DQNFZKB5Y2;
@@ -2262,8 +2370,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = SuccessEnSwift/SuccessEnSwift.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = DQNFZKB5Y2;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2271,12 +2379,12 @@
 					"$(PROJECT_DIR)/SuccessEnSwift",
 				);
 				INFOPLIST_FILE = SuccessEnSwift/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.bundle.Successen;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "229aa89d-eb0d-48da-8e95-989a5c58feb1";
-				PROVISIONING_PROFILE_SPECIFIER = "SE dev profile";
+				PROVISIONING_PROFILE_SPECIFIER = SuccessEntellusFinal;
 				SWIFT_OBJC_BRIDGING_HEADER = "SuccessEnSwift/ModalClass/SuccessEnSwift-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
@@ -2291,8 +2399,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = SuccessEnSwift/SuccessEnSwift.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = DQNFZKB5Y2;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2300,12 +2408,12 @@
 					"$(PROJECT_DIR)/SuccessEnSwift",
 				);
 				INFOPLIST_FILE = SuccessEnSwift/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.bundle.Successen;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "efae2fbc-1459-4093-ac55-f0c8338487f7";
-				PROVISIONING_PROFILE_SPECIFIER = "SE dev profile";
+				PROVISIONING_PROFILE_SPECIFIER = SuccessEntellusFinal;
 				SWIFT_OBJC_BRIDGING_HEADER = "SuccessEnSwift/ModalClass/SuccessEnSwift-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 1;

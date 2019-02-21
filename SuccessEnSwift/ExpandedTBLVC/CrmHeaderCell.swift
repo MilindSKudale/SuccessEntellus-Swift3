@@ -15,6 +15,7 @@ class CrmHeaderCell: LUExpandableTableViewSectionHeader {
     @IBOutlet weak var expandCollapseButton: UIButton!
     @IBOutlet weak var selectRecordButton: UIButton!
     @IBOutlet weak var label: UILabel!
+    @IBOutlet weak var labelDate: UILabel!
     @IBOutlet weak var bgView: UIView!
     
     override var isExpanded: Bool {

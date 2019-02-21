@@ -14,9 +14,7 @@ class DailyScoreGraphView: UIViewController, LineChartDelegate  {
     @IBOutlet weak var lblValues : UILabel!
     var xLabels = [String]()
     var arrScore = [Any]()
-    
-   
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -70,12 +68,13 @@ class DailyScoreGraphView: UIViewController, LineChartDelegate  {
                 let dictJsonData = (JsonDict!["result"] as AnyObject)
                 self.arrScore = dictJsonData as! [Any]
 //                let arrDays = (dictJsonData.object(at: 0) as AnyObject).allKeys
-                self.graphView.clearAll()
-                self.graphView.addLine(self.arrScore as! [CGFloat])
-                //self.graphView.addLine([10])
-                self.graphView.translatesAutoresizingMaskIntoConstraints = false
-                self.graphView.delegate = self
-                
+                if self.arrScore.count > 0 {
+                    self.graphView.clearAll()
+                    self.graphView.addLine(self.arrScore as! [CGFloat])
+                    //self.graphView.addLine([10])
+                    self.graphView.translatesAutoresizingMaskIntoConstraints = false
+                    self.graphView.delegate = self
+                }
             }else{
                 print("result:",JsonDict ?? "")
                 OBJCOM.hideLoader()

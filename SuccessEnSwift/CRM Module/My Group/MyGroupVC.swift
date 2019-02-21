@@ -1,11 +1,3 @@
-//
-//  MyGroupVC.swift
-//  SuccessEnSwift
-//
-//  Created by Milind Kudale on 30/04/18.
-//  Copyright © 2018 milind.kudale. All rights reserved.
-//
-
 import UIKit
 import LUExpandableTableView
 
@@ -18,6 +10,7 @@ class MyGroupVC: SliderVC, UITextFieldDelegate {
     @IBOutlet var noRecView : UIView!
     
     var isFilter = false;
+    
     let cellReuseIdentifier = "GroupCell"
     let sectionHeaderReuseIdentifier = "MyCrmHeader"
     
@@ -48,6 +41,7 @@ class MyGroupVC: SliderVC, UITextFieldDelegate {
         tblGroupList.tableFooterView = UIView()
         
         isFilter = false;
+       
         
         actionViewHeight.constant = 0.0
         btnDelete.layer.cornerRadius = 5.0

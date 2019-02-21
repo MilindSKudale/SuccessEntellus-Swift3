@@ -16,7 +16,7 @@ class CustomCampDetailVC: UIViewController, UICollectionViewDelegate, UICollecti
     var companyCampaign = ""
     var CampaignTitle = ""
     
-    var bgColor = UIColor()
+    //var bgColor = UIColor()
     var arrTemplateTitle = [String]()
     var arrTemplateId = [String]()
     var arrCampaignId = [String]()
@@ -25,9 +25,12 @@ class CustomCampDetailVC: UIViewController, UICollectionViewDelegate, UICollecti
     var arrCampaignStepSubject = [String]()
     var arrCampaignHTMLContent = [String]()
     var arrCampiagnEmailReminder = [String]()
+    var arrCampiagnDate = [String]()
     var arrStepImages = [String]()
     var arrAttachments = [AnyObject]()
     var arrTemplates = [AnyObject]()
+    var arrCampaignStepSendTo = [AnyObject]()
+    var arrBgColor = [AnyObject]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -126,6 +129,9 @@ class CustomCampDetailVC: UIViewController, UICollectionViewDelegate, UICollecti
                     self.arrStepImages = []
                     self.arrAttachments = []
                     self.arrTemplates = []
+                    self.arrBgColor = []
+                    self.arrCampiagnDate = []
+                    self.arrCampaignStepSendTo = []
                     
                     for obj in dictJsonData {
                         self.arrTemplateTitle.append(obj.value(forKey: "campaignStepTitle") as! String)
@@ -138,6 +144,10 @@ class CustomCampDetailVC: UIViewController, UICollectionViewDelegate, UICollecti
                         self.arrCampiagnEmailReminder.append(obj.value(forKey: "campiagnEndStepEmailReminder") as! String)
                         self.arrStepImages.append(obj.value(forKey: "stepImage") as! String)
                         self.arrAttachments.append(obj.value(forKey: "attachements") as AnyObject)
+                        self.arrBgColor.append(obj.value(forKey: "attachements") as AnyObject)
+                        self.arrCampiagnDate.append("\(obj.value(forKey: "datecamp") ?? "")")
+                        self.arrCampaignStepSendTo.append(obj.value(forKey: "campaignStepSendTo") as AnyObject)
+                        
                         self.arrTemplates.append(obj)
                     }
                 }
@@ -179,7 +189,7 @@ extension CustomCampDetailVC {
         vc.htmlString = self.arrCampaignHTMLContent[sender.tag]
         vc.templateName = self.arrTemplateTitle[sender.tag]
         vc.isCustomCampaign = true
-        vc.bgColor = bgColor
+      //  vc.bgColor = bgColor
         vc.dictData = dict
         vc.isFooterView = arrTemplates[sender.tag]["campaignStepFooterFlag"] as! String
         vc.modalPresentationStyle = .custom
@@ -193,6 +203,8 @@ extension CustomCampDetailVC {
         let vc = storyboard.instantiateViewController(withIdentifier: "idEmailDetailsVC") as! EmailDetailsVC
         vc.templateId = self.arrTemplateId[sender.tag]
         vc.campaignId = self.arrCampaignId[sender.tag]
+        vc.templateName = self.arrTemplateTitle[sender.tag]
+        vc.templateDate = self.arrCampiagnDate[sender.tag]
         let temp = self.arrTemplates[sender.tag]
         let repeate = temp.value(forKey: "campaignStepRepeat") as? String ?? "0"
         if repeate == "1"{
@@ -240,9 +252,6 @@ extension CustomCampDetailVC {
     }
     
     @IBAction func actionEditTemplate(_ sender : UIButton){
-        
-        
-        
         let isSelfReminder = self.arrCampiagnEmailReminder[sender.tag]
         if isSelfReminder == "1" {
             
@@ -258,8 +267,9 @@ extension CustomCampDetailVC {
             vc.timeIntervalValue = self.arrInterval[sender.tag]
             vc.timeIntervalType = self.arrIntervalType[sender.tag]
             vc.campaignId = self.arrTemplateId[sender.tag]
-            vc.reminderType = self.arrCampiagnEmailReminder[sender.tag]
-         //   vc.txtNotes.text = self.arrCampaignHTMLContent[sender.tag]
+            vc.reminderType = "\(self.arrCampaignStepSendTo[sender.tag])"//self.arrCampiagnEmailReminder[sender.tag]
+            //vc.txtNotes.text =
+            vc.note = self.arrCampaignHTMLContent[sender.tag]
             vc.modalPresentationStyle = .custom
             vc.modalTransitionStyle = .crossDissolve
             vc.view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)

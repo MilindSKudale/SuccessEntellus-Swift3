@@ -82,7 +82,8 @@ class EditCampaignVC: UIViewController, UITextFieldDelegate {
                 self.present(alertController, animated: true, completion: nil)
                 
             }else{
-                print("result:",JsonDict ?? "")
+                let result = JsonDict!["result"] as! String
+                OBJCOM.setAlert(_title: "", message: result)
                 OBJCOM.hideLoader()
             }
         };

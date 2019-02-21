@@ -126,14 +126,19 @@ class DailyChecklistView: SliderVC, TableViewReorderDelegate, UITableViewDataSou
         if let _ = dictTxtValues["5"] {
             dictTxtValues.removeValue(forKey: "5")
         }
-        if OBJCOM.isConnectedToNetwork(){
-            OBJCOM.setLoader()
-            DispatchQueue.main.async {
-                self.SubmitCheckListData(flag:self.submitFlag, dict: self.dictTxtValues)
+        if self.arrDayValues.count > 0 {
+            if OBJCOM.isConnectedToNetwork(){
+                OBJCOM.setLoader()
+                DispatchQueue.main.async {
+                    self.SubmitCheckListData(flag:self.submitFlag, dict: self.dictTxtValues)
+                }
+            }else{
+                OBJCOM.NoInternetConnectionCall()
             }
         }else{
-            OBJCOM.NoInternetConnectionCall()
+            OBJCOM.setAlert(_title: "", message: "Your business is not started yet.")
         }
+    
     }
     
     func SubmitCheckListData(flag:String, dict:[String:String]){
@@ -291,9 +296,6 @@ class DailyChecklistView: SliderVC, TableViewReorderDelegate, UITableViewDataSou
                 OBJCOM.hideLoader()
             }
         };
-        
-        
-        
     }
     
     func GetDateFromString(DateStr: String) -> Date {

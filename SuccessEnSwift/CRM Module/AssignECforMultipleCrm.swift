@@ -14,12 +14,15 @@ class AssignECforMultipleCrm: UIViewController {
     @IBOutlet var ddSelectCampaign : UIDropDown!
     @IBOutlet var btnCancel : UIButton!
     @IBOutlet var btnAssignCamp : UIButton!
+    
     var arrCampaignTitle = [String]()
     var arrCampaignID = [String]()
+    var arrStepCount = [String]()
     
     var campaignId = ""
     var contactsId = ""
     var campaignTitle = ""
+    var className = ""
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,18 +57,61 @@ class AssignECforMultipleCrm: UIViewController {
         }else{
             if OBJCOM.isConnectedToNetwork(){
                 OBJCOM.setLoader()
-                self.assignEmailCampaignToMultipleRecords()
+                self.getEmailScheduleMessage()
             }else{
                 OBJCOM.NoInternetConnectionCall()
             }
             
         }
     }
+    
+    func getEmailScheduleMessage() {
+        let dictParam = ["userId": userID,
+                         "platform":"3",
+                         "campaignId":campaignId]
+        
+        let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
+        let jsonString = String(data: jsonData!, encoding: .utf8)
+        let dictParamTemp = ["param":jsonString];
+        
+        typealias JSONDictionary = [String:Any]
+        OBJCOM.modalAPICall(Action: "getEmailScheduleMessage", param:dictParamTemp as [String : AnyObject],  vcObject: self) {
+            JsonDict, staus in
+            
+            let success:String = JsonDict!["IsSuccess"] as! String
+            if success == "true"{
+                OBJCOM.hideLoader()
+                let result = JsonDict!["result"] as! String
+                let alertController = UIAlertController(title: "", message: result, preferredStyle: .alert)
+                let okAction = UIAlertAction(title: "Proceed", style: UIAlertActionStyle.default) {
+                    UIAlertAction in
+                    if OBJCOM.isConnectedToNetwork(){
+                        OBJCOM.setLoader()
+                        self.assignEmailCampaignToMultipleRecords()
+                    }else{
+                        OBJCOM.NoInternetConnectionCall()
+                    }
+                }
+                let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) {
+                    UIAlertAction in
+                    OBJCOM.hideLoader()
+                }
+                alertController.addAction(okAction)
+                alertController.addAction(cancelAction)
+                self.present(alertController, animated: true, completion: nil)
+                
+            }else{
+                let result = JsonDict!["result"] as! String
+                OBJCOM.setAlert(_title: "", message: result)
+                OBJCOM.hideLoader()
+            }
+        };
+    }
 
 }
 
 extension AssignECforMultipleCrm {
-    func getEmailCampaignList(){
+    func getEmailCampaignList() {
         let dictParam = ["userId": userID,
                          "platform":"3"]
         
@@ -86,6 +132,7 @@ extension AssignECforMultipleCrm {
                 for obj in dictJsonData {
                     self.arrCampaignTitle.append(obj.value(forKey: "campaignTitle") as! String)
                     self.arrCampaignID.append(obj.value(forKey: "campaignId") as! String)
+                    self.arrStepCount.append("\(obj.value(forKey: "stepPresent") ?? "1")")
                 }
                 self.loadDropDown()
                 OBJCOM.hideLoader()
@@ -104,6 +151,10 @@ extension AssignECforMultipleCrm {
         self.ddSelectCampaign.optionsTextAlignment = NSTextAlignment.left
         self.ddSelectCampaign.textAlignment = NSTextAlignment.left
         self.ddSelectCampaign.options = self.arrCampaignTitle
+        self.ddSelectCampaign.availCamp = self.arrStepCount
+        self.ddSelectCampaign.uiView.backgroundColor = .white
+        self.ddSelectCampaign.rowHeight = 30.0
+        self.ddSelectCampaign.tableHeight = 150.0
         campaignTitle = " Select Email Campaign"
         self.ddSelectCampaign.didSelect { (item, index) in
             self.campaignTitle = self.arrCampaignTitle[index]
@@ -132,6 +183,15 @@ extension AssignECforMultipleCrm {
                 let alertController = UIAlertController(title: "", message: result, preferredStyle: .alert)
                 let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default) {
                     UIAlertAction in
+                    if self.className == "Prospect"{
+                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "UpdateProspectList"), object: nil)
+                    }else if self.className == "Contact"{
+                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "UpdateContactList"), object: nil)
+                    }else if self.className == "Customer"{
+                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "UpdateCustomerList"), object: nil)
+                    }else if self.className == "Recruit"{
+                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "UpdateRecruitList"), object: nil)
+                    }
                     self.dismiss(animated: true, completion: nil)
                 }
                 alertController.addAction(okAction)

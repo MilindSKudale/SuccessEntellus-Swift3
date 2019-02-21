@@ -15,7 +15,6 @@ target 'SuccessEnSwift' do
     pod 'GoogleAPIClientForREST/Calendar'
     pod 'GoogleAPIClientForREST/Gmail', '~> 1.2.1'
     pod 'GoogleSignIn', '~> 4.1.1'
-    pod 'RichEditorView'
     pod 'SwipeMenuViewController'
     pod 'ALCameraViewController'
     pod 'JSQMessagesViewController'
@@ -26,5 +25,5 @@ target 'SuccessEnSwift' do
     pod 'GooglePlaces'
     pod 'SKActivityIndicatorView'
     pod 'EAIntroView', '~> 2.10.0'
-    
+    pod 'RichEditorView'
 end

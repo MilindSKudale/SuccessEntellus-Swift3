@@ -629,7 +629,7 @@ extension MentorConversationVC  {
     
     func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
         print("view was cancelled")
-        dismiss(animated: true, completion: nil)
+        controller.dismiss(animated: true, completion: nil)
     }
     
     func downloadfile(URL: NSURL) {

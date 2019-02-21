@@ -16,6 +16,7 @@ class ImportTemplateVC: UIViewController, UITableViewDelegate, UITableViewDataSo
     @IBOutlet weak var heightTbl: NSLayoutConstraint!
     @IBOutlet weak var btnClose: UIButton!
     @IBOutlet weak var btnImport: UIButton!
+    @IBOutlet weak var btnSelectAll: UIButton!
     
     var arrCampaignTitle = [String]()
     var arrCampaignId = [AnyObject]()
@@ -37,6 +38,7 @@ class ImportTemplateVC: UIViewController, UITableViewDelegate, UITableViewDataSo
         btnImport.layer.cornerRadius = 5
         btnImport.clipsToBounds = true
         btnClose.clipsToBounds = true
+        btnSelectAll.isSelected = false
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -64,6 +66,19 @@ class ImportTemplateVC: UIViewController, UITableViewDelegate, UITableViewDataSo
         }
     }
     
+    @IBAction func actionSelectAll(sender: UIButton) {
+        if !sender.isSelected {
+            sender.isSelected = true
+            for template in self.arrTemplateId {
+                self.arrSelectedTemplates.append(template as! String)
+            }
+        }else{
+            self.arrSelectedTemplates.removeAll()
+            sender.isSelected = false
+        }
+        self.tblTemplateList.reloadData()
+    }
+    
     func loadDropDown() {
         self.dropDown.textColor = .black
         self.dropDown.tint = .black
@@ -72,8 +87,11 @@ class ImportTemplateVC: UIViewController, UITableViewDelegate, UITableViewDataSo
         self.dropDown.optionsTextAlignment = NSTextAlignment.left
         self.dropDown.textAlignment = NSTextAlignment.left
         self.dropDown.options = self.arrCampaignTitle
+        self.dropDown.uiView.backgroundColor = .white
         self.dropDown.didSelect { (item, index) in
             self.templateView.isHidden = false
+            self.btnSelectAll.isSelected = false
+            self.arrSelectedTemplates = []
             var strCampId = ""
             let campId = self.arrUnAssignedCampaignId[index]
             if campId.count > 0 {

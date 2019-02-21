@@ -21,7 +21,7 @@ class ViewDetailsVB: UIViewController, FSPagerViewDelegate, FSPagerViewDataSourc
     var vbId = ""
     
     var imageArray = [UIImage]()
-    
+    @IBOutlet var pageControl : UIPageControl!
     let viewImg = UIView()
     @IBOutlet weak var pagerView: FSPagerView! {
         didSet {
@@ -47,6 +47,14 @@ class ViewDetailsVB: UIViewController, FSPagerViewDelegate, FSPagerViewDataSourc
         }else{
             OBJCOM.NoInternetConnectionCall()
         }
+    }
+    
+    func configurePageControl() {
+        self.pageControl.numberOfPages = self.imageArray.count
+        self.pageControl.currentPage = 0
+        //        self.pageControl.tintColor = UIColor.red
+        //        self.pageControl.pageIndicatorTintColor = UIColor.cyan
+        //        self.pageControl.currentPageIndicatorTintColor = UIColor.green
     }
     
     func getVisionBoardById(){
@@ -105,7 +113,7 @@ class ViewDetailsVB: UIViewController, FSPagerViewDelegate, FSPagerViewDataSourc
         pagerView?.isInfinite = true
         pagerView?.itemSize = CGSize(width: pagerView.frame.width, height: pagerView.frame.height)
         pagerView?.interitemSpacing = 0
-        pagerView?.transformer = FSPagerViewTransformer(type: .cubic)
+        pagerView?.transformer = FSPagerViewTransformer(type: .overlap)
     
     }
     
@@ -134,13 +142,15 @@ class ViewDetailsVB: UIViewController, FSPagerViewDelegate, FSPagerViewDataSourc
                    // }
                 }
             }
+        }else{
+            self.imageArray = []
         }
         
 //        txtVisionTitle.isUserInteractionEnabled = false
 //        txtVisionCategory.isUserInteractionEnabled = false
 //        txtVisionDesc.isUserInteractionEnabled = false
 //        txtVisionDesc2.isUserInteractionEnabled = false
-        
+        self.configurePageControl()
         self.pagerView.reloadData()
     }
     
@@ -157,12 +167,13 @@ class ViewDetailsVB: UIViewController, FSPagerViewDelegate, FSPagerViewDataSourc
         let cell = pagerView.dequeueReusableCell(withReuseIdentifier: "cell", at: index)
         if pagerView == pagerView {
             cell.imageView?.image = imageArray[index]
+            self.pageControl.currentPage = index
         }
         return cell
     }
     
     public func pagerView(_ pagerView:FSPagerView, didSelectItemAt index:Int) {
-        
+        self.pageControl.currentPage = index
     }
 
 }

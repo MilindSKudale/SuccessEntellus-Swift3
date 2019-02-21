@@ -15,8 +15,10 @@ class TextCampDetailCell: UICollectionViewCell {
     @IBOutlet var btnInterval : UIButton!
     @IBOutlet var btnEdit : UIButton!
     @IBOutlet var btnDelete : UIButton!
+    @IBOutlet var btnReply : UIButton!
     @IBOutlet var btnMemberDetails : UIButton!
     @IBOutlet var imgTemplate : UIImageView!
     @IBOutlet var imgMemberDetails : UIImageView!
     @IBOutlet var labelLine : UILabel!
+    @IBOutlet var labelReplyCount : UILabel!
 }

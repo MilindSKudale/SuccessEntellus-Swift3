@@ -23,7 +23,6 @@ class AddMembersSystemVC: UIViewController, UITextFieldDelegate {
     @IBOutlet var btnAddAndStartCamp : UIButton!
     @IBOutlet var btnAddAndStartCampHeight : NSLayoutConstraint!
     
-    
     var mainArrayList = [String]()
     var mainArrayID = [String]()
     var mainArrayListSearch = [String]()
@@ -43,24 +42,20 @@ class AddMembersSystemVC: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         self.tblList.tableFooterView = UIView()
-        
         btnCancel.layer.cornerRadius = 5.0
         btnCancel.clipsToBounds = true
         btnAssign.layer.cornerRadius = 5.0
         btnAssign.clipsToBounds = true
         btnAddAndStartCamp.layer.cornerRadius = 5.0
         btnAddAndStartCamp.clipsToBounds = true
-        
-//        if CampaignType == "EmailCampaign" {
-//            self.btnAddAndStartCamp.isHidden = false
-//            self.btnAddAndStartCampHeight.constant = 30.0
-//        }else{
-//            self.btnAddAndStartCamp.isHidden = true
-//            self.btnAddAndStartCampHeight.constant = 0.0
-//        }
-        
+        if CampaignType == "EmailCampaign" {
+            self.btnAddAndStartCamp.isHidden = true
+            self.btnAddAndStartCampHeight.constant = 0.0
+        }else{
+            self.btnAddAndStartCamp.isHidden = false
+            self.btnAddAndStartCampHeight.constant = 30.0
+        }
         self.setSelected(btnContact)
         self.setDeSelected(btnProspect)
         self.setDeSelected(btnCustomer)
@@ -72,7 +67,6 @@ class AddMembersSystemVC: UIViewController, UITextFieldDelegate {
         super.viewDidAppear(true)
         if OBJCOM.isConnectedToNetwork(){
             OBJCOM.setLoader()
-            
             if CampaignType == "TextCampaign" {
                 self.getContactList(action: "getListCrmForTxtMsg")
                 self.getProspectList(action: "getListCrmForTxtMsg")
@@ -84,7 +78,6 @@ class AddMembersSystemVC: UIViewController, UITextFieldDelegate {
                 self.getCustomerList(action: "getListCrmForEmailCamp")
                 self.getRecruitList(action: "getListCrmForEmailCamp")
             }
-            
         }else{
             OBJCOM.NoInternetConnectionCall()
         }
@@ -133,7 +126,6 @@ extension AddMembersSystemVC : UITableViewDataSource, UITableViewDelegate {
         
         if isFilter {
             cell.lblName.text = self.mainArrayListSearch[indexPath.row]
-            
             let selId = self.mainArrayIDSearch[indexPath.row]
             if self.arrSelectedIDs.contains(selId){
                 cell.imgSelectBox.image = #imageLiteral(resourceName: "checkbox_ic")
@@ -250,7 +242,8 @@ extension AddMembersSystemVC {
                 if CampaignType == "TextCampaign" {
                     self.assignTextMembers("0")
                 }else if CampaignType == "EmailCampaign" {
-                    self.assignEmailMembers(addAndAssinged: "0")
+                    //self.assignEmailMembers(addAndAssinged: "0")
+                    self.getEmailScheduleMessage()
                 }
             }else{
                 OBJCOM.NoInternetConnectionCall()
@@ -265,7 +258,7 @@ extension AddMembersSystemVC {
             if OBJCOM.isConnectedToNetwork(){
                 OBJCOM.setLoader()
                 if CampaignType == "EmailCampaign" {
-                    self.assignEmailMembers(addAndAssinged: "1")
+//                    self.assignEmailMembers(addAndAssinged: "1")
                 }else if CampaignType == "TextCampaign" {
                     self.assignTextMembers("1")
                 }
@@ -488,6 +481,41 @@ extension AddMembersSystemVC {
                 OBJCOM.hideLoader()
             }else{
                 print("result:",JsonDict ?? "")
+                OBJCOM.hideLoader()
+            }
+        };
+    }
+    
+    func getEmailScheduleMessage() {
+        let dictParam = ["userId": userID,
+                         "platform":"3",
+                         "campaignId":CampaignId]
+        
+        let jsonData = try? JSONSerialization.data(withJSONObject: dictParam, options: [])
+        let jsonString = String(data: jsonData!, encoding: .utf8)
+        let dictParamTemp = ["param":jsonString];
+        
+        typealias JSONDictionary = [String:Any]
+        OBJCOM.modalAPICall(Action: "getEmailScheduleMessage", param:dictParamTemp as [String : AnyObject],  vcObject: self) {
+            JsonDict, staus in
+            
+            let success:String = JsonDict!["IsSuccess"] as! String
+            if success == "true"{
+                let result = JsonDict!["result"] as! String
+                let alertController = UIAlertController(title: "", message: result, preferredStyle: .alert)
+                let okAction = UIAlertAction(title: "Proceed", style: UIAlertActionStyle.default) {
+                    UIAlertAction in
+                    self.assignEmailMembers(addAndAssinged: "0")
+                }
+                let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) {
+                    UIAlertAction in
+                }
+                alertController.addAction(okAction)
+                alertController.addAction(cancelAction)
+                self.present(alertController, animated: true, completion: nil)
+            }else{
+                let result = JsonDict!["result"] as! String
+                OBJCOM.setAlert(_title: "", message: result)
                 OBJCOM.hideLoader()
             }
         };

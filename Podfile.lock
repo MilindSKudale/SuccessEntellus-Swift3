@@ -67,7 +67,7 @@ PODS:
   - McPicker (0.5.2)
   - Parchment (0.9.0)
   - PDFReader (2.5.1)
-  - RichEditorView (4.0.0)
+  - RichEditorView (5.0.0)
   - SKActivityIndicatorView (0.1.0)
   - SwiftMultiSelect (0.2.3)
   - SwiftyJSON (4.0.0)
@@ -155,12 +155,12 @@ SPEC CHECKSUMS:
   McPicker: 3c21f279480d04ba7f8a4ae8445f59c7e0931a99
   Parchment: 63b6ec9f14fb54529fd2b9bf3e7537706364e163
   PDFReader: 2c4a845d0560f33221cf911516e3b700967680f6
-  RichEditorView: e5990b1a092539559def9df135e064b29ab97e68
+  RichEditorView: 1bbb07b87ca2d479ac29a6877014b38b8df233ef
   SKActivityIndicatorView: f46936f760d33eb8235333242269bf01cc9248ae
   SwiftMultiSelect: daf2ee4279330458f6c1fdd5f713f6c80fb913da
   SwiftyJSON: 070dabdcb1beb81b247c65ffa3a79dbbfb3b48aa
   SwipeMenuViewController: fe912fbd0ae2cc1607b99084ca718cc7e60e50f9
 
-PODFILE CHECKSUM: 92a251b98a75c1d8a393ca2b912bb56736722e98
+PODFILE CHECKSUM: 9a4187bdc21360878b0e13ff4eafdd9e2f71865f
 
 COCOAPODS: 1.5.3

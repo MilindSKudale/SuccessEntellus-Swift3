@@ -35,6 +35,9 @@ class AddDailyEventTVC: UITableViewController {
     var strStartDate = ""
     let eventStore = EKEventStore()
     
+    var startTime = Date()
+    var endTime = Date()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -46,6 +49,7 @@ class AddDailyEventTVC: UITableViewController {
         strStartDate = formatter.string(from: date)
         
         formatter.dateFormat = "hh:mm a"
+        self.startTime = date.addingTimeInterval(60)
         txtStartTime.text = formatter.string(from: date)
         txtEndTime.text = formatter.string(from: date.addingTimeInterval(3600))
         
@@ -211,7 +215,7 @@ class AddDailyEventTVC: UITableViewController {
                 datePicker.show("Set date",
                                 doneButtonTitle: "Done",
                                 cancelButtonTitle: "Cancel",
-                                minimumDate: Date(),
+                                minimumDate: nil,
                                 datePickerMode: .date) { (date) in
                                     if let dt = date {
                                         let formatter = DateFormatter()
@@ -226,13 +230,17 @@ class AddDailyEventTVC: UITableViewController {
                 datePicker.show("Set date",
                                 doneButtonTitle: "Done",
                                 cancelButtonTitle: "Cancel",
-                                minimumDate: startDate.addingTimeInterval(3600),
+                                minimumDate: nil,
                                 datePickerMode: .date) { (date) in
                                     if let dt = date {
                                         let formatter = DateFormatter()
                                         formatter.dateFormat = "MM-dd-yyyy"
-                                    
-                                        self.txtEndDate.text = formatter.string(from: dt)
+                                        if dt < self.startDate {
+                                            OBJCOM.setAlert(_title: "", message: "'To date' should be greater than 'From date'.")
+                                        }else{
+                                            self.txtEndDate.text = formatter.string(from: dt)
+                                        }
+                                       
                                         
 //                                        self.endDate = dt
                                         //self.startDate = self.endDate.addingTimeInterval(-3600)
@@ -241,8 +249,7 @@ class AddDailyEventTVC: UITableViewController {
         }
     }
     
-    var startTime = Date()
-    var endTime = Date()
+    
     func timePickerTapped(textfield:UITextField) {
         
         let datePicker = DatePickerDialog(textColor: .black,
@@ -253,30 +260,31 @@ class AddDailyEventTVC: UITableViewController {
             datePicker.show("Set Start Time",
                             doneButtonTitle: "Done",
                             cancelButtonTitle: "Cancel",
-                            minimumDate: Date(),
+                            minimumDate: nil,
                             datePickerMode: .time) { (date) in
                                 if let dt = date {
                                     let formatter = DateFormatter()
                                     formatter.dateFormat = "hh:mm a"
                                     self.txtStartTime.text = formatter.string(from: dt)
                                     self.txtEndTime.text = formatter.string(from: dt.addingTimeInterval(3600))
-                                    self.startTime = dt
-//                                    self.endTime = dt.addingTimeInterval(3600)
+                                    self.startTime = dt.addingTimeInterval(60)
+                                   // self.endTime = dt.addingTimeInterval(3600)
                                 }
             }
         }else{
+            
             datePicker.show("Set End Time",
                             doneButtonTitle: "Done",
                             cancelButtonTitle: "Cancel",
-                            minimumDate: self.startTime.addingTimeInterval(3600),
+                            minimumDate: self.startTime,
                             datePickerMode: .time) { (date) in
-                                if let dt = date {
-                                    let formatter = DateFormatter()
-                                    formatter.dateFormat = "HH:mm a"
-                                    self.txtEndTime.text = formatter.string(from: dt)
-//                                    self.endTime = dt
-//                                    self.startTime = self.endTime.addingTimeInterval(-3600)
-                                }
+                            if let dt = date {
+                                let formatter = DateFormatter()
+                                formatter.dateFormat = "hh:mm a"
+                                self.txtEndTime.text = formatter.string(from: dt)
+                                self.endTime = dt
+                            }
+                                
             }
         }
     }
